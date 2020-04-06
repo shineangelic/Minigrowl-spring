@@ -1,44 +1,38 @@
 package it.angelic.growlroom.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+/**
+ * Singolo Comando reale quale spegni luici o set temperatura
+ * @author Ale
+ *
+ */
 @Entity
-public class Command {
+public class Command implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2086213865524090687L;
 	@Id
-	private String actuatorId;
-	private CommandEnum cmdType;
+	private String name;
+	@JsonProperty("val")
 	private String parameter;
 
-	public Command(String actuatorId, CommandEnum cmdType, String parameter) {
+	//dispositivo destinatario
+	private int targetActuator;
+
+	public Command(String name, String parameter) {
 		super();
-		this.actuatorId = actuatorId;
-		this.cmdType = cmdType;
+		this.name = name;
 		this.parameter = parameter;
 	}
-	
-	
 
 	public Command() {
 		super();
-	}
-
-
-
-	public String getActuatorId() {
-		return actuatorId;
-	}
-
-	public void setActuatorId(String actuatorId) {
-		this.actuatorId = actuatorId;
-	}
-
-	public CommandEnum getCmdType() {
-		return cmdType;
-	}
-
-	public void setCmdType(CommandEnum cmdType) {
-		this.cmdType = cmdType;
 	}
 
 	public String getParameter() {
@@ -47,6 +41,22 @@ public class Command {
 
 	public void setParameter(String parameter) {
 		this.parameter = parameter;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getTargetActuator() {
+		return targetActuator;
+	}
+
+	public void setTargetActuatorId(int targetActuator) {
+		this.targetActuator = targetActuator;
 	}
 
 }

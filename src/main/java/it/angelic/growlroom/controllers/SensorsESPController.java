@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.angelic.growlroom.model.Command;
-import it.angelic.growlroom.model.CommandEnum;
 import it.angelic.growlroom.model.CommandsRepository;
 import it.angelic.growlroom.model.Sensor;
 import it.angelic.growlroom.model.SensorsRepository;
@@ -62,8 +62,8 @@ public class SensorsESPController {
 
 		List<Command> res = new ArrayList<Command>();
 		Command ree = new Command();
-		ree.setActuatorId("1");
-		ree.setCmdType(CommandEnum.DECREASE);
+		//ree.setActuatorId("1");
+		//ree.setCmdType(CommandEnum.DECREASE);
 		ree.setParameter("s");
 		res.add(ree);
 
@@ -83,7 +83,12 @@ public class SensorsESPController {
 
 	@PutMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	// @ResponseStatus(HttpStatus.OK)
-	public int putSensor(@RequestBody Sensor sensing) {
+	public int putSensor(@PathVariable String id, @RequestBody Sensor sensing) {
+		
+		
+		if (!Integer.valueOf(id).equals(sensing.getId()))
+			throw new IllegalArgumentException("PID Mismatch: "+id+" vs" + sensing.getId());
+		
 		sensing.setTimeStamp(new Date());
 		sensorRepository.save(sensing);
 		return sensing.getId();

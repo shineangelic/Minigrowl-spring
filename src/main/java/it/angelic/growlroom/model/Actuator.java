@@ -5,18 +5,30 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+@Entity
 public class Actuator implements Serializable{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 8169740067541126448L;
+	@Id
 	private Integer id;
 	private ActuatorEnum type;
+	@JsonProperty("val")
 	private String reading;
+	private String name;
 	private UnitEnum uinit;
 	private Date timeStamp;
+	@JsonProperty("err")
 	private boolean errorPresent;
+	@JsonProperty("cmds")
+	@ElementCollection(targetClass=HashSet.class)
 	private Set<Command> supportedCommands;
 	
 	public Actuator() {
@@ -60,6 +72,22 @@ public class Actuator implements Serializable{
 	}
 	public void setErrorPresent(boolean errorPresent) {
 		this.errorPresent = errorPresent;
+	}
+
+	public Set<Command> getSupportedCommands() {
+		return supportedCommands;
+	}
+
+	public void setSupportedCommands(Set<Command> supportedCommands) {
+		this.supportedCommands = supportedCommands;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	
