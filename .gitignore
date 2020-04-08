@@ -7,3 +7,4 @@ target/
 .tern-project
 logs/
 
+/minigrow.mv.db

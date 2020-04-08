@@ -16,7 +16,6 @@
 package it.angelic.growlroom;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.Test;
@@ -32,10 +31,23 @@ import org.springframework.test.web.servlet.MockMvc;
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
 @AutoConfigureMockMvc
-public class PercorsoLavoratoreControllerTests {
+public class EspControllerTests {
 
 	@Autowired
 	private MockMvc mockMvc;
- 
+	
+	
+	@Test
+	public void testSmartCardEndpoint() throws Exception {
+		this.mockMvc.perform(get("/smartcards/0/datipersonali")).andExpect(status().isOk());
+	}
+
+	
+	/*
+	 * @Test public void paramGreetingShouldReturnTailoredMessage() throws Exception {
+	 * 
+	 * this.mockMvc.perform(get("/greeting").param("name", "Spring Community"))
+	 * .andDo(print()).andExpect(status().isOk()) .andExpect(jsonPath("$.content").value("Hello, Spring Community!")); }
+	 */
 
 }

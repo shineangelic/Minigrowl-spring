@@ -7,6 +7,14 @@
 	<groupId>org.springframework</groupId>
 	<artifactId>growlroom-be</artifactId>
 	<version>0.1</version>
+	<name>Mini Growlroom Spring</name>
+	<description>back-end services for minigrowlroom ESP32 boards</description>
+
+	<properties>
+		<java.version>11</java.version>
+		<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
+		<java.version>1.8</java.version>
+	</properties>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -45,10 +53,7 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<properties>
-		<java.version>1.8</java.version>
-	</properties>
+ 
 
 	<build>
 		<plugins>

@@ -1,13 +1,22 @@
 package it.angelic.growlroom.controllers;
 
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import javax.print.PrintException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.angelic.growlroom.model.Actuator;
@@ -23,7 +32,7 @@ import it.angelic.growlroom.model.Command;
  */
 @RestController
 @RequestMapping(value = "/api/esp/v1/actuators")
-public class ActuatorsESPController {
+public class ESPActuatorsController {
 
 	@Autowired
 	private ActuatorsRepository actuatorRepository;
@@ -37,7 +46,7 @@ public class ActuatorsESPController {
 	 */
 	@PutMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	// @ResponseStatus(HttpStatus.OK)
-	public int putSensor(@PathVariable String id, @RequestBody Actuator dispositivo) {
+	public int putActuator(@PathVariable String id, @RequestBody Actuator dispositivo) {
 		try {
 			int t2 = Integer.valueOf(id);
 		} catch (NumberFormatException e) {
@@ -55,5 +64,22 @@ public class ActuatorsESPController {
 		actuatorRepository.save(dispositivo);
 		return dispositivo.getId();
 	}
+	
+	@CrossOrigin
+	@RequestMapping(value = "/command/download", method = RequestMethod.GET)
+	@GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<Command> downloadComandi(@RequestParam(value = "dataInizio", required = false) Date dtIn)
+			throws FileNotFoundException, PrintException {
+
+		List<Command> res = new ArrayList<Command>();
+		Command ree = new Command();
+		//ree.setActuatorId("1");
+		//ree.setCmdType(CommandEnum.DECREASE);
+		ree.setParameter("s");
+		res.add(ree);
+
+		return res;
+	}
+
 
 }
