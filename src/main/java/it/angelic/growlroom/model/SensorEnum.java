@@ -2,12 +2,11 @@ package it.angelic.growlroom.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum SensorEnum {
 
 	TEMPERATURE('T'), HUMIDITY('H'), 
-	LIGHT('L'), POWER('P'), MOISTURE('M'), WATER_RESERVE('W');
+	LIGHT('L'), BAROMETER('P'), MOISTURE('M'), WATER_RESERVE('W');
 	private SensorEnum(char inVal) {
 		this.typ = inVal;
 	}
@@ -15,7 +14,7 @@ public enum SensorEnum {
 	char typ;
 
 	
-	@JsonValue
+	//@JsonValue
 	public long getTyp() {
 		return typ;
 	}

@@ -4,25 +4,31 @@ import java.io.Serializable;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Singolo Comando reale quale spegni luici o set temperatura
+ * la chiave e` data anche dal disp a cui e` associato
  * @author Ale
  *
  */
 @Entity
+@IdClass(CompositeKey.class)
 public class Command implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 2086213865524090687L;
-	@Id
+	
 	private String name;
+	
 	@JsonProperty("val")
+	@Id
 	private String parameter;
 
 	//dispositivo destinatario
+	@Id
 	private int targetActuator;
 
 	public Command(String name, String parameter) {

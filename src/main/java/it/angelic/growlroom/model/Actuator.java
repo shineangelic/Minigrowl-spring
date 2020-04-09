@@ -13,9 +13,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Entity
 public class Actuator implements Serializable{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 8169740067541126448L;
 	@Id
 	private Integer id;
@@ -27,6 +24,7 @@ public class Actuator implements Serializable{
 	private Date timeStamp;
 	@JsonProperty("err")
 	private boolean errorPresent;
+	
 	@JsonProperty("cmds")
 	@ElementCollection(targetClass=HashSet.class)
 	private Set<Command> supportedCommands;
