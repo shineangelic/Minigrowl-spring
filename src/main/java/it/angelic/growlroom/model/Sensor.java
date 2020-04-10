@@ -61,5 +61,10 @@ public class Sensor {
 	public void setErr(boolean errorPresent) {
 		this.err = errorPresent;
 	}
+	
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName() + "-" + getId();
+	}
 
 }

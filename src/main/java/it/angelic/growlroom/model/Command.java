@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 @Entity
-@IdClass(CompositeKey.class)
+@IdClass(CompositeCommandKey.class)
 public class Command implements Serializable {
 	/**
 	 * 
@@ -26,10 +26,18 @@ public class Command implements Serializable {
 	@JsonProperty("val")
 	@Id
 	private String parameter;
+	
+	private Long idOnQueue;
 
 	//dispositivo destinatario
 	@Id
 	private int targetActuator;
+	
+	@Override
+	public String toString() {
+		 
+		return "Command "+name+" with paramenter="+parameter+".Target actuator id(PIN) is: "+targetActuator;
+	}
 
 	public Command(String name, String parameter) {
 		super();
@@ -63,6 +71,14 @@ public class Command implements Serializable {
 
 	public void setTargetActuatorId(int targetActuator) {
 		this.targetActuator = targetActuator;
+	}
+
+	public Long getIdOnQueue() {
+		return idOnQueue;
+	}
+
+	public void setIdOnQueue(Long idOnQueue) {
+		this.idOnQueue = idOnQueue;
 	}
 
 }

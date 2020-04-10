@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public enum SensorEnum {
 
 	TEMPERATURE('T'), HUMIDITY('H'), 
-	LIGHT('L'), BAROMETER('P'), MOISTURE('M'), WATER_RESERVE('W');
+	LIGHT('L'), BAROMETER('B'), MOISTURE('M'), WATER_RESERVE('W');
 	private SensorEnum(char inVal) {
 		this.typ = inVal;
 	}
