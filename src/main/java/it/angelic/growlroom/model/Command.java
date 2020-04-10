@@ -35,8 +35,7 @@ public class Command implements Serializable {
 	
 	@Override
 	public String toString() {
-		 
-		return "Command "+name+" with paramenter="+parameter+".Target actuator id(PIN) is: "+targetActuator;
+		return   this.getClass().getSimpleName() + "-" +  targetActuator+"->"+parameter ;
 	}
 
 	public Command(String name, String parameter) {

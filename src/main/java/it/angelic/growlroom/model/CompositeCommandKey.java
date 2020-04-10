@@ -2,7 +2,7 @@ package it.angelic.growlroom.model;
 
 import java.io.Serializable;
 
-public class CompositeKey implements Serializable {
+public class CompositeCommandKey implements Serializable {
 	/**
 	 * 
 	 */
