@@ -7,17 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.angelic.growlroom.model.Actuator;
-import it.angelic.growlroom.model.ActuatorEnum;
 import it.angelic.growlroom.model.ActuatorsRepository;
 import it.angelic.growlroom.model.Command;
 import it.angelic.growlroom.model.CommandsRepository;
+import it.angelic.growlroom.model.UnitEnum;
 
 @Service
 public class ActuatorsServiceImpl implements ActuatorsService {
 
 	@Autowired
 	private CommandsRepository commandsRepository;
-	
+
 	@Autowired
 	private ActuatorsRepository actuatorsRepository;
 
@@ -26,13 +26,17 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 		if (!Integer.valueOf(id).equals(dispositivo.getId()))
 			throw new IllegalArgumentException("PID Mismatch: " + id + " vs" + dispositivo.getId());
 
-		switch(dispositivo.getType()) {
+		switch (dispositivo.getTyp()) {
 		case FAN:
-			dispositivo.setType(ActuatorEnum.LIGHT);
 		case LIGHT:
-			dispositivo.setType(ActuatorEnum.LIGHT);
+			dispositivo.setUinit(UnitEnum.TURNED_ON);
+		case HUMIDIFIER:
+			// reserve tank?
+			dispositivo.setUinit(UnitEnum.LITER);
+		case HVAC:
+			dispositivo.setUinit(UnitEnum.CELSIUS);
 		}
-		
+
 		for (Command com : dispositivo.getSupportedCommands()) {
 			com.setTargetActuatorId(Integer.valueOf(id));
 			commandsRepository.save(com);
@@ -46,7 +50,5 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 	public Collection<Actuator> getActuators() {
 		return actuatorsRepository.findAll();
 	}
-
- 
 
 }

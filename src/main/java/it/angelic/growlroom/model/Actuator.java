@@ -9,6 +9,8 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
@@ -17,11 +19,11 @@ public class Actuator implements Serializable {
 	private static final long serialVersionUID = 8169740067541126448L;
 	@Id
 	private Integer id;
-	@JsonProperty("name")
-	private ActuatorEnum type;
+	private ActuatorEnum typ;
 	@JsonProperty("val")
 	private String reading;
-	private String name;
+	@JsonInclude(Include.NON_NULL)
+	private String humanName;
 	private UnitEnum uinit;
 	private Date timeStamp;
 	@JsonProperty("err")
@@ -45,12 +47,12 @@ public class Actuator implements Serializable {
 		this.id = id;
 	}
 
-	public ActuatorEnum getType() {
-		return type;
+	public ActuatorEnum getTyp() {
+		return typ;
 	}
 
-	public void setType(ActuatorEnum type) {
-		this.type = type;
+	public void setTyp(ActuatorEnum type) {
+		this.typ = type;
 	}
 
 	public String getReading() {
@@ -93,12 +95,12 @@ public class Actuator implements Serializable {
 		this.supportedCommands = supportedCommands;
 	}
 
-	public String getName() {
-		return name;
+	public String getHumanName() {
+		return humanName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setHumanName(String name) {
+		this.humanName = name;
 	}
 
 	@Override

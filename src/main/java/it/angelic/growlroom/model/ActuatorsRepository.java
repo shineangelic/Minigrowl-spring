@@ -1,9 +1,9 @@
 package it.angelic.growlroom.model;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ActuatorsRepository extends CrudRepository<Actuator, Long> {
+public interface ActuatorsRepository extends JpaRepository<Actuator, Long> {
  
 
-	Sensor findById(long id);
+	Actuator findById(int id);
 }
