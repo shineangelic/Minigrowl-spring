@@ -34,11 +34,12 @@ public class Command implements Serializable {
 
 	// dispositivo destinatario
 	@Id
+	@JsonProperty("tgt")
 	private int targetActuator;
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + "-" + targetActuator + "->" + parameter;
+		return this.getClass().getSimpleName() + "-tgt: " + targetActuator + " val:" + parameter;
 	}
 
 	public Command(String name, String parameter) {

@@ -9,7 +9,7 @@ public interface CommandsService {
 	public abstract Command createOrUpdateCommand(Command product);
 
 	public abstract Collection<Command> getUnexecutedCommands();
-	public abstract boolean removeExecutedCommand(Long queueCommandId);
+	public abstract boolean removeExecutedCommand(Long queueCommandId, Command executed);
 	//returns queue len
 	public abstract Long sendCommand(Command toExecurte);
 

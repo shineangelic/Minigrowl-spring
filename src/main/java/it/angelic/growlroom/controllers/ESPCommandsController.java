@@ -38,10 +38,10 @@ public class ESPCommandsController {
 		return commandsService.getUnexecutedCommands();
 	}
 
-	@RequestMapping(method = RequestMethod.DELETE, value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public boolean deleteExecutedCommand(@PathVariable String queueCommandid) {
+	@RequestMapping(method = RequestMethod.POST, value = "/id/{queueCommandid}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public boolean deleteExecutedCommand(@PathVariable String queueCommandid, Command executed) {
 		try {
-			return commandsService.removeExecutedCommand(Long.valueOf(queueCommandid));
+			return commandsService.removeExecutedCommand(Long.valueOf(queueCommandid), executed);
 		} catch (NumberFormatException e) {
 			throw new IllegalArgumentException();
 		}

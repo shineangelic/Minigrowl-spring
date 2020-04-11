@@ -30,11 +30,14 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 		case FAN:
 		case LIGHT:
 			dispositivo.setUinit(UnitEnum.TURNED_ON);
+			break;
 		case HUMIDIFIER:
 			// reserve tank?
 			dispositivo.setUinit(UnitEnum.LITER);
+			break;
 		case HVAC:
 			dispositivo.setUinit(UnitEnum.CELSIUS);
+			break;
 		}
 
 		for (Command com : dispositivo.getSupportedCommands()) {

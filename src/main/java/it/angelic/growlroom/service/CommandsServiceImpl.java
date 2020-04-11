@@ -66,7 +66,7 @@ public class CommandsServiceImpl implements CommandsService {
 	}
 
 	@Override
-	public boolean removeExecutedCommand(Long queueCommandId) {
+	public boolean removeExecutedCommand(Long queueCommandId, Command check) {
 		queueCommands.deleteById(queueCommandId);
 		return !queueCommands.existsById(queueCommandId);
 	}
