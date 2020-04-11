@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.angelic.growlroom.model.Actuator;
 import it.angelic.growlroom.service.ActuatorsService;
-import it.angelic.growlroom.service.CommandsService;
 
 /**
  * L'esp periodicamente contatta il cloud, invia lo stato dei sensori e degli attuatori. Legge una list per scaricare i
@@ -25,9 +24,7 @@ public class ESPActuatorsController {
 
 	@Autowired
 	private ActuatorsService actuatorsService;
-	
-	@Autowired
-	private CommandsService commandsService;
+	 
 
 	/**
 	 * Put degli attuatori, ovvero dispositivi reali quali ventilatori, HVAC e luci.

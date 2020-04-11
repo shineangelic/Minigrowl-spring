@@ -1,41 +1,210 @@
-#Formazione e Lavoro Kiosk/Totem
-Software di recupero informazioni smart-card e invocazione WS lxt.
 
-E` un progetto maven, lanciandolo si avvia un runtime che risponde su localhost:8080 ad uso e consumo di un front-end abbinato.
+Minigrow APIs are based on three kind of objects: sensors, actuators and commands. While the first tho reflec real hardware devices with their own reading, the command is an abstraction used to drive such devices.
 
-application.properties contiene le variabili per la configurazione. Sono previste tre modalita di esecuzione, `DEBUG`, `TEST` e `PRODUCTION`. La prima funziona sempre, la seconda richiede MyPortal su plutone:41000 mentre l'ultima è quella finale.
+# Client APIs
+```
+   /api/minigrowl/v1/commands
+   /api/minigrowl/v1/sensors
+   /api/minigrowl/v1/actuators
+   /api/minigrowl/v1/commands/queue/add
+```
 
-#Compilazione back-end
+# ESP32 APIs
+```
+   /api/esp/v1/actuators/id/{id}
+   /api/esp/v1/sensors/id/{id}
+   /api/esp/v1/commands
+   /api/minigrowl/v1/commands/queue/add
+```
 
-1. git clone
-2. apri eclipse ed importa il progetto come "import existing maven project"
-3. lanciare l'applicazione come applicazione java standard. Alternativamente, è possibile utilizzare l'esecuzione **mvn spring-boot:run**
-4. (opzionale) includere il compilato del front-end. All'interno di `resources/static` si trovano le risorse compilate della UI. Possono essere sovrascritte con una versione più aggiornata dopo aver compilato il progetto front-end con yarn/npm.
-5. Visitare http://localhost:8080/
+## Command example:
+```
+[
+    {
+        "name": "Turn ON intake Fan",
+        "val": "1",
+        "tgt": 2
+    },
+    {
+        "name": "Turn intake Fan OFF",
+        "val": "0",
+        "tgt": 2
+    },
+    {
+        "name": "Set Temperature",
+        "val": "2",
+        "tgt": 25
+    },
+    {
+        "name": "Turn ON Hvac",
+        "val": "1",
+        "tgt": 25
+    },
+    {
+        "name": "Turn OFF Hvac",
+        "val": "0",
+        "tgt": 25
+    },
+    {
+        "name": "Switch lights ON",
+        "val": "1",
+        "tgt": 12
+    },
+    {
+        "name": "Switch lights OFF",
+        "val": "0",
+        "tgt": 12
+    },
+    {
+        "name": "Turn ON outtake Fan",
+        "val": "1",
+        "tgt": 13
+    },
+    {
+        "name": "Turn OFF outtake Fan",
+        "val": "0",
+        "tgt": 13
+    }
+]
+```
 
-##Rimozione Warning smart-card
-The solution is to change the access restrictions.
+## Sensors example:
+```
+[
+    {
+        "id": 17,
+        "typ": "HUMIDITY",
+        "val": "25.57002",
+        "uinit": "PERCENT",
+        "timeStamp": "2020-04-11T13:22:34.205+0000",
+        "err": false
+    },
+    {
+        "id": 21,
+        "typ": "BAROMETER",
+        "val": "1012.763",
+        "uinit": "MILLIBAR",
+        "timeStamp": "2020-04-11T13:22:20.353+0000",
+        "err": false
+    },
+    {
+        "id": 22,
+        "typ": "TEMPERATURE",
+        "val": "26.12",
+        "uinit": "CELSIUS",
+        "timeStamp": "2020-04-11T13:22:48.155+0000",
+        "err": false
+    },
+    {
+        "id": 33,
+        "typ": "LIGHT",
+        "val": "673",
+        "uinit": "LUMEN",
+        "timeStamp": "2020-04-11T13:23:02.023+0000",
+        "err": false
+    }
+]
+```
 
-Go to the properties of your Java project,
-i.e. by selecting "Properties" from the context menu of the project in the "Package Explorer".
-Go to "Java Build Path", tab "Libraries".
-Expand the library entry
-select
-"Access rules",
-"Edit..." and
-"Add..." a "Resolution: Accessible" with a corresponding rule pattern. For me that was "javax/smartcardio/**", for you it might instead be "com/apple/eawt/**".
+## Actuators example (w/ supported commands)
+```
+[
+    {
+        "id": 2,
+        "typ": "FAN",
+        "uinit": "CELSIUS",
+        "timeStamp": "2020-04-11T13:26:25.983+0000",
+        "val": "1",
+        "err": false,
+        "cmds": [
+            {
+                "name": "Turn ON intake Fan",
+                "val": "1",
+                "tgt": 2
+            },
+            {
+                "name": "Turn intake Fan OFF",
+                "val": "0",
+                "tgt": 2
+            }
+        ]
+    },
+    {
+        "id": 12,
+        "typ": "LIGHT",
+        "uinit": "CELSIUS",
+        "timeStamp": "2020-04-11T13:25:58.109+0000",
+        "val": "1",
+        "err": false,
+        "cmds": [
+            {
+                "name": "Switch lights ON",
+                "val": "1",
+                "tgt": 12
+            },
+            {
+                "name": "Switch lights OFF",
+                "val": "0",
+                "tgt": 12
+            }
+        ]
+    },
+    {
+        "id": 13,
+        "typ": "FAN",
+        "uinit": "CELSIUS",
+        "timeStamp": "2020-04-11T13:26:11.987+0000",
+        "val": "0",
+        "err": false,
+        "cmds": [
+            {
+                "name": "Turn ON outtake Fan",
+                "val": "1",
+                "tgt": 13
+            },
+            {
+                "name": "Turn OFF outtake Fan",
+                "val": "0",
+                "tgt": 13
+            }
+        ]
+    },
+    {
+        "id": 25,
+        "typ": "HVAC",
+        "uinit": "CELSIUS",
+        "timeStamp": "2020-04-11T13:26:21.342+0000",
+        "val": "1",
+        "err": false,
+        "cmds": [
+            {
+                "name": "Set Temperature",
+                "val": "2",
+                "tgt": 25
+            },
+            {
+                "name": "Turn ON Hvac",
+                "val": "1",
+                "tgt": 25
+            },
+            {
+                "name": "Turn OFF Hvac",
+                "val": "0",
+                "tgt": 25
+            }
+        ]
+    }
+]
+```
+## Send Command example
+PUT on /api/minigrowl/v1/commands/queue/add, with payload like the following (it must be a supported command seen above)
+```
+{
+        "name": "Turn intake Fan OFF",
+        "targetActuator": 2,
+        "val": "0"
+}
+```
 
-##Versioni
-
-
-###0.1.1
-Bugfixes, timeout scheda
-
-###0.1.0 
-Versione installata 10/2019 per avvio pilota a Bologna
-
-##Analisi log
-
-Su http://gitlab-sil.bo.eng.it/grupposil/internal-tools è disponibile un tool di log-analisi
 
 
