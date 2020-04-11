@@ -1,4 +1,4 @@
-package it.angelic.growlroom.components;
+package it.angelic.growlroom.service;
 
 import java.util.Collection;
 

@@ -1,28 +1,16 @@
 package it.angelic.growlroom.controllers;
 
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.print.PrintException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.angelic.growlroom.model.Actuator;
-import it.angelic.growlroom.model.ActuatorsRepository;
-import it.angelic.growlroom.model.Command;
-import it.angelic.growlroom.model.CommandsRepository;
+import it.angelic.growlroom.service.ActuatorsService;
+import it.angelic.growlroom.service.CommandsService;
 
 /**
  * L'esp periodicamente contatta il cloud, invia lo stato dei sensori e degli attuatori. Legge una list per scaricare i
@@ -36,10 +24,10 @@ import it.angelic.growlroom.model.CommandsRepository;
 public class ESPActuatorsController {
 
 	@Autowired
-	private ActuatorsRepository actuatorRepository;
+	private ActuatorsService actuatorsService;
 	
 	@Autowired
-	private CommandsRepository commandsRepository;
+	private CommandsService commandsService;
 
 	/**
 	 * Put degli attuatori, ovvero dispositivi reali quali ventilatori, HVAC e luci.
@@ -56,35 +44,10 @@ public class ESPActuatorsController {
 		} catch (NumberFormatException e) {
 			throw new IllegalArgumentException("Unparsable ID: " + id);
 		}
-
-		if (!Integer.valueOf(id).equals(dispositivo.getId()))
-			throw new IllegalArgumentException("PID Mismatch: " + id + " vs" + dispositivo.getId());
-
-		for (Command com : dispositivo.getSupportedCommands()) {
-			com.setTargetActuatorId(Integer.valueOf(id));
-			commandsRepository.save(com);
-		}
-
-		dispositivo.setTimeStamp(new Date());
-		actuatorRepository.save(dispositivo);
+		
+		actuatorsService.createOrUpdateActuator(dispositivo,id);
 		return dispositivo.getId();
 	}
 	
-	@CrossOrigin
-	@RequestMapping(value = "/command/download", method = RequestMethod.GET)
-	@GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<Command> downloadComandi(@RequestParam(value = "dataInizio", required = false) Date dtIn)
-			throws FileNotFoundException, PrintException {
-
-		List<Command> res = new ArrayList<Command>();
-		Command ree = new Command();
-		//ree.setActuatorId("1");
-		//ree.setCmdType(CommandEnum.DECREASE);
-		ree.setParameter("s");
-		res.add(ree);
-
-		return res;
-	}
-
 
 }

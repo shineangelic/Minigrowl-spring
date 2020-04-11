@@ -1,5 +1,5 @@
 package it.angelic.growlroom.model;
 
 public enum UnitEnum {
-CELSIUS, FAHRNEIT, PERCENT, LUMEN, MILLIBAR, LITER;
+CELSIUS, FAHRNEIT, PERCENT, LUMEN, MILLIBAR, LITER, TURNED_ON;
 }

@@ -1,8 +1,5 @@
 package it.angelic.growlroom;
 
-import java.util.Date;
-import java.util.TimeZone;
-
 import javax.annotation.PostConstruct;
 
 import org.springframework.boot.SpringApplication;
@@ -13,9 +10,6 @@ public class GrowlRoomApplication {
 
 	@PostConstruct
 	public void init() {
-		TimeZone.setDefault(TimeZone.getTimeZone("GMT+2:00")); // It will set UTC timezone
-		System.out.println("Spring boot timezone :" + new Date()); // It will print UTC
-																								// timezone
 	}
 
 	public static void main(String[] args) {

@@ -11,11 +11,15 @@ import javax.persistence.Id;
 public class QueueCommands {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long idQueueCommand;
-	private final Command toExecute;
-	private final Date creationTime;
-	
+	private Command toExecute;
+	private Date creationTime;
+
+	public QueueCommands() {
+		super();
+	}
+
 	public QueueCommands(Command toExecute) {
 		this.toExecute = toExecute;
 		creationTime = new Date();
@@ -31,5 +35,17 @@ public class QueueCommands {
 
 	public Long getIdQueueCommand() {
 		return idQueueCommand;
+	}
+
+	public void setIdQueueCommand(Long idQueueCommand) {
+		this.idQueueCommand = idQueueCommand;
+	}
+
+	public void setToExecute(Command toExecute) {
+		this.toExecute = toExecute;
+	}
+
+	public void setCreationTime(Date creationTime) {
+		this.creationTime = creationTime;
 	}
 }
