@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.angelic.growlroom.model.Actuator;
-import it.angelic.growlroom.model.ActuatorsRepository;
 import it.angelic.growlroom.model.Command;
 import it.angelic.growlroom.model.CommandsRepository;
 import it.angelic.growlroom.model.UnitEnum;
+import it.angelic.growlroom.model.repositories.ActuatorsRepository;
 
 @Service
 public class ActuatorsServiceImpl implements ActuatorsService {

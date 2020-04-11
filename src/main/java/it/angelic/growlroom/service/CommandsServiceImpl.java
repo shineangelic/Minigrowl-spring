@@ -9,12 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.angelic.growlroom.model.Actuator;
-import it.angelic.growlroom.model.ActuatorsRepository;
 import it.angelic.growlroom.model.Command;
 import it.angelic.growlroom.model.CommandsRepository;
 import it.angelic.growlroom.model.QueueCommands;
-import it.angelic.growlroom.model.QueueCommandsRepository;
-import it.angelic.growlroom.model.SensorsRepository;
+import it.angelic.growlroom.model.repositories.ActuatorsRepository;
+import it.angelic.growlroom.model.repositories.QueueCommandsRepository;
+import it.angelic.growlroom.model.repositories.SensorsRepository;
 
 @Service
 public class CommandsServiceImpl implements CommandsService {

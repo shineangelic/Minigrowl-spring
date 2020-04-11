@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.angelic.growlroom.model.Sensor;
-import it.angelic.growlroom.model.SensorsRepository;
 import it.angelic.growlroom.model.UnitEnum;
+import it.angelic.growlroom.model.repositories.SensorsRepository;
 
 @Service
 public class SensorsServiceImpl implements SensorsService {
