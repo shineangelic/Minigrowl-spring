@@ -31,15 +31,25 @@ import org.springframework.test.web.servlet.MockMvc;
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
 @AutoConfigureMockMvc
-public class EspControllerTests {
+public class ClientControllerTests {
 
 	@Autowired
 	private MockMvc mockMvc;
 	
 	
 	@Test
-	public void testSmartCardEndpoint() throws Exception {
-		this.mockMvc.perform(get("/smartcards/0/datipersonali")).andExpect(status().isOk());
+	public void testGetSensors() throws Exception {
+		this.mockMvc.perform(get("/api/minigrowl/v1/sensors")).andExpect(status().isOk());
+	}
+	
+	@Test
+	public void testGetActuators() throws Exception {
+		this.mockMvc.perform(get("/api/minigrowl/v1/actuators")).andExpect(status().isOk());
+	}
+	
+	@Test
+	public void testGetCommands() throws Exception {
+		this.mockMvc.perform(get("/api/minigrowl/v1/commands")).andExpect(status().isOk());
 	}
 
 	
