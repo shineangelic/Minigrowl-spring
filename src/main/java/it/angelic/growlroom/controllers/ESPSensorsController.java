@@ -2,6 +2,7 @@ package it.angelic.growlroom.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,19 +22,28 @@ import it.angelic.growlroom.service.SensorsService;
 @RestController
 @RequestMapping(value = "/api/esp/v1/sensors")
 public class ESPSensorsController {
+	private final SimpMessagingTemplate simpMessagingTemplate;
+
+	public ESPSensorsController(SimpMessagingTemplate simpMessagingTemplate) {
+		this.simpMessagingTemplate = simpMessagingTemplate;
+	}
 
 	@Autowired
 	private CommandsRepository commandsRepository;
 
 	@Autowired
 	private SensorsService sensorRepository;
-	 
 
 	@PutMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	// @ResponseStatus(HttpStatus.OK)
 	public int putSensor(@PathVariable String id, @RequestBody Sensor sensing) {
 		
-		return sensorRepository.createOrUpdateSensor(sensing,id).getId();
+		Sensor updated = sensorRepository.createOrUpdateSensor(sensing, id);
+		
+		//avvisa i sottoscrittori dei sensori
+		this.simpMessagingTemplate.convertAndSend("/topic/sensors", sensorRepository.getSensors());
+
+		return updated.getId();
 	}
 
 }

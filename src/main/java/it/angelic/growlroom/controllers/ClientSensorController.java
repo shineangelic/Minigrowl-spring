@@ -35,40 +35,42 @@ public class ClientSensorController {
 
 	@Autowired
 	private SensorsService sensorService;
-	
+
 	@Autowired
 	private CommandsService commandsService;
-	
+
 	@Autowired
 	private ActuatorsService actuatorsService;
+	
+
 
 	@CrossOrigin
 	@GetMapping(value = "/sensors", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> getSensors(@RequestParam(value = "dataInizio", required = false) Date dtIn)
 			throws FileNotFoundException, PrintException {
-		 
+
 		return new ResponseEntity<>(sensorService.getSensors(), HttpStatus.OK);
 	}
-	
+
 	@CrossOrigin
 	@GetMapping(value = "/actuators", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> getSensors() {
-		 
+
 		return new ResponseEntity<>(actuatorsService.getActuators(), HttpStatus.OK);
 	}
-	
+
 	@CrossOrigin
 	@GetMapping(value = "/commands", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> getSupportedCommands() {
 		return new ResponseEntity<>(commandsService.getSupportedCommands(), HttpStatus.OK);
 	}
-	
+
 	@CrossOrigin
 	@PutMapping(value = "/commands/queue/add", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	// @ResponseStatus(HttpStatus.OK)
 	public Long sendCommand(@RequestBody Command sensing) {
-		
+
 		return commandsService.sendCommand(sensing);
 	}
-
+ 
 }
