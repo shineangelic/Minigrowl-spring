@@ -63,6 +63,7 @@ public class ClientSensorController {
 		return new ResponseEntity<>(commandsService.getSupportedCommands(), HttpStatus.OK);
 	}
 	
+	@CrossOrigin
 	@PutMapping(value = "/commands/queue/add", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	// @ResponseStatus(HttpStatus.OK)
 	public Long sendCommand(@RequestBody Command sensing) {
