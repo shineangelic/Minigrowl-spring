@@ -16,14 +16,18 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @Controller
 public class WebSocketController {
 
- 
-	
 	private final SimpMessagingTemplate simpMessagingTemplate;
 
 	public WebSocketController(SimpMessagingTemplate simpMessagingTemplate) {
 		this.simpMessagingTemplate = simpMessagingTemplate;
 	}
- 
+	
+	@CrossOrigin
+	@MessageMapping("/actuators")
+	@SendTo("/topic/actuators")
+	public void subscribeActuatorsSocket() throws Exception {
+		return;
+	}
  
 
 	@CrossOrigin

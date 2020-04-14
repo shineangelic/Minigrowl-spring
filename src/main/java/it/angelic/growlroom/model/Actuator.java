@@ -25,6 +25,8 @@ public class Actuator implements Serializable {
 	@JsonInclude(Include.NON_NULL)
 	private String humanName;
 	private UnitEnum uinit;
+	@JsonProperty("mode")
+	private short mode;
 	private Date timeStamp;
 	@JsonProperty("err")
 	private boolean errorPresent;
@@ -106,6 +108,14 @@ public class Actuator implements Serializable {
 	@Override
 	public String toString() {
 		return this.getClass().getSimpleName() + "-" + getId();
+	}
+
+	public short getMode() {
+		return mode;
+	}
+
+	public void setMode(short mode) {
+		this.mode = mode;
 	}
 
 }
