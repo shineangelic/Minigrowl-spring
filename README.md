@@ -1,7 +1,10 @@
+# Minigrow back-end services
 
 Minigrow APIs are based on three kind of objects: `sensors`, `actuators` and `commands`. While the first two reflect real hardware devices with their own readings, the command is an abstraction used to drive such devices.
 
-The spring-boot server exposes REST API to exchange such devices with JSON representation and keeps a history. Since this is a personal home project, no additional security nor login features are provided. The spring server may be used optionally, as the [Minigrowl-ESP](https://shineangelic.github.io/Minigrowl-ESP-LoRa32-OLED/) already implements some basic logic, but you'll need this in order to archive logs and serve a [react-client](https://github.com/shineangelic/Minigrowl-react)
+The spring-boot server exposes REST API to exchange such devices with JSON representation and keeps a history. Since this is a personal home project, no additional security nor login features are provided. The spring server may be used optionally, as the [Minigrowl-ESP](https://shineangelic.github.io/Minigrowl-ESP-LoRa32-OLED/) already implements some basic logic, but you'll need this running in order to archive logs and serve clients like [react-client](https://github.com/shineangelic/Minigrowl-react)
+
+![architecture diagram](/docs/diagram.png)
 
 # Client APIs
 ```
