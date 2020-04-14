@@ -6,9 +6,9 @@
 
 	<groupId>org.springframework</groupId>
 	<artifactId>growlroom-be</artifactId>
-	<version>0.1</version>
+	<version>0.2</version>
 	<name>Mini Growlroom Spring</name>
-	<description>back-end services for minigrowlroom ESP32 boards</description>
+	<description>back-end services for minigrowlroom ESP32 boards and react clients</description>
 
 	<properties>
 		<java.version>11</java.version>
@@ -38,7 +38,6 @@
 		</dependency>
 		
 		<!-- WEBSOCKETS -->
-		
 		<dependency>
 			<groupId>org.webjars</groupId>
 			<artifactId>webjars-locator-core</artifactId>
@@ -85,7 +84,6 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
 
 	<build>
 		<plugins>
