@@ -3,7 +3,7 @@ Minigrow APIs are based on three kind of objects: `sensors`, `actuators` and com
 
 The spring-boot server exposes REST API to exchange such devices, with JSON representation. Since this is a personal home project, no additional security nor login features are provided. The spring server may be used optionally, as the [Minigrowl-ESP](https://github.com/shineangelic/Minigrowl-spring) already implements some basic logic, but you'll need this in order to archive logs and serve a [react-client](https://github.com/shineangelic/Minigrowl-react)
 
-![the three minigrowl main modules](https://drive.google.com/file/d/1THpw7HjxN6rkpwUbhiK-jGPMl_3MJIhl/view?usp=sharing)
+![the three minigrowl main modules](https://drive.google.com/file/d/1THpw7HjxN6rkpwUbhiK-jGPMl_3MJIhl)
 
 # Client APIs
 ```
