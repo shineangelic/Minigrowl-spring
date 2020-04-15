@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public enum ActuatorEnum {
-	FAN('F'), LIGHT('L'), HUMIDIFIER('M'), HVAC('H');
+	FAN('F'), LIGHT('L'), HUMIDIFIER('M'), HVAC('H'), OUTTAKE('O');
 
 	char typ;
 
