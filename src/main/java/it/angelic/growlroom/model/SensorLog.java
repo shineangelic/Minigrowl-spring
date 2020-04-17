@@ -2,10 +2,14 @@ package it.angelic.growlroom.model;
 
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-@Entity 
-public class Sensor {
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import lombok.Data;
+ 
+@Data
+@Document(collection = "sensors")
+public class SensorLog {
 	@Id
 	private Integer id;
 	private SensorEnum typ;

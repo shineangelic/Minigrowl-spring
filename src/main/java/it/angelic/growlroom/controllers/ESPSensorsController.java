@@ -31,6 +31,10 @@ public class ESPSensorsController {
 
 	@Autowired
 	private SensorsService sensorRepository;
+	
+
+	@Autowired
+	private MongoSensorController mongoSensorController;
 
 	@PatchMapping("/heavyresource/{id}")
 	public ResponseEntity<?> partialUpdateName(@RequestBody Sensor partialUpdate, @PathVariable("id") String id) {
@@ -44,6 +48,7 @@ public class ESPSensorsController {
 	public int putSensor(@PathVariable String id, @RequestBody Sensor sensing) {
 
 		Sensor updated = sensorRepository.createOrUpdateSensor(sensing, id);
+		mongoSensorController.logSensor(updated);
 
 		// avvisa i sottoscrittori dei sensori
 		this.simpMessagingTemplate.convertAndSend("/topic/sensors", sensorRepository.getSensors());
