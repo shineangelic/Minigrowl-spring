@@ -3,6 +3,7 @@ package it.angelic.growlroom.controllers;
 import java.io.FileNotFoundException;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 
 import javax.print.PrintException;
 
@@ -12,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,9 +47,13 @@ public class ClientSensorController {
 	@Autowired
 	private ActuatorsService actuatorsService;
 
+	@Autowired
+	private MongoSensorController mongoSensorController;
+
 	@CrossOrigin
 	@GetMapping(value = "/sensors", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Collection<Sensor>> getSensors(@RequestParam(value = "dataInizio", required = false) Date dtIn)
+	public ResponseEntity<Collection<Sensor>> getSensors(
+			@RequestParam(value = "dataInizio", required = false) Date dtIn)
 			throws FileNotFoundException, PrintException {
 
 		return new ResponseEntity<>(sensorService.getSensors(), HttpStatus.OK);
@@ -63,7 +69,7 @@ public class ClientSensorController {
 	@CrossOrigin
 	@GetMapping(value = "/commands", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Collection<Command>> getSupportedCommands() {
-		 
+
 		return ResponseEntity.status(HttpStatus.OK).body(commandsService.getSupportedCommands());
 	}
 
@@ -74,4 +80,15 @@ public class ClientSensorController {
 		return commandsService.sendCommand(sensing);
 	}
 
+	@CrossOrigin
+	@GetMapping(value = "/sensors/{id}/hourChart", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<Integer, Float>> getSensorsHourChart(@PathVariable String id,
+			@RequestParam(value = "dataInizio", required = false) Date dtIn)
+			throws FileNotFoundException, IllegalArgumentException {
+		if (!(Integer.valueOf(id).intValue() > 0))
+			throw new IllegalArgumentException("INVALID sensor id: " + id);
+		// return new ResponseEntity<>(mongoSensorController.getLogBySensorId(Integer.valueOf(id)), HttpStatus.OK);
+		return new ResponseEntity<>(mongoSensorController.getGroupedLogFromDate(Integer.valueOf(id), dtIn),
+				HttpStatus.OK);
+	}
 }

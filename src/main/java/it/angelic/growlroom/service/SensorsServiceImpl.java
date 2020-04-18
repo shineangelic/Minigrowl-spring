@@ -36,16 +36,16 @@ public class SensorsServiceImpl implements SensorsService {
 
 	@Override
 	public Sensor createOrUpdateSensor(Sensor sensing, String checkId) {
-		Sensor dbs = null;
+		float dbs = -1f;
 		try {
-			dbs = getSensorById(sensing.getId());
+			dbs =Float.valueOf(getSensorById(sensing.getId()).getVal());
 		} catch (SensorNotFoundException e) {
 			logger.warn("Sensore non Trovato? " + sensing.getId());
 		}
 
 		Sensor updated = createSensorImpl(sensing, checkId);
 		//mando a mongo e al front-end sse cambiato
-		if (dbs != null && !dbs.getVal().equals(sensing.getVal())) {
+		if ( dbs!= Float.valueOf(sensing.getVal())) {
 			mongoSensorController.logSensor(new SensorLog(updated));
 			// avvisa i sottoscrittori dei sensori
 			this.simpMessagingTemplate.convertAndSend("/topic/sensors", getSensors());

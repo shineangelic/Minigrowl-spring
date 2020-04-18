@@ -24,6 +24,12 @@ public class SensorLog {
 	private UnitEnum uinit;
 	private Date timeStamp;
 	private boolean err;
+	
+	
+
+	public SensorLog() {
+		super();
+	}
 
 	public SensorLog(Sensor updated) {
 		id = updated.getId();
