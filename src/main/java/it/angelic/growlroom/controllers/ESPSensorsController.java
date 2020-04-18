@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.angelic.growlroom.model.Sensor;
+import it.angelic.growlroom.model.SensorLog;
 import it.angelic.growlroom.service.SensorsService;
 
 /**
@@ -48,7 +49,7 @@ public class ESPSensorsController {
 	public int putSensor(@PathVariable String id, @RequestBody Sensor sensing) {
 
 		Sensor updated = sensorRepository.createOrUpdateSensor(sensing, id);
-		mongoSensorController.logSensor(updated);
+		mongoSensorController.logSensor(new SensorLog(updated));
 
 		// avvisa i sottoscrittori dei sensori
 		this.simpMessagingTemplate.convertAndSend("/topic/sensors", sensorRepository.getSensors());

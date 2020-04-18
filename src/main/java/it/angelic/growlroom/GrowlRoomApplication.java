@@ -15,4 +15,5 @@ public class GrowlRoomApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(GrowlRoomApplication.class, args);
 	}
+
 }

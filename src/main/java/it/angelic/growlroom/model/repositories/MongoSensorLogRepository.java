@@ -7,19 +7,19 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
 import it.angelic.growlroom.model.Sensor;
+import it.angelic.growlroom.model.SensorLog;
 
-public interface MongoSensorLogRepository extends MongoRepository<Sensor, String> {
+public interface MongoSensorLogRepository extends MongoRepository<SensorLog, String> {
 
 	@Override
-	List<Sensor> findAll();
-	
-	Optional<Sensor> findById(String name);
-	 
-    @Query("{typ:'?0'}")
-    List<Sensor> findByTyp(String address);
-     
+	List<SensorLog> findAll();
+
+	Optional<SensorLog> findById(String name);
+
+	@Query("{typ:'?0'}")
+	List<Sensor> findByTyp(String address);
 
 	// Custom Query method returning a Java 8 Stream
-	//@Query("{}")
-	//Stream<Sensor> findAllByCustomQueryWithStream();
+	// @Query("{}")
+	// Stream<Sensor> findAllByCustomQueryWithStream();
 }
