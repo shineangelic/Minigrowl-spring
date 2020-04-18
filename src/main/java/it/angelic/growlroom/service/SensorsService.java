@@ -9,4 +9,6 @@ public interface SensorsService {
 	public abstract Sensor createOrUpdateSensor(Sensor product, String checkId);
 
 	public abstract Collection<Sensor> getSensors();
+	
+	public abstract Sensor getSensorById(Integer sensorPid) throws SensorNotFoundException;
 }

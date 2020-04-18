@@ -11,20 +11,13 @@ import it.angelic.growlroom.service.MongoSequenceService;
 public class MongoSensorController {
 	@Autowired
 	private MongoSensorLogRepository repository;
-	
+
 	@Autowired
 	private MongoSequenceService sequenceGenerator;
 
 	public void logSensor(SensorLog in) {
-		//MongoOperations mongoOps = new MongoTemplate(MongoClients.create(), "test");
-		// mongoOps.createCollection("sensors");
 		in.setLogId(sequenceGenerator.generateSequence(SensorLog.SEQUENCE_NAME));
-		 
 		repository.save(in);
-
-		// log.info(mongoOps.findOne(new Query(where("name").is("Joe")), Person.class));
-
-		// mongoOps.dropCollection("person");
 	}
 
 }

@@ -39,7 +39,6 @@ public class ESPActuatorsController {
 	 * @return
 	 */
 	@PutMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	// @ResponseStatus(HttpStatus.OK)
 	public int putActuator(@PathVariable String id, @RequestBody Actuator dispositivo) {
 		try {
 			int t2 = Integer.valueOf(id);

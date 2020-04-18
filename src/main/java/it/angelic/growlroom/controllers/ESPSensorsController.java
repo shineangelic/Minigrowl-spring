@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.angelic.growlroom.model.Sensor;
-import it.angelic.growlroom.model.SensorLog;
 import it.angelic.growlroom.service.SensorsService;
 
 /**
@@ -31,8 +30,7 @@ public class ESPSensorsController {
 	}
 
 	@Autowired
-	private SensorsService sensorRepository;
-	
+	private SensorsService sensorService;
 
 	@Autowired
 	private MongoSensorController mongoSensorController;
@@ -40,19 +38,20 @@ public class ESPSensorsController {
 	@PatchMapping("/heavyresource/{id}")
 	public ResponseEntity<?> partialUpdateName(@RequestBody Sensor partialUpdate, @PathVariable("id") String id) {
 		// TODO partial update
-		sensorRepository.createOrUpdateSensor(partialUpdate, id);
+		sensorService.createOrUpdateSensor(partialUpdate, id);
 		return ResponseEntity.ok("sensor updated");
 	}
 
 	@PutMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	// @ResponseStatus(HttpStatus.OK)
 	public int putSensor(@PathVariable String id, @RequestBody Sensor sensing) {
-
-		Sensor updated = sensorRepository.createOrUpdateSensor(sensing, id);
-		mongoSensorController.logSensor(new SensorLog(updated));
-
+		
+		//Sensor pasS = sensorService.find
+		Sensor updated = sensorService.createOrUpdateSensor(sensing, id);
+		
+	/*	mongoSensorController.logSensor(new SensorLog(updated));
 		// avvisa i sottoscrittori dei sensori
-		this.simpMessagingTemplate.convertAndSend("/topic/sensors", sensorRepository.getSensors());
+		this.simpMessagingTemplate.convertAndSend("/topic/sensors", sensorService.getSensors());*/
 
 		return updated.getId();
 	}
