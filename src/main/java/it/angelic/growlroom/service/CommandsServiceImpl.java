@@ -47,6 +47,7 @@ public class CommandsServiceImpl implements CommandsService {
 			Command actualCmd = queueCommands.getToExecute();
 			actualCmd.setIdOnQueue(queueCommands.getIdQueueCommand());
 			ret.add(actualCmd);
+			break;// only 1 per volta
 		}
 		return ret;
 	}
@@ -56,9 +57,9 @@ public class CommandsServiceImpl implements CommandsService {
 
 		int targetActuator = toExecurte.getTargetActuator();
 		Actuator checkSensor = actuatorsRepository.findById(targetActuator);
-		
-		if (checkSensor==null||!checkSensor.getSupportedCommands().contains(toExecurte))
-			throw new IllegalArgumentException("UNSUPPORTED COMMAND: "+ toExecurte.toString());
+
+		if (checkSensor == null || !checkSensor.getSupportedCommands().contains(toExecurte))
+			throw new IllegalArgumentException("UNSUPPORTED COMMAND: " + toExecurte.toString());
 
 		QueueCommands arg0 = new QueueCommands(toExecurte);
 		queueCommands.save(arg0);
@@ -80,6 +81,5 @@ public class CommandsServiceImpl implements CommandsService {
 		}
 		return ret;
 	}
-
 
 }

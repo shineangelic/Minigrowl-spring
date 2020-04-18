@@ -46,10 +46,11 @@ public class ESPActuatorsController {
 		} catch (NumberFormatException e) {
 			throw new IllegalArgumentException("Unparsable ID: " + id);
 		}
+		actuatorsService.createOrUpdateActuator(dispositivo,id);
 		//TODO if (e` cambiato)
 		// avvisa i sottoscrittori degli attuatori
-				this.simpMessagingTemplate.convertAndSend("/topic/actuators", actuatorsService.getActuators());
-		actuatorsService.createOrUpdateActuator(dispositivo,id);
+		this.simpMessagingTemplate.convertAndSend("/topic/actuators", actuatorsService.getActuators());
+		
 		return dispositivo.getId();
 	}
 	
