@@ -2,15 +2,23 @@ package it.angelic.growlroom.model.repositories;
 
 public class HourValuePair implements Comparable<HourValuePair> {
 
-	private String id;
+	private String hour;
 	private String value;
 
+	 
+
+	public HourValuePair(String id, String value) {
+		super();
+		this.hour = id;
+		this.value = value;
+	}
+
 	public String getId() {
-		return id;
+		return hour;
 	}
 
 	public void setId(String id) {
-		this.id = id;
+		this.hour = id;
 	}
 
 	public String getValue() {

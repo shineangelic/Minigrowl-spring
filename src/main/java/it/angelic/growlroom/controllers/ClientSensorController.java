@@ -3,7 +3,7 @@ package it.angelic.growlroom.controllers;
 import java.io.FileNotFoundException;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Map;
+import java.util.List;
 
 import javax.print.PrintException;
 
@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import it.angelic.growlroom.model.Actuator;
 import it.angelic.growlroom.model.Command;
 import it.angelic.growlroom.model.Sensor;
+import it.angelic.growlroom.model.repositories.HourValuePair;
 import it.angelic.growlroom.service.ActuatorsService;
 import it.angelic.growlroom.service.CommandsService;
 import it.angelic.growlroom.service.SensorsService;
@@ -82,7 +83,7 @@ public class ClientSensorController {
 
 	@CrossOrigin
 	@GetMapping(value = "/sensors/{id}/hourChart", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Map<Integer, Float>> getSensorsHourChart(@PathVariable String id,
+	public ResponseEntity<List<HourValuePair>> getSensorsHourChart(@PathVariable String id,
 			@RequestParam(value = "dataInizio", required = false) Date dtIn)
 			throws FileNotFoundException, IllegalArgumentException {
 		if (!(Integer.valueOf(id).intValue() > 0))

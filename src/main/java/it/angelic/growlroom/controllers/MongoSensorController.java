@@ -1,5 +1,7 @@
 package it.angelic.growlroom.controllers;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,22 +34,29 @@ public class MongoSensorController {
 
 	}
 
-	public Map<Integer, Float> getGroupedLogFromDate(int sensorId, Date dtIn) {
-		Map<Integer, Float> hourAverage = new HashMap<Integer, Float>();
+	public List<HourValuePair> getGroupedLogFromDate(int sensorId, Date dtIn) {
+		Map<String, Float> hourAverage = new HashMap<String, Float>();
 		Calendar c = Calendar.getInstance();
 		List<SensorLog> nit = repository.findFromDate(sensorId, dtIn);
 		for (SensorLog sensorLog : nit) {
 			c.setTime(sensorLog.getTimeStamp());
 			int hourK = c.get(Calendar.HOUR_OF_DAY);
+			SimpleDateFormat sf = new SimpleDateFormat("HH");
+			String hourFormat = sf.format(c.getTime());
 			if (hourAverage.containsKey(hourK)) {
 				Float aver = hourAverage.get(hourK);
-				hourAverage.put(hourK, (aver + Float.valueOf(sensorLog.getVal())) / 2f);
+				hourAverage.put(hourFormat, (aver + Float.valueOf(sensorLog.getVal())) / 2f);
 			} else {
-				hourAverage.put(hourK, (Float.valueOf(sensorLog.getVal())));
+				hourAverage.put(hourFormat, (Float.valueOf(sensorLog.getVal())));
 			}
 
 		}
-		return hourAverage;
+		ArrayList<HourValuePair> ret = new ArrayList<>();
+		for (String k : hourAverage.keySet()) {
+			ret.add(new HourValuePair(k, hourAverage.get(k).toString()));
+		}
+
+		return ret;
 	}
 
 	public List<SensorLog> getLogBySensorId(int sensorId) {
