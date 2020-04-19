@@ -40,56 +40,27 @@ Two topic websocket are made available in order to asyncronously update front-en
 A command is used to operate `Actuators`, given that they are in *MANUAL* state. When *AUTOMATIC*, default chamber logic implemented on [ESP32](https://shineangelic.github.io/Minigrowl-ESP-LoRa32-OLED/) will be applied.
 
 ```
-[
-    {
-        "name": "Turn ON intake Fan",
-        "val": "1",
-        "tgt": 2
-    },
-    {
-        "name": "Turn intake Fan OFF",
-        "val": "0",
-        "tgt": 2
-    },
-    {
-        "name": "Set Temperature",
-        "val": "2",
-        "tgt": 25
-    },
-    {
-        "name": "Turn ON Hvac",
-        "val": "1",
-        "tgt": 25
-    },
-    {
-        "name": "Turn OFF Hvac",
-        "val": "0",
-        "tgt": 25
-    },
+
     {
         "name": "Switch lights ON",
         "val": "1",
         "tgt": 12
-    },
-    {
-        "name": "Switch lights OFF",
-        "val": "0",
-        "tgt": 12
-    },
-    {
-        "name": "Turn ON outtake Fan",
-        "val": "1",
-        "tgt": 13
-    },
-    {
-        "name": "Turn OFF outtake Fan",
-        "val": "0",
-        "tgt": 13
-    }
-]
+    }  
 ```
 
+To switch mode between *AUTOMATIC* and *MANUAL* mode, relevand commands are included for each device, for example:
+```
+    {
+        "name": "AUTO mode",
+        "val": "-2",
+        "tgt": 2
+    }
+```
+
+
 ## Sensors example:
+Each `sensor` represented at spring level has a `timeStamp` of last contact received from board, a `uinit` to represent its unit (Celsius, millibar, %, etc.) and an error state at true if some hardware problem occurred. `val` is a float containing last known sensor's value.
+
 ```
 [
     {
@@ -128,6 +99,9 @@ A command is used to operate `Actuators`, given that they are in *MANUAL* state.
 ```
 
 ## Actuators example (w/ supported commands)
+
+An actuator is a real device used inside a typical growroom: `MainLights`, `Humidifier` or different kind of `Fan`. The fields are similar to sensors ones, apart from a list `cmds` of supported commands and the current Actuator's `mode` 
+
 ```
 [
     {
