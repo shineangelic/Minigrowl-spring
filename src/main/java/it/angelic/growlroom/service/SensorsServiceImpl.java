@@ -48,7 +48,7 @@ public class SensorsServiceImpl implements SensorsService {
 		if ( dbs!= Float.valueOf(sensing.getVal())) {
 			mongoSensorController.logSensor(new SensorLog(updated));
 			// avvisa i sottoscrittori dei sensori
-			this.simpMessagingTemplate.convertAndSend("/topic/sensors", getSensors());
+			this.simpMessagingTemplate.convertAndSend("/topic/sensors", updated);
 		}
 		return updated;
 	}
