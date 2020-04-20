@@ -2,7 +2,9 @@
 
 Minigrow APIs are based on three kind of objects: `sensors`, `actuators` and `commands`. While the first two reflect real hardware devices with their own readings, the command is an abstraction used to drive such devices.
 
-The spring-boot server exposes REST API to exchange such devices with JSON representation and keeps a history. Since this is a personal home project, no additional security nor login features are provided. The spring server may be used optionally, as the [Minigrowl-ESP](https://shineangelic.github.io/Minigrowl-ESP-LoRa32-OLED/) already implements some basic logic, but you'll need this running in order to archive logs and serve clients like [Minigrowl-react](https://shineangelic.github.io/Minigrowl-react/)
+The spring-boot server exposes REST API to exchange such devices between harware boards and clients with JSON representation and keeps a history. Since this is a personal home project, no additional security nor login features are provided. The spring server may be used optionally, as the [Minigrowl-ESP](https://shineangelic.github.io/Minigrowl-ESP-LoRa32-OLED/) already implements some basic logic, but you'll need this running in order to archive logs and serve clients like [Minigrowl-react](https://shineangelic.github.io/Minigrowl-react/).
+
+*MongoDB* is being used for logging, it stores a new sensor log when detects value changes. Such collection is then used to aggregate data ready to be plotted
 
 ![architecture diagram](/docs/diagram.png)
 
@@ -12,6 +14,7 @@ The spring-boot server exposes REST API to exchange such devices with JSON repre
    /api/minigrowl/v1/sensors
    /api/minigrowl/v1/actuators
    /api/minigrowl/v1/commands/queue/add
+   /sensors/{id}/hourChart
 ```
 
 # ESP32 APIs
@@ -23,6 +26,9 @@ The spring-boot server exposes REST API to exchange such devices with JSON repre
 ```
 
 # Websockets
+
+Two topic websocket are made available in order to asyncronously update front-end views. a message is sent upon changes detection, containing only data relevant to the change event.
+
 ```
    /topic/actuators/
    /topic/sensors/
@@ -30,57 +36,31 @@ The spring-boot server exposes REST API to exchange such devices with JSON repre
 
 
 ## Command example:
+
+A command is used to operate `Actuators`, given that they are in *MANUAL* state. When *AUTOMATIC*, default chamber logic implemented on [ESP32](https://shineangelic.github.io/Minigrowl-ESP-LoRa32-OLED/) will be applied.
+
 ```
-[
-    {
-        "name": "Turn ON intake Fan",
-        "val": "1",
-        "tgt": 2
-    },
-    {
-        "name": "Turn intake Fan OFF",
-        "val": "0",
-        "tgt": 2
-    },
-    {
-        "name": "Set Temperature",
-        "val": "2",
-        "tgt": 25
-    },
-    {
-        "name": "Turn ON Hvac",
-        "val": "1",
-        "tgt": 25
-    },
-    {
-        "name": "Turn OFF Hvac",
-        "val": "0",
-        "tgt": 25
-    },
+
     {
         "name": "Switch lights ON",
         "val": "1",
         "tgt": 12
-    },
-    {
-        "name": "Switch lights OFF",
-        "val": "0",
-        "tgt": 12
-    },
-    {
-        "name": "Turn ON outtake Fan",
-        "val": "1",
-        "tgt": 13
-    },
-    {
-        "name": "Turn OFF outtake Fan",
-        "val": "0",
-        "tgt": 13
-    }
-]
+    }  
 ```
 
+To switch mode between *AUTOMATIC* and *MANUAL* mode, relevand commands are included for each device, for example:
+```
+    {
+        "name": "AUTO mode",
+        "val": "-2",
+        "tgt": 2
+    }
+```
+
+
 ## Sensors example:
+Each `sensor` represented at spring level has a `timeStamp` of last contact received from board, a `uinit` to represent its unit (Celsius, millibar, %, etc.) and an error state at true if some hardware problem occurred. `val` is a float containing last known sensor's value.
+
 ```
 [
     {
@@ -119,24 +99,38 @@ The spring-boot server exposes REST API to exchange such devices with JSON repre
 ```
 
 ## Actuators example (w/ supported commands)
+
+An actuator is a real device used inside a typical growroom: `MainLights`, `Humidifier` or different kind of `Fan`. The fields are similar to sensors ones, apart from a list `cmds` of supported commands and the current Actuator's `mode` 
+
 ```
 [
     {
         "id": 2,
         "typ": "FAN",
-        "uinit": "CELSIUS",
-        "timeStamp": "2020-04-11T13:26:25.983+0000",
-        "val": "1",
+        "uinit": "O",
+        "timeStamp": "2020-04-19T19:40:03.037+0000",
+        "val": "0",
+        "mode": -2,
         "err": false,
         "cmds": [
             {
-                "name": "Turn ON intake Fan",
+                "name": "Turn ON",
                 "val": "1",
                 "tgt": 2
             },
             {
-                "name": "Turn intake Fan OFF",
+                "name": "Turn OFF",
                 "val": "0",
+                "tgt": 2
+            },
+            {
+                "name": "AUTO mode",
+                "val": "-2",
+                "tgt": 2
+            },
+            {
+                "name": "Manual mode",
+                "val": "-1",
                 "tgt": 2
             }
         ]
@@ -144,18 +138,29 @@ The spring-boot server exposes REST API to exchange such devices with JSON repre
     {
         "id": 12,
         "typ": "LIGHT",
-        "uinit": "CELSIUS",
-        "timeStamp": "2020-04-11T13:25:58.109+0000",
+        "uinit": "O",
+        "timeStamp": "2020-04-19T19:39:53.424+0000",
         "val": "1",
+        "mode": -2,
         "err": false,
         "cmds": [
             {
-                "name": "Switch lights ON",
+                "name": "AUTO mode",
+                "val": "-2",
+                "tgt": 12
+            },
+            {
+                "name": "Manual mode",
+                "val": "-1",
+                "tgt": 12
+            },
+            {
+                "name": "Switch ON",
                 "val": "1",
                 "tgt": 12
             },
             {
-                "name": "Switch lights OFF",
+                "name": "Switch OFF",
                 "val": "0",
                 "tgt": 12
             }
@@ -163,46 +168,32 @@ The spring-boot server exposes REST API to exchange such devices with JSON repre
     },
     {
         "id": 13,
-        "typ": "FAN",
-        "uinit": "CELSIUS",
-        "timeStamp": "2020-04-11T13:26:11.987+0000",
+        "typ": "OUTTAKE",
+        "uinit": null,
+        "timeStamp": "2020-04-19T19:40:07.770+0000",
         "val": "0",
+        "mode": -2,
         "err": false,
         "cmds": [
             {
-                "name": "Turn ON outtake Fan",
+                "name": "AUTO mode",
+                "val": "-2",
+                "tgt": 13
+            },
+            {
+                "name": "Manual mode",
+                "val": "-1",
+                "tgt": 13
+            },
+            {
+                "name": "Turn ON",
                 "val": "1",
                 "tgt": 13
             },
             {
-                "name": "Turn OFF outtake Fan",
+                "name": "Turn OFF",
                 "val": "0",
                 "tgt": 13
-            }
-        ]
-    },
-    {
-        "id": 25,
-        "typ": "HVAC",
-        "uinit": "CELSIUS",
-        "timeStamp": "2020-04-11T13:26:21.342+0000",
-        "val": "1",
-        "err": false,
-        "cmds": [
-            {
-                "name": "Set Temperature",
-                "val": "2",
-                "tgt": 25
-            },
-            {
-                "name": "Turn ON Hvac",
-                "val": "1",
-                "tgt": 25
-            },
-            {
-                "name": "Turn OFF Hvac",
-                "val": "0",
-                "tgt": 25
             }
         ]
     }
