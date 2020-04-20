@@ -46,7 +46,12 @@ public class SensorsServiceImpl implements SensorsService {
 		Sensor updated = createSensorImpl(sensing, checkId);
 		//mando a mongo e al front-end sse cambiato
 		if ( dbs!= Float.valueOf(sensing.getVal())) {
-			mongoSensorController.logSensor(new SensorLog(updated));
+			try {
+				mongoSensorController.logSensor(new SensorLog(updated));
+			} catch (Exception e) {
+				logger.warn("MongoDB exc: "+ e.getMessage());
+			}
+			
 			// avvisa i sottoscrittori dei sensori
 			this.simpMessagingTemplate.convertAndSend("/topic/sensors", updated);
 		}

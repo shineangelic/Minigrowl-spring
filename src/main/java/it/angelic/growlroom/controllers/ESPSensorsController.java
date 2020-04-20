@@ -48,10 +48,7 @@ public class ESPSensorsController {
 		
 		//Sensor pasS = sensorService.find
 		Sensor updated = sensorService.createOrUpdateSensor(sensing, id);
-		
-	/*	mongoSensorController.logSensor(new SensorLog(updated));
-		// avvisa i sottoscrittori dei sensori
-		this.simpMessagingTemplate.convertAndSend("/topic/sensors", sensorService.getSensors());*/
+		 
 
 		return updated.getId();
 	}
