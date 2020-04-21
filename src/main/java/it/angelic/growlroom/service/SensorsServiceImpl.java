@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import it.angelic.growlroom.controllers.MongoSensorController;
 import it.angelic.growlroom.model.Sensor;
 import it.angelic.growlroom.model.SensorLog;
 import it.angelic.growlroom.model.UnitEnum;
@@ -24,7 +23,8 @@ public class SensorsServiceImpl implements SensorsService {
 	private SensorsRepository sensorRepository;
 
 	@Autowired
-	private MongoSensorController mongoSensorController;
+	private MongoLogService mongoLogService;
+
 
 	private final SimpMessagingTemplate simpMessagingTemplate;
 	
@@ -47,7 +47,7 @@ public class SensorsServiceImpl implements SensorsService {
 		//mando a mongo e al front-end sse cambiato
 		if ( dbs!= Float.valueOf(sensing.getVal())) {
 			try {
-				mongoSensorController.logSensor(new SensorLog(updated));
+				mongoLogService.logSensor(new SensorLog(updated));
 			} catch (Exception e) {
 				logger.warn("MongoDB exc: "+ e.getMessage());
 			}

@@ -26,6 +26,7 @@ import it.angelic.growlroom.model.Sensor;
 import it.angelic.growlroom.model.repositories.HourValuePair;
 import it.angelic.growlroom.service.ActuatorsService;
 import it.angelic.growlroom.service.CommandsService;
+import it.angelic.growlroom.service.MongoLogService;
 import it.angelic.growlroom.service.SensorsService;
 
 /**
@@ -49,7 +50,7 @@ public class ClientSensorController {
 	private ActuatorsService actuatorsService;
 
 	@Autowired
-	private MongoSensorController mongoSensorController;
+	private MongoLogService mongoLogService;
 
 	@CrossOrigin
 	@GetMapping(value = "/sensors", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -82,14 +83,20 @@ public class ClientSensorController {
 	}
 
 	@CrossOrigin
+	@PutMapping(value = "/sensors/log/delete", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public Long deleteLogs(@RequestBody Command sensing) {
+
+		return mongoLogService.deleteOldLog();
+	}
+
+	@CrossOrigin
 	@GetMapping(value = "/sensors/{id}/hourChart", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<HourValuePair>> getSensorsHourChart(@PathVariable String id,
 			@RequestParam(value = "dataInizio", required = false) Date dtIn)
 			throws FileNotFoundException, IllegalArgumentException {
 		if (!(Integer.valueOf(id).intValue() > 0))
 			throw new IllegalArgumentException("INVALID sensor id: " + id);
-		// return new ResponseEntity<>(mongoSensorController.getLogBySensorId(Integer.valueOf(id)), HttpStatus.OK);
-		return new ResponseEntity<>(mongoSensorController.getGroupedLogFromDate(Integer.valueOf(id), dtIn),
-				HttpStatus.OK);
+		// return new ResponseEntity<>(mongoLogService.getLogBySensorId(Integer.valueOf(id)), HttpStatus.OK);
+		return new ResponseEntity<>(mongoLogService.getGroupedLogFromDate(Integer.valueOf(id), dtIn), HttpStatus.OK);
 	}
 }

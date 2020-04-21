@@ -3,7 +3,6 @@ package it.angelic.growlroom.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,17 +22,10 @@ import it.angelic.growlroom.service.SensorsService;
 @RestController
 @RequestMapping(value = "/api/esp/v1/sensors")
 public class ESPSensorsController {
-	private final SimpMessagingTemplate simpMessagingTemplate;
-
-	public ESPSensorsController(SimpMessagingTemplate simpMessagingTemplate) {
-		this.simpMessagingTemplate = simpMessagingTemplate;
-	}
 
 	@Autowired
 	private SensorsService sensorService;
 
-	@Autowired
-	private MongoSensorController mongoSensorController;
 
 	@PatchMapping("/heavyresource/{id}")
 	public ResponseEntity<?> partialUpdateName(@RequestBody Sensor partialUpdate, @PathVariable("id") String id) {
