@@ -67,7 +67,7 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 	}
 
 	private List<Document> aggregaStoria(int sensorI) {
-		return Arrays.asList(new Document("$match", new Document("id", 33L).append("err", false)),
+		return Arrays.asList(new Document("$match", new Document("id", sensorI).append("err", false)),
 				new Document("$addFields",
 						new Document("year", new Document("$year", "$timeStamp"))
 								.append("mon", new Document("$month", "$timeStamp"))
