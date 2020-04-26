@@ -3,9 +3,7 @@ package it.angelic.growlroom.service;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +26,7 @@ public class MongoLogService {
 
 	@Autowired
 	private MongoSensorLogRepository repository;
-	
+
 	@Autowired
 	private MongoSequenceService sequenceGenerator;
 
@@ -36,9 +34,6 @@ public class MongoLogService {
 	public MongoLogService(MongoTemplate mongoTemplate) {
 		this.mongoTemplate = mongoTemplate;
 	}
-	
- 
-
 
 	public void logSensor(SensorLog in) {
 		in.setLogId(sequenceGenerator.generateSequence(SensorLog.SEQUENCE_NAME));
@@ -60,46 +55,29 @@ public class MongoLogService {
 		return res.getDeletedCount();
 	}
 
-	/*public List<HourValuePair> getGroupedLogFromDate(int sensorId, Date dtIn) {
-		Map<String, HourValuePair> hourAverage = new HashMap<String, HourValuePair>();
-		Calendar c = Calendar.getInstance();
-		List<SensorLog> nit = repository.findFromDate(sensorId, dtIn);
+	/*
+	 * public List<HourValuePair> getGroupedLogFromDate(int sensorId, Date dtIn) { Map<String, HourValuePair>
+	 * hourAverage = new HashMap<String, HourValuePair>(); Calendar c = Calendar.getInstance(); List<SensorLog> nit =
+	 * repository.findFromDate(sensorId, dtIn);
+	 * 
+	 * for (SensorLog sensorLog : nit) { c.setTime(sensorLog.getTimeStamp()); // int hourK =
+	 * c.get(Calendar.HOUR_OF_DAY); SimpleDateFormat sf = new SimpleDateFormat("HH"); String hourFormat =
+	 * sf.format(c.getTime()); if (hourAverage.containsKey(hourFormat)) { HourValuePair aver =
+	 * hourAverage.get(hourFormat);
+	 * 
+	 * Float curMin = Float.valueOf(aver.getMin()); Float curMax = Float.valueOf(aver.getMax());
+	 * 
+	 * if (Float.valueOf(sensorLog.getVal()) < curMin) aver.setMin(sensorLog.getVal()); if
+	 * (Float.valueOf(sensorLog.getVal()) > curMax) aver.setMax(sensorLog.getVal()); Float avg =
+	 * ((Float.valueOf(aver.getValue()) + Float.valueOf(sensorLog.getVal())) / 2f); aver.setValue(avg.toString());
+	 * hourAverage.put(hourFormat, aver); } else { HourValuePair aver = new HourValuePair(hourFormat,
+	 * Float.valueOf(sensorLog.getVal()).toString()); hourAverage.put(hourFormat, aver); }
+	 * 
+	 * } ArrayList<HourValuePair> ret = new ArrayList<>(); for (String k : hourAverage.keySet()) {
+	 * ret.add(hourAverage.get(k)); } Collections.sort(ret); return ret; }
+	 */
 
-		for (SensorLog sensorLog : nit) {
-			c.setTime(sensorLog.getTimeStamp());
-			// int hourK = c.get(Calendar.HOUR_OF_DAY);
-			SimpleDateFormat sf = new SimpleDateFormat("HH");
-			String hourFormat = sf.format(c.getTime());
-			if (hourAverage.containsKey(hourFormat)) {
-				HourValuePair aver = hourAverage.get(hourFormat);
-
-				Float curMin = Float.valueOf(aver.getMin());
-				Float curMax = Float.valueOf(aver.getMax());
-
-				if (Float.valueOf(sensorLog.getVal()) < curMin)
-					aver.setMin(sensorLog.getVal());
-				if (Float.valueOf(sensorLog.getVal()) > curMax)
-					aver.setMax(sensorLog.getVal());
-				Float avg = ((Float.valueOf(aver.getValue()) + Float.valueOf(sensorLog.getVal())) / 2f);
-				aver.setValue(avg.toString());
-				hourAverage.put(hourFormat, aver);
-			} else {
-				HourValuePair aver = new HourValuePair(hourFormat, Float.valueOf(sensorLog.getVal()).toString());
-				hourAverage.put(hourFormat, aver);
-			}
-
-		}
-		ArrayList<HourValuePair> ret = new ArrayList<>();
-		for (String k : hourAverage.keySet()) {
-			ret.add(hourAverage.get(k));
-		}
-		Collections.sort(ret);
-		return ret;
-	}*/
-	
-	public List<HourValuePair> getGroupedLogFromDate2(int sensorId, Date dtIn) {
-		Map<String, HourValuePair> hourAverage = new HashMap<String, HourValuePair>();
-		Calendar c = Calendar.getInstance();
+	public List<HourValuePair> getGroupedLogFromDate(int sensorId, Date dtIn) {
 		AggregateIterable<Document> nit = repository.getHour24ChartAggregateData(sensorId);
 		ArrayList<HourValuePair> ret = new ArrayList<>();
 		for (Document document : nit) {
@@ -108,8 +86,22 @@ public class MongoLogService {
 			ha.setMin(document.get("min").toString());
 			ret.add(ha);
 		}
-		 
+
 		return ret;
 	}
-	
+
+	public List<HourValuePair> getGroupedLogHistory(int sensorId, Date dtIn) {
+		Calendar c = Calendar.getInstance();
+		AggregateIterable<Document> nit = repository.getHourHistoryChartAggregateData(sensorId, dtIn);
+		ArrayList<HourValuePair> ret = new ArrayList<>();
+		for (Document document : nit) {
+			HourValuePair ha = new HourValuePair(document.get("GGts").toString(), document.get("avg").toString());
+			ha.setMax(document.get("max").toString());
+			ha.setMin(document.get("min").toString());
+			ret.add(ha);
+		}
+
+		return ret;
+	}
+
 }

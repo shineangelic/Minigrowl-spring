@@ -46,19 +46,42 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 
 	}
 
-	private List<Document> merda() {
-		return Arrays.asList(new Document("$match", new Document("id", 33L).append("err", false)),
+	public AggregateIterable<Document> getHour24ChartAggregateData(int sensorId) {
+
+		AggregateIterable<Document> result = mongoTemplate.getCollection("sensors").aggregate(aggrega24H(sensorId));
+		return result;
+
+	}
+
+	@Override
+	public AggregateIterable<Document> getHourHistoryChartAggregateData(int sensorId, Date limit) {
+		AggregateIterable<Document> result = mongoTemplate.getCollection("sensors").aggregate(aggregaStoria(sensorId));
+		return result;
+	}
+
+	private List<Document> aggrega24H(int sensorId) {
+		return Arrays.asList(new Document("$match", new Document("id", sensorId).append("err", false)),
 				new Document("$addFields", new Document("ora24", new Document("$hour", "$timeStamp"))),
 				new Document("$group", new Document("_id", "$ora24").append("avg", new Document("$avg", "$val"))
 						.append("max", new Document("$max", "$val")).append("min", new Document("$min", "$val"))));
 	}
 
-	public AggregateIterable<Document> getHour24ChartAggregateData(int sensorId) {
-
-		// Convert the aggregation result into a List
-		
-		AggregateIterable<Document> result  = mongoTemplate.getCollection("sensors").aggregate(merda());
-		return result;
+	private List<Document> aggregaStoria(int sensorI) {
+		return Arrays.asList(new Document("$match", new Document("id", 33L).append("err", false)),
+				new Document("$addFields",
+						new Document("year", new Document("$year", "$timeStamp"))
+								.append("mon", new Document("$month", "$timeStamp"))
+								.append("GG", new Document("$dayOfMonth", "$timeStamp"))
+								.append("ora24", new Document("$hour", "$timeStamp"))),
+				new Document("$addFields",
+						new Document("GGts",
+								new Document("$concat",
+										Arrays.asList(new Document("$substr", Arrays.asList("$year", 0L, -1L)), "-",
+												new Document("$substr", Arrays.asList("$mon", 0L, -1L)), "-",
+												new Document("$substr", Arrays.asList("$GG", 0L, -1L)), ":",
+												new Document("$substr", Arrays.asList("$ora24", 0L, -1L)))))),
+				new Document("$group", new Document("_id", "$GGts").append("avg", new Document("$avg", "$val"))
+						.append("max", new Document("$max", "$val")).append("min", new Document("$min", "$val"))));
 
 	}
 }
