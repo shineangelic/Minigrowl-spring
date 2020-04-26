@@ -20,7 +20,7 @@ public class SensorLog {
 
 	private Integer id;
 	private SensorEnum typ;
-	private String val;
+	private Float val;
 	private UnitEnum uinit;
 	private Date timeStamp;
 	private boolean err;
@@ -34,7 +34,7 @@ public class SensorLog {
 	public SensorLog(Sensor updated) {
 		id = updated.getId();
 		typ = updated.getTyp();
-		val = updated.getVal();
+		val = Float.valueOf(updated.getVal());
 		timeStamp = updated.getTimeStamp();
 		err = updated.isErr();
 	}
@@ -55,11 +55,11 @@ public class SensorLog {
 		this.typ = type;
 	}
 
-	public String getVal() {
+	public Float getVal() {
 		return val;
 	}
 
-	public void setVal(String reading) {
+	public void setVal(Float reading) {
 		this.val = reading;
 	}
 
