@@ -45,7 +45,7 @@ public class SensorsServiceImpl implements SensorsService {
 
 		Sensor updated = createSensorImpl(sensing, checkId);
 		//mando a mongo e al front-end sse cambiato
-		if ( dbs!= Float.valueOf(sensing.getVal())) {
+		//if ( dbs!= Float.valueOf(sensing.getVal())) {
 			try {
 				mongoLogService.logSensor(new SensorLog(updated));
 			} catch (Exception e) {
@@ -54,7 +54,7 @@ public class SensorsServiceImpl implements SensorsService {
 			
 			// avvisa i sottoscrittori dei sensori
 			this.simpMessagingTemplate.convertAndSend("/topic/sensors", updated);
-		}
+		//}
 		return updated;
 	}
 
