@@ -1,20 +1,20 @@
 package it.angelic.growlroom.service;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.result.DeleteResult;
 
 import it.angelic.growlroom.model.SensorLog;
@@ -60,7 +60,7 @@ public class MongoLogService {
 		return res.getDeletedCount();
 	}
 
-	public List<HourValuePair> getGroupedLogFromDate(int sensorId, Date dtIn) {
+	/*public List<HourValuePair> getGroupedLogFromDate(int sensorId, Date dtIn) {
 		Map<String, HourValuePair> hourAverage = new HashMap<String, HourValuePair>();
 		Calendar c = Calendar.getInstance();
 		List<SensorLog> nit = repository.findFromDate(sensorId, dtIn);
@@ -95,5 +95,18 @@ public class MongoLogService {
 		}
 		Collections.sort(ret);
 		return ret;
+	}*/
+	
+	public List<HourValuePair> getGroupedLogFromDate2(int sensorId, Date dtIn) {
+		Map<String, HourValuePair> hourAverage = new HashMap<String, HourValuePair>();
+		Calendar c = Calendar.getInstance();
+		AggregateIterable<Document> nit = repository.getHour24ChartAggregateData(sensorId);
+		ArrayList<HourValuePair> ret = new ArrayList<>();
+		for (Document document : nit) {
+			System.out.println(document);
+		}
+		 
+		return ret;
 	}
+	
 }

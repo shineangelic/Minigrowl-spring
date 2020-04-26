@@ -1,13 +1,17 @@
 package it.angelic.growlroom.model.repositories;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.mapreduce.MapReduceResults;
+
+import com.mongodb.client.AggregateIterable;
 
 //Impl postfix of the name on it compared to the core repository interface
 public class MongoAggregationRepositoryImpl implements MongoAggregationRepository {
@@ -18,7 +22,6 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 	public MongoAggregationRepositoryImpl(MongoTemplate mongoTemplate) {
 		this.mongoTemplate = mongoTemplate;
 	}
-
 
 	/**
 	 * brutti stronzi di atlas, 40 minuti per scriverla e poi si deve pagare
@@ -40,15 +43,22 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 
 		Collections.sort(sortedList);
 		return sortedList;
-		/*
-		 * List<BarChartStatisticsResult> res = new ArrayList<>(projectCount); for (HourValuePair kv : sortedList) {
-		 * ProjectEntity project = mongoTemplate.findOne(new Query(Criteria.where("id").is(kv.getId())),
-		 * ProjectEntity.class);
-		 * 
-		 * if (project != null) { res.add(new BarChartStatisticsResult(kv.getId(), project.getTitle(), kv.getValue()));
-		 * } if (res.size() >= projectCount) { break; } }
-		 */
+
 	}
 
-	
+	private List<Document> merda() {
+		return Arrays.asList(new Document("$match", new Document("id", 33L).append("err", false)),
+				new Document("$addFields", new Document("ora24", new Document("$hour", "$timeStamp"))),
+				new Document("$group", new Document("_id", "$ora24").append("avg", new Document("$avg", "$val"))
+						.append("max", new Document("$max", "$val")).append("min", new Document("$min", "$val"))));
+	}
+
+	public AggregateIterable<Document> getHour24ChartAggregateData(int sensorId) {
+
+		// Convert the aggregation result into a List
+		
+		AggregateIterable<Document> result  = mongoTemplate.getCollection("sensors").aggregate(merda());
+		return result;
+
+	}
 }

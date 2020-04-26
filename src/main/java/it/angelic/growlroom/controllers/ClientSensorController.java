@@ -89,7 +89,7 @@ public class ClientSensorController {
 		return mongoLogService.deleteOldLog();
 	}
 
-	@CrossOrigin
+	/*@CrossOrigin
 	@GetMapping(value = "/sensors/{id}/hourChart", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<HourValuePair>> getSensorsHourChart(@PathVariable String id,
 			@RequestParam(value = "dataInizio", required = false) Date dtIn)
@@ -98,5 +98,16 @@ public class ClientSensorController {
 			throw new IllegalArgumentException("INVALID sensor id: " + id);
 		// return new ResponseEntity<>(mongoLogService.getLogBySensorId(Integer.valueOf(id)), HttpStatus.OK);
 		return new ResponseEntity<>(mongoLogService.getGroupedLogFromDate(Integer.valueOf(id), dtIn), HttpStatus.OK);
+	}*/
+	
+	@CrossOrigin
+	@GetMapping(value = "/sensors/{id}/hourChart2", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<HourValuePair>> getSensorsHourChart(@PathVariable String id,
+			@RequestParam(value = "dataInizio", required = false) Date dtIn)
+			throws FileNotFoundException, IllegalArgumentException {
+		if (!(Integer.valueOf(id).intValue() > 0))
+			throw new IllegalArgumentException("INVALID sensor id: " + id);
+		// return new ResponseEntity<>(mongoLogService.getLogBySensorId(Integer.valueOf(id)), HttpStatus.OK);
+		return new ResponseEntity<>(mongoLogService.getGroupedLogFromDate2(Integer.valueOf(id), dtIn), HttpStatus.OK);
 	}
 }
