@@ -16,6 +16,7 @@ import it.angelic.growlroom.model.Sensor;
 import it.angelic.growlroom.model.SensorLog;
 import it.angelic.growlroom.model.UnitEnum;
 import it.angelic.growlroom.model.repositories.SensorsRepository;
+
 @Service
 public class SensorsServiceImpl implements SensorsService {
 
@@ -25,9 +26,8 @@ public class SensorsServiceImpl implements SensorsService {
 	@Autowired
 	private MongoLogService mongoLogService;
 
-
 	private final SimpMessagingTemplate simpMessagingTemplate;
-	
+
 	Logger logger = LoggerFactory.getLogger(SensorsServiceImpl.class);
 
 	public SensorsServiceImpl(SimpMessagingTemplate simpMessagingTemplate) {
@@ -38,23 +38,23 @@ public class SensorsServiceImpl implements SensorsService {
 	public Sensor createOrUpdateSensor(Sensor sensing, String checkId) {
 		float dbs = -1f;
 		try {
-			dbs =Float.valueOf(getSensorById(sensing.getId()).getVal());
+			dbs = Float.valueOf(getSensorById(sensing.getId()).getVal());
 		} catch (SensorNotFoundException e) {
 			logger.warn("Sensore non Trovato? " + sensing.getId());
 		}
 
 		Sensor updated = createSensorImpl(sensing, checkId);
-		//mando a mongo e al front-end sse cambiato
-		//if ( dbs!= Float.valueOf(sensing.getVal())) {
+		// mando a mongo e al front-end sse cambiato
+		if (!updated.isErr()) {
 			try {
 				mongoLogService.logSensor(new SensorLog(updated));
 			} catch (Exception e) {
-				logger.warn("MongoDB exc: "+ e.getMessage());
+				logger.warn("MongoDB exc: " + e.getMessage());
 			}
-			
-			// avvisa i sottoscrittori dei sensori
-			this.simpMessagingTemplate.convertAndSend("/topic/sensors", updated);
-		//}
+		}
+		// avvisa i sottoscrittori dei sensori
+		this.simpMessagingTemplate.convertAndSend("/topic/sensors", updated);
+		// }
 		return updated;
 	}
 
