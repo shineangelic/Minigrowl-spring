@@ -3,6 +3,7 @@ package it.angelic.growlroom.service;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -87,7 +88,7 @@ public class MongoLogService {
 			ha.setMin(document.get("min").toString());
 			ret.add(ha);
 		}
-
+		Collections.sort(ret);
 		return ret;
 	}
 
@@ -104,7 +105,7 @@ public class MongoLogService {
 			ha.setMin(df.format(Double.valueOf(document.get("min").toString())));
 			ret.add(ha);
 		}
-
+		Collections.sort(ret);
 		return ret;
 	}
 
