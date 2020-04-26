@@ -101,7 +101,7 @@ public class ClientSensorController {
 	}*/
 	
 	@CrossOrigin
-	@GetMapping(value = "/sensors/{id}/hourChart2", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/sensors/{id}/hourChart", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<HourValuePair>> getSensorsHourChart(@PathVariable String id,
 			@RequestParam(value = "dataInizio", required = false) Date dtIn)
 			throws FileNotFoundException, IllegalArgumentException {

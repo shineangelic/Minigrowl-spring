@@ -103,7 +103,10 @@ public class MongoLogService {
 		AggregateIterable<Document> nit = repository.getHour24ChartAggregateData(sensorId);
 		ArrayList<HourValuePair> ret = new ArrayList<>();
 		for (Document document : nit) {
-			System.out.println(document);
+			HourValuePair ha = new HourValuePair(document.get("_id").toString(), document.get("avg").toString());
+			ha.setMax(document.get("max").toString());
+			ha.setMin(document.get("min").toString());
+			ret.add(ha);
 		}
 		 
 		return ret;
