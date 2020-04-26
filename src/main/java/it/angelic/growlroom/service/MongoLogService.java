@@ -1,5 +1,6 @@
 package it.angelic.growlroom.service;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -91,13 +92,16 @@ public class MongoLogService {
 	}
 
 	public List<HourValuePair> getGroupedLogHistory(int sensorId, Date dtIn) {
+		DecimalFormat df = new DecimalFormat();
+		df.setMaximumFractionDigits(2);
 		Calendar c = Calendar.getInstance();
 		AggregateIterable<Document> nit = repository.getHourHistoryChartAggregateData(sensorId, dtIn);
 		ArrayList<HourValuePair> ret = new ArrayList<>();
 		for (Document document : nit) {
-			HourValuePair ha = new HourValuePair(document.get("_id").toString(), document.get("avg").toString());
-			ha.setMax(document.get("max").toString());
-			ha.setMin(document.get("min").toString());
+			HourValuePair ha = new HourValuePair(document.get("_id").toString(),
+					df.format(Double.valueOf(document.get("avg").toString())));
+			ha.setMax(df.format(Double.valueOf(document.get("max").toString())));
+			ha.setMin(df.format(Double.valueOf(document.get("min").toString())));
 			ret.add(ha);
 		}
 
