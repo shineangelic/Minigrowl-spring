@@ -104,7 +104,7 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 						group("$groupStamp", avg("houravg", "$val"), min("hourmin", "$val"), max("hourmax", "$val")),
 						new Document()));*/
 		AggregateIterable<Document> result = collection.aggregate(Arrays.asList(new Document("$match", 
-			    new Document("id", 33L)
+			    new Document("id", sensorI)
 			            .append("err", false)), 
 			    new Document("$addFields", 
 			    new Document("groupStamp", 
