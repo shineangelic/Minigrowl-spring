@@ -93,7 +93,8 @@ public class MongoLogService {
 	}
 
 	/**
-	 * WARN unused  Date 
+	 * WARN unused Date
+	 * 
 	 * @param sensorId
 	 * @param dtIn
 	 * @return
@@ -105,18 +106,18 @@ public class MongoLogService {
 		AggregateIterable<Document> nit = repository.aggregaStoriaV2(sensorId);
 		ArrayList<HourValuePair> ret = new ArrayList<>();
 		for (Document document : nit) {
-			//schifo perche` mongo torna le ore a 1 cifra
+			// schifo perche` mongo torna le ore a 1 cifra
 			String tCode = document.get("_id").toString();
 			String[] dPart = tCode.split(":");
 
 			if (dPart[1].length() == 1)
 				dPart[1] = "0" + dPart[1];
 
-			HourValuePair ha = new HourValuePair(dPart[0] + dPart[1],
-					df.format(Double.valueOf(document.get("avg").toString())));
-			ha.setMax(df.format(Double.valueOf(document.get("max").toString())));
-			ha.setMin(df.format(Double.valueOf(document.get("min").toString())));
-			ret.add(ha);
+				HourValuePair ha = new HourValuePair(dPart[0] + dPart[1],
+						df.format(Double.valueOf(document.get("houravg").toString())));
+				ha.setMax(df.format(Double.valueOf(document.get("hourmax").toString())));
+				ha.setMin(df.format(Double.valueOf(document.get("hourmin").toString())));
+				ret.add(ha);
 		}
 		Collections.sort(ret);
 		return ret;

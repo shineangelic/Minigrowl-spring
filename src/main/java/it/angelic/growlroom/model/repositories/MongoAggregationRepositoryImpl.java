@@ -1,14 +1,5 @@
 package it.angelic.growlroom.model.repositories;
 
-import static com.mongodb.client.model.Accumulators.avg;
-import static com.mongodb.client.model.Accumulators.max;
-import static com.mongodb.client.model.Accumulators.min;
-import static com.mongodb.client.model.Aggregates.addFields;
-import static com.mongodb.client.model.Aggregates.group;
-import static com.mongodb.client.model.Aggregates.match;
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,7 +13,6 @@ import org.springframework.data.mongodb.core.mapreduce.MapReduceResults;
 
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Field;
 
 //Impl postfix of the name on it compared to the core repository interface
 public class MongoAggregationRepositoryImpl implements MongoAggregationRepository {
@@ -105,14 +95,31 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 	public AggregateIterable<Document> aggregaStoriaV2(int sensorI) {
 		MongoCollection<Document> collection = mongoTemplate.getCollection("sensors");
 
-		AggregateIterable<Document> result = collection
+		/*AggregateIterable<Document> result = collection
 				.aggregate(Arrays.asList(match(and(eq("id", 33L), eq("err", false))),
 						addFields(new Field<>("groupStamp",
 								new Document("$dateToString",
 										new Document("date", "$timeStamp").append("format", "%Y-%m-%d:%H")
 												.append("timezone", "Europe/Rome")))),
 						group("$groupStamp", avg("houravg", "$val"), min("hourmin", "$val"), max("hourmax", "$val")),
-						new Document()));
+						new Document()));*/
+		AggregateIterable<Document> result = collection.aggregate(Arrays.asList(new Document("$match", 
+			    new Document("id", 33L)
+			            .append("err", false)), 
+			    new Document("$addFields", 
+			    new Document("groupStamp", 
+			    new Document("$dateToString", 
+			    new Document("date", "$timeStamp")
+			                    .append("format", "%Y-%m-%d:%H")
+			                    .append("timezone", "Europe/Rome")))), 
+			    new Document("$group", 
+			    new Document("_id", "$groupStamp")
+			            .append("houravg", 
+			    new Document("$avg", "$val"))
+			            .append("hourmin", 
+			    new Document("$min", "$val"))
+			            .append("hourmax", 
+			    new Document("$max", "$val")))));
 		
 		return result;
 
