@@ -103,7 +103,7 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 	 */
 	@Override
 	public AggregateIterable<Document> aggregaStoriaV2(int sensorI) {
-		MongoCollection<Document> collection = mongoTemplate.getCollection("");
+		MongoCollection<Document> collection = mongoTemplate.getCollection("sensors");
 
 		AggregateIterable<Document> result = collection
 				.aggregate(Arrays.asList(match(and(eq("id", 33L), eq("err", false))),
