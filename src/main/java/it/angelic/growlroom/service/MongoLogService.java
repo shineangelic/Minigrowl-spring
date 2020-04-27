@@ -92,11 +92,17 @@ public class MongoLogService {
 		return ret;
 	}
 
+	/**
+	 * WARN unused  Date 
+	 * @param sensorId
+	 * @param dtIn
+	 * @return
+	 */
 	public List<HourValuePair> getGroupedLogHistory(int sensorId, Date dtIn) {
 		DecimalFormat df = new DecimalFormat();
 		df.setMaximumFractionDigits(2);
 		Calendar c = Calendar.getInstance();
-		AggregateIterable<Document> nit = repository.getHourHistoryChartAggregateData(sensorId, dtIn);
+		AggregateIterable<Document> nit = repository.aggregaStoriaV2(sensorId);
 		ArrayList<HourValuePair> ret = new ArrayList<>();
 		for (Document document : nit) {
 			//schifo perche` mongo torna le ore a 1 cifra
