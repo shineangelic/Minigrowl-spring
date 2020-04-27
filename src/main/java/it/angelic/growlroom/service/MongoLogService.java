@@ -80,12 +80,14 @@ public class MongoLogService {
 	 */
 
 	public List<HourValuePair> getGroupedLogFromDate(int sensorId, Date dtIn) {
+		final DecimalFormat df = new DecimalFormat();
 		AggregateIterable<Document> nit = repository.getHour24ChartAggregateData(sensorId);
 		ArrayList<HourValuePair> ret = new ArrayList<>();
 		for (Document document : nit) {
-			HourValuePair ha = new HourValuePair(document.get("_id").toString(), document.get("avg").toString());
-			ha.setMax(document.get("max").toString());
-			ha.setMin(document.get("min").toString());
+			HourValuePair ha = new HourValuePair(document.get("_id").toString(),
+					df.format(Double.valueOf(document.get("avg").toString())));
+			ha.setMax(df.format(Double.valueOf(document.get("max").toString())));
+			ha.setMin(df.format(Double.valueOf(document.get("min").toString())));
 			ret.add(ha);
 		}
 		Collections.sort(ret);
@@ -100,7 +102,7 @@ public class MongoLogService {
 	 * @return
 	 */
 	public List<HourValuePair> getGroupedLogHistory(int sensorId, Date dtIn) {
-		DecimalFormat df = new DecimalFormat();
+		final DecimalFormat df = new DecimalFormat();
 		df.setMaximumFractionDigits(2);
 		Calendar c = Calendar.getInstance();
 		AggregateIterable<Document> nit = repository.aggregaStoriaV2(sensorId);
@@ -113,11 +115,11 @@ public class MongoLogService {
 			if (dPart[1].length() == 1)
 				dPart[1] = "0" + dPart[1];
 
-				HourValuePair ha = new HourValuePair(dPart[0] + dPart[1],
-						df.format(Double.valueOf(document.get("houravg").toString())));
-				ha.setMax(df.format(Double.valueOf(document.get("hourmax").toString())));
-				ha.setMin(df.format(Double.valueOf(document.get("hourmin").toString())));
-				ret.add(ha);
+			HourValuePair ha = new HourValuePair(dPart[0] + dPart[1],
+					df.format(Double.valueOf(document.get("houravg").toString())));
+			ha.setMax(df.format(Double.valueOf(document.get("hourmax").toString())));
+			ha.setMin(df.format(Double.valueOf(document.get("hourmin").toString())));
+			ret.add(ha);
 		}
 		Collections.sort(ret);
 		return ret;
