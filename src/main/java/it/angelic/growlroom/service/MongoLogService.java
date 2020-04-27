@@ -57,27 +57,7 @@ public class MongoLogService {
 		return res.getDeletedCount();
 	}
 
-	/*
-	 * public List<HourValuePair> getGroupedLogFromDate(int sensorId, Date dtIn) { Map<String, HourValuePair>
-	 * hourAverage = new HashMap<String, HourValuePair>(); Calendar c = Calendar.getInstance(); List<SensorLog> nit =
-	 * repository.findFromDate(sensorId, dtIn);
-	 * 
-	 * for (SensorLog sensorLog : nit) { c.setTime(sensorLog.getTimeStamp()); // int hourK =
-	 * c.get(Calendar.HOUR_OF_DAY); SimpleDateFormat sf = new SimpleDateFormat("HH"); String hourFormat =
-	 * sf.format(c.getTime()); if (hourAverage.containsKey(hourFormat)) { HourValuePair aver =
-	 * hourAverage.get(hourFormat);
-	 * 
-	 * Float curMin = Float.valueOf(aver.getMin()); Float curMax = Float.valueOf(aver.getMax());
-	 * 
-	 * if (Float.valueOf(sensorLog.getVal()) < curMin) aver.setMin(sensorLog.getVal()); if
-	 * (Float.valueOf(sensorLog.getVal()) > curMax) aver.setMax(sensorLog.getVal()); Float avg =
-	 * ((Float.valueOf(aver.getValue()) + Float.valueOf(sensorLog.getVal())) / 2f); aver.setValue(avg.toString());
-	 * hourAverage.put(hourFormat, aver); } else { HourValuePair aver = new HourValuePair(hourFormat,
-	 * Float.valueOf(sensorLog.getVal()).toString()); hourAverage.put(hourFormat, aver); }
-	 * 
-	 * } ArrayList<HourValuePair> ret = new ArrayList<>(); for (String k : hourAverage.keySet()) {
-	 * ret.add(hourAverage.get(k)); } Collections.sort(ret); return ret; }
-	 */
+
 
 	public List<HourValuePair> getGroupedLogFromDate(int sensorId, Date dtIn) {
 		final DecimalFormat df = new DecimalFormat();

@@ -15,9 +15,6 @@ public interface MongoAggregationRepository {
 	// aggregate pipeline
 	public AggregateIterable<Document> getHour24ChartAggregateData(int sensorId);
 	
-	// aggregate pipeline
-	@Deprecated
-	public AggregateIterable<Document> getHourHistoryChartAggregateData(int sensorId, Date limit);
 
 	// aggregate pipeline V2
 	public AggregateIterable<Document> aggregaStoriaV2(int sensorI);

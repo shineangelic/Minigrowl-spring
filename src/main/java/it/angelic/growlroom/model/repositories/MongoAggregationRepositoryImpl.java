@@ -54,36 +54,15 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 
 	}
 
-	@Override
-	public AggregateIterable<Document> getHourHistoryChartAggregateData(int sensorId, Date limit) {
-		AggregateIterable<Document> result = mongoTemplate.getCollection("sensors").aggregate(aggregaStoria(sensorId));
-		return result;
-	}
-
 	private List<Document> aggrega24H(int sensorId) {
 		return Arrays.asList(new Document("$match", new Document("id", sensorId).append("err", false)),
-				new Document("$addFields", new Document("ora24", new Document("$hour", "$timeStamp"))),
+				new Document("$addFields",
+						new Document("ora24", new Document("$dateToString",
+								new Document("date", "$timeStamp").append("format", "%H")
+										.append("timezone", "Europe/Rome")))),
+				//new Document("$addFields", new Document("ora24", new Document("$hour", "$timeStamp"))),
 				new Document("$group", new Document("_id", "$ora24").append("avg", new Document("$avg", "$val"))
 						.append("max", new Document("$max", "$val")).append("min", new Document("$min", "$val"))));
-	}
-
-	private List<Document> aggregaStoria(int sensorI) {
-		return Arrays.asList(new Document("$match", new Document("id", sensorI).append("err", false)),
-				new Document("$addFields",
-						new Document("year", new Document("$year", "$timeStamp"))
-								.append("mon", new Document("$month", "$timeStamp"))
-								.append("GG", new Document("$dayOfMonth", "$timeStamp"))
-								.append("ora24", new Document("$hour", "$timeStamp"))),
-				new Document("$addFields",
-						new Document("GGts",
-								new Document("$concat",
-										Arrays.asList(new Document("$substr", Arrays.asList("$year", 0L, -1L)), "-",
-												new Document("$substr", Arrays.asList("$mon", 0L, -1L)), "-",
-												new Document("$substr", Arrays.asList("$GG", 0L, -1L)), ":",
-												new Document("$substr", Arrays.asList("$ora24", 0L, -1L)))))),
-				new Document("$group", new Document("_id", "$GGts").append("avg", new Document("$avg", "$val"))
-						.append("max", new Document("$max", "$val")).append("min", new Document("$min", "$val"))));
-
 	}
 
 	/*
@@ -95,32 +74,25 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 	public AggregateIterable<Document> aggregaStoriaV2(int sensorI) {
 		MongoCollection<Document> collection = mongoTemplate.getCollection("sensors");
 
-		/*AggregateIterable<Document> result = collection
-				.aggregate(Arrays.asList(match(and(eq("id", 33L), eq("err", false))),
-						addFields(new Field<>("groupStamp",
-								new Document("$dateToString",
-										new Document("date", "$timeStamp").append("format", "%Y-%m-%d:%H")
-												.append("timezone", "Europe/Rome")))),
-						group("$groupStamp", avg("houravg", "$val"), min("hourmin", "$val"), max("hourmax", "$val")),
-						new Document()));*/
-		AggregateIterable<Document> result = collection.aggregate(Arrays.asList(new Document("$match", 
-			    new Document("id", sensorI)
-			            .append("err", false)), 
-			    new Document("$addFields", 
-			    new Document("groupStamp", 
-			    new Document("$dateToString", 
-			    new Document("date", "$timeStamp")
-			                    .append("format", "%Y-%m-%d:%H")
-			                    .append("timezone", "Europe/Rome")))), 
-			    new Document("$group", 
-			    new Document("_id", "$groupStamp")
-			            .append("houravg", 
-			    new Document("$avg", "$val"))
-			            .append("hourmin", 
-			    new Document("$min", "$val"))
-			            .append("hourmax", 
-			    new Document("$max", "$val")))));
-		
+		/*
+		 * AggregateIterable<Document> result = collection .aggregate(Arrays.asList(match(and(eq("id", 33L), eq("err",
+		 * false))), addFields(new Field<>("groupStamp", new Document("$dateToString", new Document("date",
+		 * "$timeStamp").append("format", "%Y-%m-%d:%H") .append("timezone", "Europe/Rome")))), group("$groupStamp",
+		 * avg("houravg", "$val"), min("hourmin", "$val"), max("hourmax", "$val")), new Document()));
+		 */
+		AggregateIterable<Document> result = collection
+				.aggregate(
+						Arrays.asList(new Document("$match", new Document("id", sensorI).append("err", false)),
+								new Document("$addFields",
+										new Document("groupStamp", new Document("$dateToString",
+												new Document("date", "$timeStamp").append("format", "%Y-%m-%d:%H")
+														.append("timezone", "Europe/Rome")))),
+								new Document("$group",
+										new Document("_id", "$groupStamp")
+												.append("houravg", new Document("$avg", "$val"))
+												.append("hourmin", new Document("$min", "$val"))
+												.append("hourmax", new Document("$max", "$val")))));
+
 		return result;
 
 	}
