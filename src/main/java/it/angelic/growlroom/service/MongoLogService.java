@@ -99,7 +99,14 @@ public class MongoLogService {
 		AggregateIterable<Document> nit = repository.getHourHistoryChartAggregateData(sensorId, dtIn);
 		ArrayList<HourValuePair> ret = new ArrayList<>();
 		for (Document document : nit) {
-			HourValuePair ha = new HourValuePair(document.get("_id").toString(),
+			//schifo perche` mongo torna le ore a 1 cifra
+			String tCode = document.get("_id").toString();
+			String[] dPart = tCode.split(":");
+
+			if (dPart[1].length() == 1)
+				dPart[1] = "0" + dPart[1];
+
+			HourValuePair ha = new HourValuePair(dPart[0] + dPart[1],
 					df.format(Double.valueOf(document.get("avg").toString())));
 			ha.setMax(df.format(Double.valueOf(document.get("max").toString())));
 			ha.setMin(df.format(Double.valueOf(document.get("min").toString())));
