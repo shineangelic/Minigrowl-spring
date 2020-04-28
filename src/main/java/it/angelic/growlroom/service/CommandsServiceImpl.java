@@ -70,6 +70,7 @@ public class CommandsServiceImpl implements CommandsService {
 	public Long sendFullRefreshCommand() {
 		Command forceRefresh = new Command();
 		forceRefresh.setParameter("-1");
+		forceRefresh.setName("Refresh");
 		forceRefresh.setTargetActuatorId(-1);
 		QueueCommands arg0 = new QueueCommands(forceRefresh);
 		queueCommands.save(arg0);
