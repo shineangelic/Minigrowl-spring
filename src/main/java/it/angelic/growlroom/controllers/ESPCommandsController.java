@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.angelic.growlroom.model.Command;
-import it.angelic.growlroom.service.ActuatorsService;
 import it.angelic.growlroom.service.CommandsService;
 
 /**
@@ -26,8 +25,7 @@ import it.angelic.growlroom.service.CommandsService;
 @RequestMapping(value = "/api/esp/v1/commands")
 public class ESPCommandsController {
 
-	@Autowired
-	private ActuatorsService actuatorsService;
+
 
 	@Autowired
 	private CommandsService commandsService;
@@ -38,6 +36,12 @@ public class ESPCommandsController {
 		return commandsService.getUnexecutedCommands();
 	}
 
+	/**
+	 * Used from ESP to confirm command execution
+	 * @param queueCommandid
+	 * @param executed
+	 * @return
+	 */
 	@RequestMapping(method = RequestMethod.POST, value = "/id/{queueCommandid}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public boolean deleteExecutedCommand(@PathVariable String queueCommandid, Command executed) {
 		try {

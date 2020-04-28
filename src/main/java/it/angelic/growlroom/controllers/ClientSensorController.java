@@ -68,10 +68,9 @@ public class ClientSensorController {
 		return new ResponseEntity<>(actuatorsService.getActuators(), HttpStatus.OK);
 	}
 
-	@CrossOrigin
+	@CrossOrigin//UNUSED, see supported commands
 	@GetMapping(value = "/commands", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Collection<Command>> getSupportedCommands() {
-
 		return ResponseEntity.status(HttpStatus.OK).body(commandsService.getSupportedCommands());
 	}
 
@@ -81,24 +80,21 @@ public class ClientSensorController {
 
 		return commandsService.sendCommand(sensing);
 	}
+	
+	@CrossOrigin
+	@PutMapping(value = "/commands/fullRefresh", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public Long sendForceRefresh() {
+
+		return commandsService.sendFullRefreshCommand();
+	}
 
 	@CrossOrigin
 	@PutMapping(value = "/sensors/log/delete", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Long deleteLogs(@RequestBody Command sensing) {
+	public Long deleteLogs() {
 
 		return mongoLogService.deleteOldLog();
 	}
-
-	/*@CrossOrigin
-	@GetMapping(value = "/sensors/{id}/hourChart", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<HourValuePair>> getSensorsHourChart(@PathVariable String id,
-			@RequestParam(value = "dataInizio", required = false) Date dtIn)
-			throws FileNotFoundException, IllegalArgumentException {
-		if (!(Integer.valueOf(id).intValue() > 0))
-			throw new IllegalArgumentException("INVALID sensor id: " + id);
-		// return new ResponseEntity<>(mongoLogService.getLogBySensorId(Integer.valueOf(id)), HttpStatus.OK);
-		return new ResponseEntity<>(mongoLogService.getGroupedLogFromDate(Integer.valueOf(id), dtIn), HttpStatus.OK);
-	}*/
+ 
 	
 	@CrossOrigin
 	@GetMapping(value = "/sensors/{id}/hourChart", produces = MediaType.APPLICATION_JSON_VALUE)

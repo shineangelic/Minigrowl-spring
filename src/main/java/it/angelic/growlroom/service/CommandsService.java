@@ -14,5 +14,7 @@ public interface CommandsService {
 	public abstract Long sendCommand(Command toExecurte);
 
 	public abstract Collection<Command> getSupportedCommands();
+
+	public abstract Long sendFullRefreshCommand();
  
 }

@@ -2,8 +2,6 @@ package it.angelic.growlroom.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,21 +24,11 @@ public class ESPSensorsController {
 	@Autowired
 	private SensorsService sensorService;
 
-
-	@PatchMapping("/heavyresource/{id}")
-	public ResponseEntity<?> partialUpdateName(@RequestBody Sensor partialUpdate, @PathVariable("id") String id) {
-		// TODO partial update
-		sensorService.createOrUpdateSensor(partialUpdate, id);
-		return ResponseEntity.ok("sensor updated");
-	}
-
 	@PutMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	// @ResponseStatus(HttpStatus.OK)
 	public int putSensor(@PathVariable String id, @RequestBody Sensor sensing) {
-		
-		//Sensor pasS = sensorService.find
+
 		Sensor updated = sensorService.createOrUpdateSensor(sensing, id);
-		 
 
 		return updated.getId();
 	}

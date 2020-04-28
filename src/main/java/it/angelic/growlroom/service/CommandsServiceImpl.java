@@ -67,6 +67,16 @@ public class CommandsServiceImpl implements CommandsService {
 	}
 
 	@Override
+	public Long sendFullRefreshCommand() {
+		Command forceRefresh = new Command();
+		forceRefresh.setParameter("-1");
+		forceRefresh.setTargetActuatorId(-1);
+		QueueCommands arg0 = new QueueCommands(forceRefresh);
+		queueCommands.save(arg0);
+		return queueCommands.count();
+	}
+
+	@Override
 	public boolean removeExecutedCommand(Long queueCommandId, Command check) {
 		queueCommands.deleteById(queueCommandId);
 		return !queueCommands.existsById(queueCommandId);
