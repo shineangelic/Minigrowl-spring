@@ -57,10 +57,9 @@ public class MongoLogService {
 		return res.getDeletedCount();
 	}
 
-
-
 	public List<HourValuePair> getGroupedLogFromDate(int sensorId, Date dtIn) {
 		final DecimalFormat df = new DecimalFormat();
+		df.setGroupingUsed(false);
 		AggregateIterable<Document> nit = repository.getHour24ChartAggregateData(sensorId);
 		ArrayList<HourValuePair> ret = new ArrayList<>();
 		for (Document document : nit) {
@@ -83,6 +82,7 @@ public class MongoLogService {
 	 */
 	public List<HourValuePair> getGroupedLogHistory(int sensorId, Date dtIn) {
 		final DecimalFormat df = new DecimalFormat();
+		df.setGroupingUsed(false);
 		df.setMaximumFractionDigits(2);
 		Calendar c = Calendar.getInstance();
 		AggregateIterable<Document> nit = repository.aggregaStoriaV2(sensorId);
