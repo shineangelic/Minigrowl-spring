@@ -54,4 +54,9 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 		return actuatorsRepository.findAll();
 	}
 
+	@Override
+	public Date getLastContact() {
+		return actuatorsRepository.getLastContact();
+	}
+
 }

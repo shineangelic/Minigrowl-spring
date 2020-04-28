@@ -106,4 +106,9 @@ public class SensorsServiceImpl implements SensorsService {
 		throw new SensorNotFoundException();
 	}
 
+	@Override
+	public Date getLastContact() {
+		return sensorRepository.getLastContact();
+	}
+
 }

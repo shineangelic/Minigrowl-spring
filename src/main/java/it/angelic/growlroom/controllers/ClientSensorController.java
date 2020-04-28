@@ -84,8 +84,17 @@ public class ClientSensorController {
 	@CrossOrigin
 	@PutMapping(value = "/commands/fullRefresh", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Long sendForceRefresh() {
-
 		return commandsService.sendFullRefreshCommand();
+	}
+	
+	@CrossOrigin//UNUSED, see supported commands
+	@GetMapping(value = "/lastContact", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Date> getLastContact() {
+		
+		Date actM = actuatorsService.getLastContact();
+		Date sensM = sensorService.getLastContact();
+		
+		return ResponseEntity.status(HttpStatus.OK).body(actM.after(sensM)?actM:sensM);
 	}
 
 	@CrossOrigin
