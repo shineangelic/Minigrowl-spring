@@ -15,8 +15,12 @@ public interface MongoActuatorLogRepository extends MongoRepository<ActuatorLog,
 
 	@Query("{'id': ?0}")
 	List<ActuatorLog> findByActuatorId(int actId);
+	
+	@Query("{'id': ?0}")
+	ActuatorLog findLastByActuatorId(int actId);
 
 	@Query("{'id': ?0},{'timeStamp': $gt: ?1}")
 	List<ActuatorLog> findFromDate(int sensorId, Date tHold);
+	 
  
 }

@@ -49,6 +49,14 @@ public class MongoLogService {
 	
 	public void logActuator(ActuatorLog in) {
 		in.setLogId(sequenceGenerator.generateSequence(ActuatorLog.SEQUENCE_NAME_ACTUATORS));
+		
+		
+		ActuatorLog last = mongoActuatorLogRepository.findLastByActuatorId(in.getId());
+		if (last != null) {
+			last.setNextLogId(in.getLogId());
+			mongoActuatorLogRepository.save(last);
+		}
+		
 		mongoActuatorLogRepository.save(in);
 	}
 

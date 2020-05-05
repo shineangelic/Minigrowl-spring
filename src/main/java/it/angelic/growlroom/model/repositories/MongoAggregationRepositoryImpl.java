@@ -8,11 +8,16 @@ import java.util.List;
 
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.mapreduce.MapReduceResults;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
+
+import it.angelic.growlroom.model.mongo.ActuatorLog;
 
 //Impl postfix of the name on it compared to the core repository interface
 public class MongoAggregationRepositoryImpl implements MongoAggregationRepository {
@@ -95,5 +100,17 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 
 		return result;
 
+	}
+	
+	public ActuatorLog getLastByActuatorId(Long id) {
+	   /* return mongoTemplate.findOne(
+	        Query.query(Criteria.where("_id").is(id)),
+	        ActuatorLog.class,
+	        COLLECTION_NAME
+	    );*/
+		Query query = Query.query(Criteria.where("id").is(id));
+		query.with(new Sort(Sort.Direction.DESC,"timeStamp"));
+		return mongoTemplate.findOne(query, ActuatorLog.class);
+	    //return mongoTemplate.find(Query.query(Criteria.where("_id").is(id)), ActuatorLog.class).sort({ "date_time" : -1 }).limit(1);
 	}
 }
