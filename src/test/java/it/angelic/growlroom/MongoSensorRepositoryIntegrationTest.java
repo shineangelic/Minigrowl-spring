@@ -25,7 +25,7 @@ import org.springframework.data.mongodb.core.mapping.event.LoggingEventListener;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import it.angelic.growlroom.model.Sensor;
-import it.angelic.growlroom.model.SensorLog;
+import it.angelic.growlroom.model.mongo.SensorLog;
 import it.angelic.growlroom.model.repositories.MongoSensorLogRepository;
 
 /**

@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
-import it.angelic.growlroom.model.DatabaseSequence;
+import it.angelic.growlroom.model.mongo.DatabaseSequence;
 
 @Service
 public class MongoSequenceService {

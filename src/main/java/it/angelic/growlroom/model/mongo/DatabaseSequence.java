@@ -1,4 +1,4 @@
-package it.angelic.growlroom.model;
+package it.angelic.growlroom.model.mongo;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

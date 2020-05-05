@@ -1,4 +1,4 @@
-package it.angelic.growlroom.model;
+package it.angelic.growlroom.model.mongo;
 
 import java.util.Date;
 
@@ -6,6 +6,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import it.angelic.growlroom.model.Sensor;
+import it.angelic.growlroom.model.SensorEnum;
+import it.angelic.growlroom.model.UnitEnum;
 import lombok.Data;
 
 @Data
@@ -14,6 +17,7 @@ public class SensorLog {
 
 	@Transient
 	public static final String SEQUENCE_NAME = "users_sequence";
+
 
 	@Id
 	private Long logId;

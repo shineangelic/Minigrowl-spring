@@ -3,6 +3,8 @@ package it.angelic.growlroom.service;
 import java.util.Collection;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +12,7 @@ import it.angelic.growlroom.model.Actuator;
 import it.angelic.growlroom.model.Command;
 import it.angelic.growlroom.model.CommandsRepository;
 import it.angelic.growlroom.model.UnitEnum;
+import it.angelic.growlroom.model.mongo.ActuatorLog;
 import it.angelic.growlroom.model.repositories.ActuatorsRepository;
 
 @Service
@@ -20,6 +23,11 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 
 	@Autowired
 	private ActuatorsRepository actuatorsRepository;
+	
+	@Autowired
+	private MongoLogService mongoLogService;
+	
+	Logger logger = LoggerFactory.getLogger(ActuatorsServiceImpl.class);
 
 	@Override
 	public Actuator createOrUpdateActuator(Actuator dispositivo, String id) {
@@ -28,6 +36,7 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 
 		switch (dispositivo.getTyp()) {
 		case FAN:
+		case OUTTAKE:
 		case LIGHT:
 			dispositivo.setUinit(UnitEnum.TURNED_ON);
 			break;
@@ -44,9 +53,19 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 			com.setTargetActuatorId(Integer.valueOf(id));
 			commandsRepository.save(com);
 		}
-
+		
 		dispositivo.setTimeStamp(new Date());
-		return actuatorsRepository.save(dispositivo);
+		Actuator updated = actuatorsRepository.save(dispositivo);
+		if (!updated.isErrorPresent()) {
+			try {
+				mongoLogService.logActuator(new ActuatorLog(updated));
+			} catch (Exception e) {
+				logger.warn("MongoDB exc: " + e.getMessage());
+			}
+		}
+
+		
+		return updated;
 	}
 
 	@Override

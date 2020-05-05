@@ -13,8 +13,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import it.angelic.growlroom.model.Sensor;
-import it.angelic.growlroom.model.SensorLog;
 import it.angelic.growlroom.model.UnitEnum;
+import it.angelic.growlroom.model.mongo.SensorLog;
 import it.angelic.growlroom.model.repositories.SensorsRepository;
 
 @Service
@@ -44,7 +44,6 @@ public class SensorsServiceImpl implements SensorsService {
 		}
 
 		Sensor updated = createSensorImpl(sensing, checkId);
-		// mando a mongo e al front-end sse cambiato
 		if (!updated.isErr()) {
 			try {
 				mongoLogService.logSensor(new SensorLog(updated));

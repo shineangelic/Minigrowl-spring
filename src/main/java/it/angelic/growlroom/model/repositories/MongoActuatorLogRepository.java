@@ -6,17 +6,17 @@ import java.util.List;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
-import it.angelic.growlroom.model.mongo.SensorLog;
+import it.angelic.growlroom.model.mongo.ActuatorLog;
 
-public interface MongoSensorLogRepository extends MongoRepository<SensorLog, String>,MongoAggregationRepository {
+public interface MongoActuatorLogRepository extends MongoRepository<ActuatorLog, String>,MongoAggregationRepository {
 
 	@Override
-	List<SensorLog> findAll();
+	List<ActuatorLog> findAll();
 
 	@Query("{'id': ?0}")
-	List<SensorLog> findByIdSensore(int sensorId);
+	List<ActuatorLog> findByActuatorId(int actId);
 
 	@Query("{'id': ?0},{'timeStamp': $gt: ?1}")
-	List<SensorLog> findFromDate(int sensorId, Date tHold);
+	List<ActuatorLog> findFromDate(int sensorId, Date tHold);
  
 }

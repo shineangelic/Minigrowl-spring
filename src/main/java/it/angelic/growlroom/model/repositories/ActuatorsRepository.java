@@ -11,6 +11,6 @@ public interface ActuatorsRepository extends JpaRepository<Actuator, Long> {
 
 	Actuator findById(int id);
 
-	@Query(value = "SELECT max(timeStamp) FROM Actuator")
+	@Query(value = "SELECT max(timeStamp) FROM ActuatorLog")
 	public Date getLastContact();
 }

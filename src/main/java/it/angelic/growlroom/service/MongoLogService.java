@@ -17,8 +17,10 @@ import org.springframework.stereotype.Service;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.result.DeleteResult;
 
-import it.angelic.growlroom.model.SensorLog;
+import it.angelic.growlroom.model.mongo.ActuatorLog;
+import it.angelic.growlroom.model.mongo.SensorLog;
 import it.angelic.growlroom.model.repositories.HourValuePair;
+import it.angelic.growlroom.model.repositories.MongoActuatorLogRepository;
 import it.angelic.growlroom.model.repositories.MongoSensorLogRepository;
 
 @Service
@@ -27,7 +29,10 @@ public class MongoLogService {
 	private final MongoTemplate mongoTemplate;
 
 	@Autowired
-	private MongoSensorLogRepository repository;
+	private MongoSensorLogRepository mongoSensorLogRepository;
+	
+	@Autowired
+	private MongoActuatorLogRepository mongoActuatorLogRepository;
 
 	@Autowired
 	private MongoSequenceService sequenceGenerator;
@@ -39,15 +44,20 @@ public class MongoLogService {
 
 	public void logSensor(SensorLog in) {
 		in.setLogId(sequenceGenerator.generateSequence(SensorLog.SEQUENCE_NAME));
-		repository.save(in);
+		mongoSensorLogRepository.save(in);
+	}
+	
+	public void logActuator(ActuatorLog in) {
+		in.setLogId(sequenceGenerator.generateSequence(ActuatorLog.SEQUENCE_NAME_ACTUATORS));
+		mongoActuatorLogRepository.save(in);
 	}
 
 	public List<HourValuePair> getHourChartData(int sensorId, Date tholdDate) {
-		return repository.mapReduceToHourChart(sensorId, tholdDate);
+		return mongoSensorLogRepository.mapReduceToHourChart(sensorId, tholdDate);
 	}
 
 	public List<SensorLog> getLogBySensorId(int sensorId) {
-		return repository.findByIdSensore(sensorId);
+		return mongoSensorLogRepository.findByIdSensore(sensorId);
 	}
 
 	public Long deleteOldLog() {
@@ -60,7 +70,7 @@ public class MongoLogService {
 	public List<HourValuePair> getGroupedLogFromDate(int sensorId, Date dtIn) {
 		final DecimalFormat df = new DecimalFormat();
 		df.setGroupingUsed(false);
-		AggregateIterable<Document> nit = repository.getHour24ChartAggregateData(sensorId);
+		AggregateIterable<Document> nit = mongoSensorLogRepository.getHour24ChartAggregateData(sensorId);
 		ArrayList<HourValuePair> ret = new ArrayList<>();
 		for (Document document : nit) {
 			HourValuePair ha = new HourValuePair(document.get("_id").toString(),
@@ -85,7 +95,7 @@ public class MongoLogService {
 		df.setGroupingUsed(false);
 		df.setMaximumFractionDigits(2);
 		Calendar c = Calendar.getInstance();
-		AggregateIterable<Document> nit = repository.aggregaStoriaV2(sensorId);
+		AggregateIterable<Document> nit = mongoSensorLogRepository.aggregaStoriaV2(sensorId);
 		ArrayList<HourValuePair> ret = new ArrayList<>();
 		for (Document document : nit) {
 			// schifo perche` mongo torna le ore a 1 cifra
