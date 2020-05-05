@@ -58,6 +58,31 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 		return result;
 
 	}
+	/*
+	 * PIPELINE
+	 * 
+	 * [{$match: { timeStamp: 
+        { $gte: ISODate("2016-06-01T00:00:00.000Z"), 
+        $lt: ISODate("2020-06-03T00:00:00.000Z")},
+
+ }}, {$lookup: {
+  from: 'actuators',
+  localField: '_id',
+  foreignField: 'nextLogId',
+  as: 'previous'
+}}, {$addFields: {
+  prev: {$arrayElemAt: [ '$previous', 0]}
+}}, {$addFields: {
+  msecAccesa:{ $subtract: ['$timeStamp','$prev.timeStamp'] }    
+}}, {$match: {
+  prev: {$ne:null},
+  'prev.reading':"1"
+}}, {$group: {
+  _id: '$id',
+ count: { $sum: '$msecAccesa' }
+}}]
+
+*/
 
 	private List<Document> aggrega24H(int sensorId) {
 		return Arrays.asList(new Document("$match", new Document("id", sensorId).append("err", false)),

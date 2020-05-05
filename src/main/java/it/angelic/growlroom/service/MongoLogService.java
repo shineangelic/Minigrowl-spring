@@ -57,7 +57,7 @@ public class MongoLogService {
 			mongoActuatorLogRepository.save(last);
 		}
 		
-		mongoActuatorLogRepository.save(in);
+		mongoActuatorLogRepository.insert(in);
 	}
 
 	public List<HourValuePair> getHourChartSensorData(int sensorId, Date tholdDate) {
