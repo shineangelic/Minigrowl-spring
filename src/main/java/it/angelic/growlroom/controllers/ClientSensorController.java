@@ -101,7 +101,7 @@ public class ClientSensorController {
 	@PutMapping(value = "/sensors/log/delete", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Long deleteLogs() {
 
-		return mongoLogService.deleteOldLog();
+		return mongoLogService.deleteOldSensorLog();
 	}
  
 	
@@ -113,7 +113,7 @@ public class ClientSensorController {
 		if (!(Integer.valueOf(id).intValue() > 0))
 			throw new IllegalArgumentException("INVALID sensor id: " + id);
 		// return new ResponseEntity<>(mongoLogService.getLogBySensorId(Integer.valueOf(id)), HttpStatus.OK);
-		return new ResponseEntity<>(mongoLogService.getGroupedLogFromDate(Integer.valueOf(id), dtIn), HttpStatus.OK);
+		return new ResponseEntity<>(mongoLogService.getGroupedSensorLogFromDate(Integer.valueOf(id), dtIn), HttpStatus.OK);
 	}
 	
 	@CrossOrigin
@@ -124,6 +124,6 @@ public class ClientSensorController {
 		if (!(Integer.valueOf(id).intValue() > 0))
 			throw new IllegalArgumentException("INVALID sensor id: " + id);
 		// return new ResponseEntity<>(mongoLogService.getLogBySensorId(Integer.valueOf(id)), HttpStatus.OK);
-		return new ResponseEntity<>(mongoLogService.getGroupedLogHistory(Integer.valueOf(id), dtIn), HttpStatus.OK);
+		return new ResponseEntity<>(mongoLogService.getGroupedSensorLogHistory(Integer.valueOf(id), dtIn), HttpStatus.OK);
 	}
 }

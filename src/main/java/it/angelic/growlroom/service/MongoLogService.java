@@ -52,7 +52,7 @@ public class MongoLogService {
 		mongoActuatorLogRepository.save(in);
 	}
 
-	public List<HourValuePair> getHourChartData(int sensorId, Date tholdDate) {
+	public List<HourValuePair> getHourChartSensorData(int sensorId, Date tholdDate) {
 		return mongoSensorLogRepository.mapReduceToHourChart(sensorId, tholdDate);
 	}
 
@@ -60,14 +60,14 @@ public class MongoLogService {
 		return mongoSensorLogRepository.findByIdSensore(sensorId);
 	}
 
-	public Long deleteOldLog() {
+	public Long deleteOldSensorLog() {
 		Query query1 = new Query();
 		query1.addCriteria(Criteria.where("timeStamp").lt(new Date()));
 		DeleteResult res = mongoTemplate.remove(query1, SensorLog.class);
 		return res.getDeletedCount();
 	}
 
-	public List<HourValuePair> getGroupedLogFromDate(int sensorId, Date dtIn) {
+	public List<HourValuePair> getGroupedSensorLogFromDate(int sensorId, Date dtIn) {
 		final DecimalFormat df = new DecimalFormat();
 		df.setGroupingUsed(false);
 		AggregateIterable<Document> nit = mongoSensorLogRepository.getHour24ChartAggregateData(sensorId);
@@ -90,7 +90,7 @@ public class MongoLogService {
 	 * @param dtIn
 	 * @return
 	 */
-	public List<HourValuePair> getGroupedLogHistory(int sensorId, Date dtIn) {
+	public List<HourValuePair> getGroupedSensorLogHistory(int sensorId, Date dtIn) {
 		final DecimalFormat df = new DecimalFormat();
 		df.setGroupingUsed(false);
 		df.setMaximumFractionDigits(2);
