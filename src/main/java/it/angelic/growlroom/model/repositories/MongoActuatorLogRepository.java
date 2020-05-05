@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.repository.Query;
 
 import it.angelic.growlroom.model.mongo.ActuatorLog;
 
-public interface MongoActuatorLogRepository extends MongoRepository<ActuatorLog, String>,MongoAggregationRepository {
+public interface MongoActuatorLogRepository extends MongoRepository<ActuatorLog, String> {
 
 	@Override
 	List<ActuatorLog> findAll();

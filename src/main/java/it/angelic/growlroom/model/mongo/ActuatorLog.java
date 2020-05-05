@@ -3,9 +3,8 @@ package it.angelic.growlroom.model.mongo;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Id;
-import javax.persistence.Transient;
-
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
