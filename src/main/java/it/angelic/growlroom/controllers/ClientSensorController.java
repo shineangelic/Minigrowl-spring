@@ -89,7 +89,7 @@ public class ClientSensorController {
 		return commandsService.sendFullRefreshCommand();
 	}
 
-	@CrossOrigin // UNUSED, see supported commands
+	@CrossOrigin
 	@GetMapping(value = "/lastContact", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Date> getLastContact() {
 

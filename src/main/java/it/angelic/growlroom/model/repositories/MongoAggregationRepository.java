@@ -23,6 +23,7 @@ public interface MongoAggregationRepository {
 	
 	public ActuatorLog getLastByActuatorId(Long id);
 	
+	//per ogni attuatore ottiene i millisec di uptime
 	public AggregateIterable<Document> getIntervalActuatorsOnMsec(Date from, Date to);
 
 }

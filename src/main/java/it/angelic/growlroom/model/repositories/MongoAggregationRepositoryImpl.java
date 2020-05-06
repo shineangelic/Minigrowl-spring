@@ -8,7 +8,7 @@ import static com.mongodb.client.model.Aggregates.match;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.gte;
-import static com.mongodb.client.model.Filters.lt;
+import static com.mongodb.client.model.Filters.lte;
 import static com.mongodb.client.model.Filters.ne;
 
 import java.util.ArrayList;
@@ -74,8 +74,7 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 	}
 
 	public AggregateIterable<Document> getIntervalActuatorsOnMsec(Date from, Date to) {
-
-		AggregateIterable<Document> result = mongoTemplate.getCollection("actuators").aggregate(aggregaStati(from, to));
+		AggregateIterable<Document> result = mongoTemplate.getCollection("actuators").aggregate(aggregaTempoAccese(from, to));
 		return result;
 
 	}
@@ -90,8 +89,8 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 	 * ['$timeStamp','$prev.timeStamp'] } }}, {$match: { prev: {$ne:null}, 'prev.reading':"1" }}, {$group: { _id: '$id',
 	 * count: { $sum: '$msecAccesa' } }}]
 	 * 
-	 */private List<Bson> aggregaStati(Date in, Date out) {
-		return Arrays.asList(match(and(gte("timeStamp", in), lt("timeStamp", out))),
+	 */private List<Bson> aggregaTempoAccese(Date in, Date out) {
+		return Arrays.asList(match(and(gte("timeStamp", in), lte("timeStamp", out))),
 				lookup("actuators", "_id", "nextLogId", "previous"),
 				addFields(new Field("prev", new Document("$arrayElemAt", Arrays.asList("$previous", 0L)))),
 				addFields(new Field("msecAccesa",

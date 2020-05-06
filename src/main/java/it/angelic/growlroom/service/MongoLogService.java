@@ -106,7 +106,6 @@ public class MongoLogService {
 		for (Document document : nit) {
 			ret.add(document);
 		}
-		 
 		return ret;
 	}
 
