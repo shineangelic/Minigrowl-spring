@@ -23,7 +23,6 @@ import it.angelic.growlroom.model.mongo.ActuatorLog;
 import it.angelic.growlroom.model.mongo.SensorLog;
 import it.angelic.growlroom.model.repositories.HourValuePair;
 import it.angelic.growlroom.model.repositories.MongoActuatorLogRepository;
-import it.angelic.growlroom.model.repositories.MongoAggregationRepository;
 import it.angelic.growlroom.model.repositories.MongoSensorLogRepository;
 
 @Service
@@ -36,9 +35,6 @@ public class MongoLogService {
 	
 	@Autowired
 	private MongoActuatorLogRepository mongoActuatorLogRepository;
-
-	@Autowired
-	private MongoAggregationRepository mongoAggregationRepository;
 	
 	@Autowired
 	private MongoSequenceService sequenceGenerator;
@@ -57,7 +53,7 @@ public class MongoLogService {
 		in.setLogId(sequenceGenerator.generateSequence(ActuatorLog.SEQUENCE_NAME_ACTUATORS));
 		mongoActuatorLogRepository.insert(in);
 		
-		ActuatorLog last =mongoAggregationRepository.getLastByActuatorId(in.getId().longValue());
+		ActuatorLog last =mongoSensorLogRepository.getLastByActuatorId(in.getId().longValue());
 		//mongoActuatorLogRepository.findLastByActuatorId(in.getId());
 		if (last != null) {
 			last.setNextLogId(in.getLogId());
