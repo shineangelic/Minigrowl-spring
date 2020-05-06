@@ -9,6 +9,7 @@ import javax.print.PrintException;
 
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -69,7 +70,7 @@ public class ClientSensorController {
 		return new ResponseEntity<>(actuatorsService.getActuators(), HttpStatus.OK);
 	}
 
-	@CrossOrigin//UNUSED, see supported commands
+	@CrossOrigin // UNUSED, see supported commands
 	@GetMapping(value = "/commands", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Collection<Command>> getSupportedCommands() {
 		return ResponseEntity.status(HttpStatus.OK).body(commandsService.getSupportedCommands());
@@ -81,21 +82,21 @@ public class ClientSensorController {
 
 		return commandsService.sendCommand(sensing);
 	}
-	
+
 	@CrossOrigin
 	@PutMapping(value = "/commands/fullRefresh", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Long sendForceRefresh() {
 		return commandsService.sendFullRefreshCommand();
 	}
-	
-	@CrossOrigin//UNUSED, see supported commands
+
+	@CrossOrigin // UNUSED, see supported commands
 	@GetMapping(value = "/lastContact", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Date> getLastContact() {
-		
+
 		Date actM = actuatorsService.getLastContact();
 		Date sensM = sensorService.getLastContact();
-		
-		return ResponseEntity.status(HttpStatus.OK).body(actM.after(sensM)?actM:sensM);
+
+		return ResponseEntity.status(HttpStatus.OK).body(actM.after(sensM) ? actM : sensM);
 	}
 
 	@CrossOrigin
@@ -104,18 +105,18 @@ public class ClientSensorController {
 
 		return mongoLogService.deleteOldSensorLog();
 	}
-	
+
 	@CrossOrigin
 	@GetMapping(value = "/actuators/uptime", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Document>> getActuatorsUptime(
-			@RequestParam(value = "dataInizio", required = false) Date dtIn,@RequestParam(value = "dataFine", required = false) Date dtOut)
+			@RequestParam(value = "dataInizio", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dtIn,
+			@RequestParam(value = "dataFine", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dtOut)
 			throws FileNotFoundException, IllegalArgumentException {
-		 
+
 		// return new ResponseEntity<>(mongoLogService.getLogBySensorId(Integer.valueOf(id)), HttpStatus.OK);
 		return new ResponseEntity<>(mongoLogService.getGroupedActuatorUptime(dtIn, dtOut), HttpStatus.OK);
 	}
- 
-	
+
 	@CrossOrigin
 	@GetMapping(value = "/sensors/{id}/hourChart", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<HourValuePair>> getSensorsHourChart(@PathVariable String id,
@@ -124,9 +125,10 @@ public class ClientSensorController {
 		if (!(Integer.valueOf(id).intValue() > 0))
 			throw new IllegalArgumentException("INVALID sensor id: " + id);
 		// return new ResponseEntity<>(mongoLogService.getLogBySensorId(Integer.valueOf(id)), HttpStatus.OK);
-		return new ResponseEntity<>(mongoLogService.getGroupedSensorLogFromDate(Integer.valueOf(id), dtIn), HttpStatus.OK);
+		return new ResponseEntity<>(mongoLogService.getGroupedSensorLogFromDate(Integer.valueOf(id), dtIn),
+				HttpStatus.OK);
 	}
-	
+
 	@CrossOrigin
 	@GetMapping(value = "/sensors/{id}/historyChart", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<HourValuePair>> getSensorsHistoryChart(@PathVariable String id,
@@ -135,6 +137,7 @@ public class ClientSensorController {
 		if (!(Integer.valueOf(id).intValue() > 0))
 			throw new IllegalArgumentException("INVALID sensor id: " + id);
 		// return new ResponseEntity<>(mongoLogService.getLogBySensorId(Integer.valueOf(id)), HttpStatus.OK);
-		return new ResponseEntity<>(mongoLogService.getGroupedSensorLogHistory(Integer.valueOf(id), dtIn), HttpStatus.OK);
+		return new ResponseEntity<>(mongoLogService.getGroupedSensorLogHistory(Integer.valueOf(id), dtIn),
+				HttpStatus.OK);
 	}
 }
