@@ -75,7 +75,7 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 
 	public AggregateIterable<Document> getIntervalActuatorsOnMsec(Date from, Date to) {
 
-		AggregateIterable<Document> result = mongoTemplate.getCollection("sensors").aggregate(aggregaStati(from, to));
+		AggregateIterable<Document> result = mongoTemplate.getCollection("actuators").aggregate(aggregaStati(from, to));
 		return result;
 
 	}
