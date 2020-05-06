@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -21,11 +23,12 @@ import it.angelic.growlroom.model.mongo.ActuatorLog;
 import it.angelic.growlroom.model.mongo.SensorLog;
 import it.angelic.growlroom.model.repositories.HourValuePair;
 import it.angelic.growlroom.model.repositories.MongoActuatorLogRepository;
+import it.angelic.growlroom.model.repositories.MongoAggregationRepository;
 import it.angelic.growlroom.model.repositories.MongoSensorLogRepository;
 
 @Service
 public class MongoLogService {
-
+	Logger logger = LoggerFactory.getLogger(MongoLogService.class);
 	private final MongoTemplate mongoTemplate;
 
 	@Autowired
@@ -34,6 +37,9 @@ public class MongoLogService {
 	@Autowired
 	private MongoActuatorLogRepository mongoActuatorLogRepository;
 
+	@Autowired
+	private MongoAggregationRepository mongoAggregationRepository;
+	
 	@Autowired
 	private MongoSequenceService sequenceGenerator;
 
@@ -49,15 +55,17 @@ public class MongoLogService {
 	
 	public void logActuator(ActuatorLog in) {
 		in.setLogId(sequenceGenerator.generateSequence(ActuatorLog.SEQUENCE_NAME_ACTUATORS));
+		mongoActuatorLogRepository.insert(in);
 		
-		
-		ActuatorLog last = mongoActuatorLogRepository.findLastByActuatorId(in.getId());
+		ActuatorLog last =mongoAggregationRepository.getLastByActuatorId(in.getId().longValue());
+		//mongoActuatorLogRepository.findLastByActuatorId(in.getId());
 		if (last != null) {
 			last.setNextLogId(in.getLogId());
 			mongoActuatorLogRepository.save(last);
+			logger.info("Updated old log with next: " + last.getId());
 		}
 		
-		mongoActuatorLogRepository.insert(in);
+		
 	}
 
 	public List<HourValuePair> getHourChartSensorData(int sensorId, Date tholdDate) {
