@@ -107,7 +107,7 @@ public class ClientSensorController {
 	
 	@CrossOrigin
 	@GetMapping(value = "/actuators/uptime", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<Document>> getSensorsHourChart(
+	public ResponseEntity<List<Document>> getActuatorsUptime(
 			@RequestParam(value = "dataInizio", required = false) Date dtIn,@RequestParam(value = "dataFine", required = false) Date dtOut)
 			throws FileNotFoundException, IllegalArgumentException {
 		 
