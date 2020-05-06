@@ -25,11 +25,9 @@ public class ESPSensorsController {
 	private SensorsService sensorService;
 
 	@PutMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	// @ResponseStatus(HttpStatus.OK)
 	public int putSensor(@PathVariable String id, @RequestBody Sensor sensing) {
 
 		Sensor updated = sensorService.createOrUpdateSensor(sensing, id);
-
 		return updated.getId();
 	}
 

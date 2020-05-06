@@ -1,10 +1,10 @@
 # Minigrow back-end services
 
-Minigrow APIs are based on three kind of objects: `sensors`, `actuators` and `commands`. While the first two reflect real hardware devices with their own readings, the command is an abstraction used to drive such devices.
+Minigrow _APIs_ are based on three kind of objects: `sensors`, `actuators` and `commands`. While the first two reflect real hardware devices with their own readings, the command is an abstraction used to drive such devices.
 
-The spring-boot server exposes REST API to exchange such devices between harware boards and clients with JSON representation and keeps a history. Since this is a personal home project, no additional security nor login features are provided. The spring server may be used optionally, as the [Minigrowl-ESP](https://shineangelic.github.io/Minigrowl-ESP-LoRa32-OLED/) already implements some basic logic, but you'll need this running in order to archive logs and serve clients like [Minigrowl-react](https://shineangelic.github.io/Minigrowl-react/).
+The spring-boot server exposes REST API to exchange such devices between harware boards (ESP) and clients with JSON representation and keeps a history. Two separate api sides are exposed: one to be used by the board and the other from clients. Since this is a personal home project, no additional security nor login features are provided. The spring server may be used optionally, as the [Minigrowl-ESP](https://shineangelic.github.io/Minigrowl-ESP-LoRa32-OLED/) already implements some basic logic, but you'll need this running in order to archive logs and serve clients like [Minigrowl-react](https://shineangelic.github.io/Minigrowl-react/).
 
-*MongoDB* is being used for logging, it stores a new sensor log when detects value changes. Such collection is then used to aggregate data ready to be plotted
+*MongoDB* is being used for logging, it stores a new sensor log when detects value changes. Such collection is then used to aggregate data ready to be plotted. It also aggregates actuator stuatuses, so that you can know for how much time a given device was turned on. Devices in errors won't be saved.
 
 ![architecture diagram](/docs/diagram.png)
 
@@ -15,6 +15,8 @@ The spring-boot server exposes REST API to exchange such devices between harware
    /api/minigrowl/v1/actuators
    /api/minigrowl/v1/commands/queue/add
    /sensors/{id}/hourChart
+   /sensors/{id}/historyChart
+   /actuators/uptime
 ```
 
 # ESP32 APIs
@@ -22,7 +24,6 @@ The spring-boot server exposes REST API to exchange such devices between harware
    /api/esp/v1/actuators/id/{id}
    /api/esp/v1/sensors/id/{id}
    /api/esp/v1/commands
-   /api/minigrowl/v1/commands/queue/add
 ```
 
 # Websockets
