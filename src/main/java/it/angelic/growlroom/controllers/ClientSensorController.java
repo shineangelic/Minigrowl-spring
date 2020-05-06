@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.print.PrintException;
 
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -102,6 +103,16 @@ public class ClientSensorController {
 	public Long deleteLogs() {
 
 		return mongoLogService.deleteOldSensorLog();
+	}
+	
+	@CrossOrigin
+	@GetMapping(value = "/actuators/uptime", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<Document>> getSensorsHourChart(
+			@RequestParam(value = "dataInizio", required = false) Date dtIn,@RequestParam(value = "dataFine", required = false) Date dtOut)
+			throws FileNotFoundException, IllegalArgumentException {
+		 
+		// return new ResponseEntity<>(mongoLogService.getLogBySensorId(Integer.valueOf(id)), HttpStatus.OK);
+		return new ResponseEntity<>(mongoLogService.getGroupedActuatorUptime(dtIn, dtOut), HttpStatus.OK);
 	}
  
 	

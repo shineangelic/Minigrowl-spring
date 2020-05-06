@@ -1,12 +1,25 @@
 package it.angelic.growlroom.model.repositories;
 
+import static com.mongodb.client.model.Accumulators.sum;
+import static com.mongodb.client.model.Aggregates.addFields;
+import static com.mongodb.client.model.Aggregates.group;
+import static com.mongodb.client.model.Aggregates.lookup;
+import static com.mongodb.client.model.Aggregates.match;
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.gte;
+import static com.mongodb.client.model.Filters.lt;
+import static com.mongodb.client.model.Filters.ne;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.bson.BsonNull;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -16,6 +29,7 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Field;
 
 import it.angelic.growlroom.model.mongo.ActuatorLog;
 
@@ -58,39 +72,42 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 		return result;
 
 	}
+
+	public AggregateIterable<Document> getIntervalActuatorsOnMsec(Date from, Date to) {
+
+		AggregateIterable<Document> result = mongoTemplate.getCollection("sensors").aggregate(aggregaStati(from, to));
+		return result;
+
+	}
+
 	/*
 	 * PIPELINE
 	 * 
-	 * [{$match: { timeStamp: 
-        { $gte: ISODate("2016-06-01T00:00:00.000Z"), 
-        $lt: ISODate("2020-06-03T00:00:00.000Z")},
-
- }}, {$lookup: {
-  from: 'actuators',
-  localField: '_id',
-  foreignField: 'nextLogId',
-  as: 'previous'
-}}, {$addFields: {
-  prev: {$arrayElemAt: [ '$previous', 0]}
-}}, {$addFields: {
-  msecAccesa:{ $subtract: ['$timeStamp','$prev.timeStamp'] }    
-}}, {$match: {
-  prev: {$ne:null},
-  'prev.reading':"1"
-}}, {$group: {
-  _id: '$id',
- count: { $sum: '$msecAccesa' }
-}}]
-
-*/
+	 * [{$match: { timeStamp: { $gte: ISODate("2016-06-01T00:00:00.000Z"), $lt: ISODate("2020-06-03T00:00:00.000Z")},
+	 * 
+	 * }}, {$lookup: { from: 'actuators', localField: '_id', foreignField: 'nextLogId', as: 'previous' }}, {$addFields:
+	 * { prev: {$arrayElemAt: [ '$previous', 0]} }}, {$addFields: { msecAccesa:{ $subtract:
+	 * ['$timeStamp','$prev.timeStamp'] } }}, {$match: { prev: {$ne:null}, 'prev.reading':"1" }}, {$group: { _id: '$id',
+	 * count: { $sum: '$msecAccesa' } }}]
+	 * 
+	 */private List<Bson> aggregaStati(Date in, Date out) {
+		return Arrays.asList(match(and(gte("timeStamp", in), lt("timeStamp", out))),
+				lookup("actuators", "_id", "nextLogId", "previous"),
+				addFields(new Field("prev", new Document("$arrayElemAt", Arrays.asList("$previous", 0L)))),
+				addFields(new Field("msecAccesa",
+						new Document("$subtract", Arrays.asList("$timeStamp", "$prev.timeStamp")))),
+				match(and(ne("prev", new BsonNull()), eq("prev.reading", "1"))),
+				group("$id", sum("count", "$msecAccesa")));
+	}
 
 	private List<Document> aggrega24H(int sensorId) {
 		return Arrays.asList(new Document("$match", new Document("id", sensorId).append("err", false)),
 				new Document("$addFields",
-						new Document("ora24", new Document("$dateToString",
-								new Document("date", "$timeStamp").append("format", "%H")
-										.append("timezone", "Europe/Rome")))),
-				//new Document("$addFields", new Document("ora24", new Document("$hour", "$timeStamp"))),
+						new Document("ora24",
+								new Document("$dateToString",
+										new Document("date", "$timeStamp").append("format", "%H").append("timezone",
+												"Europe/Rome")))),
+				// new Document("$addFields", new Document("ora24", new Document("$hour", "$timeStamp"))),
 				new Document("$group", new Document("_id", "$ora24").append("avg", new Document("$avg", "$val"))
 						.append("max", new Document("$max", "$val")).append("min", new Document("$min", "$val"))));
 	}
@@ -126,16 +143,16 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 		return result;
 
 	}
-	
+
 	public ActuatorLog getLastByActuatorId(Long id) {
-	   /* return mongoTemplate.findOne(
-	        Query.query(Criteria.where("_id").is(id)),
-	        ActuatorLog.class,
-	        COLLECTION_NAME
-	    );*/
+		/*
+		 * return mongoTemplate.findOne( Query.query(Criteria.where("_id").is(id)), ActuatorLog.class, COLLECTION_NAME
+		 * );
+		 */
 		Query query = Query.query(Criteria.where("id").is(id));
-		query.with(new Sort(Sort.Direction.DESC,"timeStamp"));
+		query.with(new Sort(Sort.Direction.DESC, "timeStamp"));
 		return mongoTemplate.findOne(query, ActuatorLog.class);
-	    //return mongoTemplate.find(Query.query(Criteria.where("_id").is(id)), ActuatorLog.class).sort({ "date_time" : -1 }).limit(1);
+		// return mongoTemplate.find(Query.query(Criteria.where("_id").is(id)), ActuatorLog.class).sort({ "date_time" :
+		// -1 }).limit(1);
 	}
 }

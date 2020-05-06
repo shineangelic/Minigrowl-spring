@@ -22,5 +22,7 @@ public interface MongoAggregationRepository {
 	public AggregateIterable<Document> aggregaStoriaV2(int sensorI);
 	
 	public ActuatorLog getLastByActuatorId(Long id);
+	
+	public AggregateIterable<Document> getIntervalActuatorsOnMsec(Date from, Date to);
 
 }

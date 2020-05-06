@@ -98,6 +98,17 @@ public class MongoLogService {
 		Collections.sort(ret);
 		return ret;
 	}
+	
+	public List<Document> getGroupedActuatorUptime(Date dtIn, Date out) {
+		 
+		AggregateIterable<Document> nit = mongoSensorLogRepository.getIntervalActuatorsOnMsec(dtIn, out);
+		ArrayList<Document> ret = new ArrayList<>();
+		for (Document document : nit) {
+			ret.add(document);
+		}
+		 
+		return ret;
+	}
 
 	/**
 	 * WARN unused Date
