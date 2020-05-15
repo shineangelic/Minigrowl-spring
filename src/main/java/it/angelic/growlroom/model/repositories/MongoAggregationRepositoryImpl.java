@@ -133,9 +133,9 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 		AggregateIterable<Document> result = collection
 				.aggregate(
 						Arrays.asList(
-								new Document(new Document("$match",
+								/*new Document(new Document("$match",
 										new Document("timeStamp",
-												new Document("$gt", dtIn.getTime()).append("$lte", dtTo)))),
+												new Document("$gt", dtIn.getTime()).append("$lte", dtTo)))),*/
 								new Document("$match", new Document("id", sensorI).append("errorPresent", false)),
 								new Document("$addFields",
 										new Document("groupStamp", new Document("$dateToString",
