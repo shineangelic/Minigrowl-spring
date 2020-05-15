@@ -135,7 +135,7 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 						Arrays.asList(
 								new Document(new Document("$match",
 										new Document("timeStamp",
-												new Document("$gt", df.format(dtIn.getTime())).append("$lte", df.format(dtTo))))),
+												new Document("$gt", dtIn.getTime()).append("$lte", dtTo)))),
 								new Document("$match", new Document("id", sensorI).append("errorPresent", false)),
 								new Document("$addFields",
 										new Document("groupStamp", new Document("$dateToString",
