@@ -91,8 +91,7 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 	 * count: { $sum: '$msecAccesa' } }}]
 	 * 
 	 */private List<Bson> aggregaTempoAccese(Date in, Date out) {
-		return Arrays.asList(
-				match(and(gt("timeStamp", in), lte("timeStamp", out))),
+		return Arrays.asList(match(and(gt("timeStamp", in), lte("timeStamp", out))),
 				lookup("actuators", "_id", "nextLogId", "previous"),
 				addFields(new Field("prev", new Document("$arrayElemAt", Arrays.asList("$previous", 0L)))),
 				addFields(new Field("msecAccesa",
@@ -120,22 +119,21 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 	 */
 	@Override
 	public AggregateIterable<Document> aggregaStoriaV2(int sensorI) {
-		
+
 		Calendar dtIn = Calendar.getInstance();
-		Date dtTo  = new Date();
-		dtTo .setTime(dtIn.getTime().getTime());
-		
+		Date dtTo = new Date();
+		dtTo.setTime(dtIn.getTime().getTime());
+
 		dtIn.add(Calendar.DATE, -7);
-		
+
 		MongoCollection<Document> collection = mongoTemplate.getCollection("sensors");
- 
+
 		AggregateIterable<Document> result = collection
 				.aggregate(
 						Arrays.asList(
-								new Document("timeStamp", 
-									    new Document("$gt", 
-									    dtIn.getTime())
-									                .append("$lte", dtTo)), 
+								new Document(new Document("$match",
+										new Document("timeStamp",
+												new Document("$gt", dtIn.getTime()).append("$lte", dtTo)))),
 								new Document("$match", new Document("id", sensorI).append("errorPresent", false)),
 								new Document("$addFields",
 										new Document("groupStamp", new Document("$dateToString",
