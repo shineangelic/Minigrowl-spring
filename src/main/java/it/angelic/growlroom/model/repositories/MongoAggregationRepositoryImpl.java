@@ -11,6 +11,7 @@ import static com.mongodb.client.model.Filters.gt;
 import static com.mongodb.client.model.Filters.lte;
 import static com.mongodb.client.model.Filters.ne;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -123,6 +124,7 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 		Calendar dtIn = Calendar.getInstance();
 		Date dtTo = new Date();
 		dtTo.setTime(dtIn.getTime().getTime());
+		SimpleDateFormat df = new SimpleDateFormat("YYYY-MM-DD");
 
 		dtIn.add(Calendar.DATE, -7);
 
@@ -133,7 +135,7 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 						Arrays.asList(
 								new Document(new Document("$match",
 										new Document("timeStamp",
-												new Document("$gt", dtIn.getTime()).append("$lte", dtTo)))),
+												new Document("$gt", df.format(dtIn)).append("$lte", df.format(dtTo))))),
 								new Document("$match", new Document("id", sensorI).append("errorPresent", false)),
 								new Document("$addFields",
 										new Document("groupStamp", new Document("$dateToString",
