@@ -13,6 +13,7 @@ import static com.mongodb.client.model.Filters.ne;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -119,17 +120,23 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 	 */
 	@Override
 	public AggregateIterable<Document> aggregaStoriaV2(int sensorI) {
+		
+		Calendar dtIn = Calendar.getInstance();
+		Date dtTo  = new Date();
+		dtTo .setTime(dtIn.getTime().getTime());
+		
+		dtIn.add(Calendar.DATE, -7);
+		
 		MongoCollection<Document> collection = mongoTemplate.getCollection("sensors");
-
-		/*
-		 * AggregateIterable<Document> result = collection .aggregate(Arrays.asList(match(and(eq("id", 33L), eq("err",
-		 * false))), addFields(new Field<>("groupStamp", new Document("$dateToString", new Document("date",
-		 * "$timeStamp").append("format", "%Y-%m-%d:%H") .append("timezone", "Europe/Rome")))), group("$groupStamp",
-		 * avg("houravg", "$val"), min("hourmin", "$val"), max("hourmax", "$val")), new Document()));
-		 */
+ 
 		AggregateIterable<Document> result = collection
 				.aggregate(
-						Arrays.asList(new Document("$match", new Document("id", sensorI).append("err", false)),
+						Arrays.asList(
+								new Document("timeStamp", 
+									    new Document("$gt", 
+									    dtIn.getTime())
+									                .append("$lte", dtTo)), 
+								new Document("$match", new Document("id", sensorI).append("errorPresent", false)),
 								new Document("$addFields",
 										new Document("groupStamp", new Document("$dateToString",
 												new Document("date", "$timeStamp").append("format", "%Y-%m-%d:%H")
