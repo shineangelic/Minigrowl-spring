@@ -7,7 +7,7 @@ import static com.mongodb.client.model.Aggregates.lookup;
 import static com.mongodb.client.model.Aggregates.match;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.gte;
+import static com.mongodb.client.model.Filters.gt;
 import static com.mongodb.client.model.Filters.lte;
 import static com.mongodb.client.model.Filters.ne;
 
@@ -91,7 +91,7 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 	 * 
 	 */private List<Bson> aggregaTempoAccese(Date in, Date out) {
 		return Arrays.asList(
-				match(and(gte("timeStamp", in), lte("timeStamp", out))),
+				match(and(gt("timeStamp", in), lte("timeStamp", out))),
 				lookup("actuators", "_id", "nextLogId", "previous"),
 				addFields(new Field("prev", new Document("$arrayElemAt", Arrays.asList("$previous", 0L)))),
 				addFields(new Field("msecAccesa",
