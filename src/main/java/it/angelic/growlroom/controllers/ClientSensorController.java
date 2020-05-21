@@ -112,7 +112,7 @@ public class ClientSensorController {
 	public ResponseEntity<List<Document>> getActuatorsUptime(
 			@RequestParam(value = "dataInizio", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dtIn,
 			@RequestParam(value = "dataFine", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dtOut,
-			@RequestParam(value = "dataFine", required = true) Integer actuatorId)
+			@RequestParam(value = "actuatorId", required = true) Integer actuatorId)
 			throws FileNotFoundException, IllegalArgumentException {
 
 		// return new ResponseEntity<>(mongoLogService.getLogBySensorId(Integer.valueOf(id)), HttpStatus.OK);
