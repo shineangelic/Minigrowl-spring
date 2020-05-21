@@ -110,12 +110,13 @@ public class ClientSensorController {
 	@CrossOrigin
 	@GetMapping(value = "/actuators/uptime", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Document>> getActuatorsUptime(
-			@RequestParam(value = "dataInizio", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dtIn,
-			@RequestParam(value = "dataFine", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dtOut)
+			@RequestParam(value = "dataInizio", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dtIn,
+			@RequestParam(value = "dataFine", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dtOut,
+			@RequestParam(value = "dataFine", required = true) Integer actuatorId)
 			throws FileNotFoundException, IllegalArgumentException {
 
 		// return new ResponseEntity<>(mongoLogService.getLogBySensorId(Integer.valueOf(id)), HttpStatus.OK);
-		return new ResponseEntity<>(mongoLogService.getGroupedActuatorUptime(dtIn, dtOut), HttpStatus.OK);
+		return new ResponseEntity<>(mongoLogService.getGroupedActuatorUptime(dtIn, dtOut, actuatorId), HttpStatus.OK);
 	}
 
 	@CrossOrigin

@@ -99,9 +99,9 @@ public class MongoLogService {
 		return ret;
 	}
 	
-	public List<Document> getGroupedActuatorUptime(Date dtIn, Date out) {
+	public List<Document> getGroupedActuatorUptime(Date dtIn, Date out, Integer id) {
 		 
-		AggregateIterable<Document> nit = mongoSensorLogRepository.getIntervalActuatorsOnMsec(dtIn, out);
+		AggregateIterable<Document> nit = mongoSensorLogRepository.getIntervalActuatorsOnMsec(dtIn, out, id);
 		ArrayList<Document> ret = new ArrayList<>();
 		for (Document document : nit) {
 			ret.add(document);

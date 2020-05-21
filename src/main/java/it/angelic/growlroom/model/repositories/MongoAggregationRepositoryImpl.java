@@ -75,9 +75,9 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 
 	}
 
-	public AggregateIterable<Document> getIntervalActuatorsOnMsec(Date from, Date to) {
+	public AggregateIterable<Document> getIntervalActuatorsOnMsec(Date from, Date to, Integer actId) {
 		AggregateIterable<Document> result = mongoTemplate.getCollection("actuators")
-				.aggregate(aggregaTempoAccese(from, to));
+				.aggregate(aggregaTempoAccese(from, to,actId));
 		return result;
 	}
 
@@ -91,8 +91,8 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 	 * ['$timeStamp','$prev.timeStamp'] } }}, {$match: { prev: {$ne:null}, 'prev.reading':"1" }}, {$group: { _id: '$id',
 	 * count: { $sum: '$msecAccesa' } }}]
 	 * 
-	 */private List<Bson> aggregaTempoAccese(Date in, Date out) {
-		return Arrays.asList(match(and(gt("timeStamp", in), lte("timeStamp", out))),
+	 */private List<Bson> aggregaTempoAccese(Date in, Date out, Integer which) {
+		return Arrays.asList(match(and(gt("timeStamp", in), lte("timeStamp", out), eq("id", which))),
 				lookup("actuators", "_id", "nextLogId", "previous"),
 				addFields(new Field("prev", new Document("$arrayElemAt", Arrays.asList("$previous", 0L)))),
 				addFields(new Field("msecAccesa",
