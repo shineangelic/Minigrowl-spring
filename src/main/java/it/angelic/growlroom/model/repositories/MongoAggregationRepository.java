@@ -19,7 +19,7 @@ public interface MongoAggregationRepository {
 	
 
 	// aggregate pipeline V2
-	public AggregateIterable<Document> aggregaStoriaV2(int sensorI);
+	public AggregateIterable<Document> aggregaStoriaUltimaSettimana(int sensorI);
 	
 	public ActuatorLog getLastByActuatorId(Long id);
 	

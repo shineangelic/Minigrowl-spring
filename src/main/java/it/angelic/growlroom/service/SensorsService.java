@@ -1,7 +1,6 @@
 package it.angelic.growlroom.service;
 
 import java.util.Collection;
-import java.util.Date;
 
 import it.angelic.growlroom.model.Sensor;
 
@@ -12,6 +11,4 @@ public interface SensorsService {
 	public Collection<Sensor> getSensors();
 
 	public Sensor getSensorById(Integer sensorPid) throws SensorNotFoundException;
-
-	public Date getLastContact();
 }

@@ -83,7 +83,7 @@ public class MongoLogService {
 		return res.getDeletedCount();
 	}
 
-	public List<HourValuePair> getGroupedSensorLogFromDate(int sensorId, Date dtIn) {
+	public List<HourValuePair> getGroupedSensorLogHourChart(int sensorId, Date dtIn) {
 		final DecimalFormat df = new DecimalFormat();
 		df.setGroupingUsed(false);
 		AggregateIterable<Document> nit = mongoSensorLogRepository.getHour24ChartAggregateData(sensorId);
@@ -121,7 +121,7 @@ public class MongoLogService {
 		df.setGroupingUsed(false);
 		df.setMaximumFractionDigits(2);
 		Calendar c = Calendar.getInstance();
-		AggregateIterable<Document> nit = mongoSensorLogRepository.aggregaStoriaV2(sensorId);
+		AggregateIterable<Document> nit = mongoSensorLogRepository.aggregaStoriaUltimaSettimana(sensorId);
 		ArrayList<HourValuePair> ret = new ArrayList<>();
 		for (Document document : nit) {
 			// schifo perche` mongo torna le ore a 1 cifra

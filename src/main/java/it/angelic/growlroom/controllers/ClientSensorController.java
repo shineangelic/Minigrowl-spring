@@ -91,16 +91,6 @@ public class ClientSensorController {
 	}
 
 	@CrossOrigin
-	@GetMapping(value = "/lastContact", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Date> getLastContact() {
-
-		Date actM = actuatorsService.getLastContact();
-		Date sensM = sensorService.getLastContact();
-
-		return ResponseEntity.status(HttpStatus.OK).body(actM.after(sensM) ? actM : sensM);
-	}
-
-	@CrossOrigin
 	@PutMapping(value = "/sensors/log/delete", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Long deleteLogs() {
 
@@ -127,7 +117,7 @@ public class ClientSensorController {
 		if (!(Integer.valueOf(id).intValue() > 0))
 			throw new IllegalArgumentException("INVALID sensor id: " + id);
 		// return new ResponseEntity<>(mongoLogService.getLogBySensorId(Integer.valueOf(id)), HttpStatus.OK);
-		return new ResponseEntity<>(mongoLogService.getGroupedSensorLogFromDate(Integer.valueOf(id), dtIn),
+		return new ResponseEntity<>(mongoLogService.getGroupedSensorLogHourChart(Integer.valueOf(id), dtIn),
 				HttpStatus.OK);
 	}
 

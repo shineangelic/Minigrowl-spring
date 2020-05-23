@@ -70,15 +70,22 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 
 	public AggregateIterable<Document> getHour24ChartAggregateData(int sensorId) {
 
-		AggregateIterable<Document> result = mongoTemplate.getCollection("sensors").aggregate(aggrega24H(sensorId));
+		AggregateIterable<Document> result = mongoTemplate.getCollection("sensors")
+				.aggregate(aggrega24HUltimaSettimana(sensorId));
 		return result;
 
 	}
 
 	public AggregateIterable<Document> getIntervalActuatorsOnMsec(Date from, Date to, Integer actId) {
 		AggregateIterable<Document> result = mongoTemplate.getCollection("actuators")
-				.aggregate(aggregaTempoAccese(from, to,actId));
+				.aggregate(aggregaTempoAccese(from, to, actId));
 		return result;
+	}
+
+	public ActuatorLog getLastByActuatorId(Long id) {
+		Query query = Query.query(Criteria.where("id").is(id));
+		query.with(new Sort(Sort.Direction.DESC, "timeStamp"));
+		return mongoTemplate.findOne(query, ActuatorLog.class);
 	}
 
 	/*
@@ -101,8 +108,23 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 				group("$id", sum("count", "$msecAccesa")));
 	}
 
-	private List<Document> aggrega24H(int sensorId) {
-		return Arrays.asList(new Document("$match", new Document("id", sensorId).append("err", false)),
+	/**
+	 * Prima versione aggrega, primo grafico medie ultima settimana divise per ore
+	 * 
+	 * @param sensorId
+	 * @return
+	 */
+	private List<Document> aggrega24HUltimaSettimana(int sensorId) {
+		Calendar dtIn = Calendar.getInstance();
+		Date dtTo = new Date();
+		dtTo.setTime(dtIn.getTime().getTime());
+		SimpleDateFormat df = new SimpleDateFormat("YYYY-MM-DD");
+
+		dtIn.add(Calendar.DATE, -7);
+		return Arrays.asList(
+				new Document("$match",
+						new Document("id", sensorId).append("err", false).append("timeStamp",
+								new Document("$gt", dtIn.getTime()).append("$lte", dtTo))),
 				new Document("$addFields",
 						new Document("ora24",
 								new Document("$dateToString",
@@ -119,7 +141,7 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 	 * }, 'hourmin': { '$min': '$val' }, 'hourmax': { '$max': '$val' }, }}, {}]
 	 */
 	@Override
-	public AggregateIterable<Document> aggregaStoriaV2(int sensorI) {
+	public AggregateIterable<Document> aggregaStoriaUltimaSettimana(int sensorI) {
 
 		Calendar dtIn = Calendar.getInstance();
 		Date dtTo = new Date();
@@ -151,15 +173,4 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 
 	}
 
-	public ActuatorLog getLastByActuatorId(Long id) {
-		/*
-		 * return mongoTemplate.findOne( Query.query(Criteria.where("_id").is(id)), ActuatorLog.class, COLLECTION_NAME
-		 * );
-		 */
-		Query query = Query.query(Criteria.where("id").is(id));
-		query.with(new Sort(Sort.Direction.DESC, "timeStamp"));
-		return mongoTemplate.findOne(query, ActuatorLog.class);
-		// return mongoTemplate.find(Query.query(Criteria.where("_id").is(id)), ActuatorLog.class).sort({ "date_time" :
-		// -1 }).limit(1);
-	}
 }
