@@ -6,7 +6,7 @@
 
 	<groupId>org.springframework</groupId>
 	<artifactId>growlroom-be</artifactId>
-	<version>0.3</version>
+	<version>0.4</version>
 	<name>Mini Growlroom Spring</name>
 	<description>back-end services for minigrowlroom ESP32 boards and react clients</description>
 

@@ -12,6 +12,15 @@ import javax.persistence.OneToMany;
 
 @Entity
 public class Board {
+	public Board() {
+		super();
+
+	}
+
+	public Board(int boardId) {
+		super();
+		this.boardId = boardId;
+	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

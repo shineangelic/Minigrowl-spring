@@ -12,9 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import it.angelic.growlroom.model.Board;
 import it.angelic.growlroom.model.Sensor;
 import it.angelic.growlroom.model.UnitEnum;
 import it.angelic.growlroom.model.mongo.SensorLog;
+import it.angelic.growlroom.model.repositories.BoardsRepository;
 import it.angelic.growlroom.model.repositories.SensorsRepository;
 
 @Service
@@ -25,6 +27,10 @@ public class SensorsServiceImpl implements SensorsService {
 
 	@Autowired
 	private MongoLogService mongoLogService;
+	
+
+	@Autowired
+	private BoardsRepository boardsRepository;
 
 	private final SimpMessagingTemplate simpMessagingTemplate;
 
@@ -55,6 +61,51 @@ public class SensorsServiceImpl implements SensorsService {
 		this.simpMessagingTemplate.convertAndSend("/topic/sensors", updated);
 		// }
 		return updated;
+	}
+	
+	@Override
+	public Sensor createOrUpdateBoardSensor(Sensor sensing, String boardId, String checkId) {
+		if (!Integer.valueOf(checkId).equals(sensing.getId()))
+			throw new IllegalArgumentException("PID Mismatch: " + checkId + " vs" + sensing.getId());
+
+		Board tboard;
+		try {
+			tboard = boardsRepository.findByBoardId(Integer.valueOf(boardId));
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException("boardId ERR: " + e.getMessage());
+		}  
+		if (tboard == null) {
+			tboard = new Board(Integer.valueOf(boardId));
+			tboard.setBoardSensors(new ArrayList<>());
+			tboard = boardsRepository.save(tboard);
+		}
+		
+		switch (sensing.getTyp()) {
+		case BAROMETER:
+			sensing.setUinit(UnitEnum.MILLIBAR);
+			break;
+		case TEMPERATURE:
+			sensing.setUinit(UnitEnum.CELSIUS);
+			break;
+		case HUMIDITY:
+			sensing.setUinit(UnitEnum.PERCENT);
+			break;
+		case LIGHT:
+			sensing.setUinit(UnitEnum.LUMEN);
+			break;
+		case WATER_RESERVE:
+			sensing.setUinit(UnitEnum.LITER);
+			break;
+		default:
+			break;
+		}
+		if (!tboard.getBoardSensors().contains(sensing)) {
+			tboard.getBoardSensors().add(sensing);
+			boardsRepository.save(tboard);
+		}
+		sensing.setBoard(tboard);
+		sensing.setTimeStamp(new Date());
+		return sensorRepository.save(sensing);
 	}
 
 	public Sensor createSensorImpl(Sensor sensing, String checkId) {
@@ -104,6 +155,8 @@ public class SensorsServiceImpl implements SensorsService {
 
 		throw new SensorNotFoundException();
 	}
+
+
 
 
 

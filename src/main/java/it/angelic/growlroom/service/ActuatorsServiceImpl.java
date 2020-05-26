@@ -1,5 +1,6 @@
 package it.angelic.growlroom.service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
@@ -44,9 +45,11 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 			tboard = boardsRepository.findByBoardId(Integer.valueOf(boardId));
 		} catch (NumberFormatException e) {
 			throw new IllegalArgumentException("boardId ERR: " + e.getMessage());
-		} catch (Exception e) {
-			tboard = new Board();
-			tboard.setBoardId(Integer.valueOf(boardId));
+		}  
+		if (tboard == null) {
+			tboard = new Board(Integer.valueOf(boardId));
+			tboard.setBoardActuators(new ArrayList<>());
+			tboard = boardsRepository.save(tboard);
 		}
 
 		switch (dispositivo.getTyp()) {
@@ -70,9 +73,10 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 		}
 
 		dispositivo.setTimeStamp(new Date());
-		if (!tboard.getBoardActuators().contains(dispositivo))
+		if (!tboard.getBoardActuators().contains(dispositivo)) {
 			tboard.getBoardActuators().add(dispositivo);
-		
+			tboard = boardsRepository.save(tboard);
+		}
 		dispositivo.setBoard(tboard);
 		Actuator updated = actuatorsRepository.save(dispositivo);
 		if (!updated.isErrorPresent()) {

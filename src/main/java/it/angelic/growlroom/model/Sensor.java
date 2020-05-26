@@ -7,6 +7,8 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 @Entity 
 public class Sensor {
 	@Id
@@ -17,6 +19,7 @@ public class Sensor {
 	private Date timeStamp;
 	private boolean err;
 	
+	@JsonProperty("bid")
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "board_id", nullable = false)
 	private Board board;

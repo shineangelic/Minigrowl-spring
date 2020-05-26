@@ -25,35 +25,35 @@ public class ESPActuatorsControllerV2 {
 
 	@Autowired
 	private ActuatorsService actuatorsService;
-	 
+
 	private final SimpMessagingTemplate simpMessagingTemplate;
 
 	public ESPActuatorsControllerV2(SimpMessagingTemplate simpMessagingTemplate) {
 		this.simpMessagingTemplate = simpMessagingTemplate;
 	}
+
 	/**
 	 * Put degli attuatori, ovvero dispositivi reali quali ventilatori, HVAC e luci.
 	 * 
-	 * @param id PIN della board fisica
+	 * @param id
+	 *            PIN della board fisica
 	 * @param dispositivo
 	 * @return
 	 */
 	@PutMapping(value = "/{boardId}/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public int putActuator(@PathVariable String id,@PathVariable String boardid, @RequestBody Actuator dispositivo) {
+	public int putActuator(@PathVariable String id, @PathVariable String boardId, @RequestBody Actuator dispositivo) {
 		try {
 			int t2 = Integer.valueOf(id);
 		} catch (NumberFormatException e) {
 			throw new IllegalArgumentException("Unparsable ID: " + id);
 		}
-		
-		
-		Actuator updated = actuatorsService.createOrUpdateBoardActuator(dispositivo,boardid, id);
-		//TODO if (e` cambiato)
+
+		Actuator updated = actuatorsService.createOrUpdateBoardActuator(dispositivo, boardId, id);
+		// TODO if (e` cambiato)
 		// avvisa i sottoscrittori degli attuatori
 		this.simpMessagingTemplate.convertAndSend("/topic/actuators", updated);
-		
+
 		return dispositivo.getId();
 	}
-	
 
 }

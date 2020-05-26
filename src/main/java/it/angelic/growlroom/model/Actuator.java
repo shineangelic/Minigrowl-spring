@@ -33,6 +33,8 @@ public class Actuator implements Serializable {
 	private Date timeStamp;
 	@JsonProperty("err")
 	private boolean errorPresent;
+	
+	@JsonProperty("bid")
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "board_id", nullable = false)
 	private Board board;
