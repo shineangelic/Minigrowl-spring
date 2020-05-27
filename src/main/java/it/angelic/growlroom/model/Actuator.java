@@ -5,15 +5,17 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.ElementCollection;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
@@ -21,26 +23,31 @@ public class Actuator implements Serializable {
 
 	private static final long serialVersionUID = 8169740067541126448L;
 	@Id
-	private Integer id;
+	private Long id;
 	private ActuatorEnum typ;
 	@JsonProperty("val")
 	private String reading;
 	@JsonInclude(Include.NON_NULL)
 	private String humanName;
 	private UnitEnum uinit;
+
 	@JsonProperty("mode")
 	private short mode;
+
 	private Date timeStamp;
+
 	@JsonProperty("err")
 	private boolean errorPresent;
-	
+
 	@JsonProperty("bid")
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "board_id", nullable = false)
 	private Board board;
 
 	@JsonProperty("cmds")
-	@ElementCollection(targetClass = HashSet.class)
+	@OneToMany(mappedBy = "targetActuator", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JsonManagedReference
+	// @ElementCollection(targetClass = HashSet.class)
 	private Set<Command> supportedCommands;
 
 	public Actuator() {
@@ -49,11 +56,11 @@ public class Actuator implements Serializable {
 		supportedCommands = new HashSet<>();
 	}
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

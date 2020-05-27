@@ -57,7 +57,7 @@ public class EspControllerTests {
 	@Test
 	public void testActRepository() {
 		Actuator emp = new Actuator();
-		emp.setId(22);
+		emp.setId(22l);
 		emp.setTyp(ActuatorEnum.HUMIDIFIER);
 		actrepository.save(emp);
 		Assert.assertNotNull(emp.getId());
@@ -68,7 +68,7 @@ public class EspControllerTests {
 	public void testComRepository() {
 		Command emp = new Command();
 		emp.setName("df");
-		emp.setTargetActuatorId(22);
+		emp.setTargetActuator(new Actuator());
 		emp.setParameter("1");
 		emp = comrepository.save(emp);
 		Assert.assertNotNull(emp.getParameter());

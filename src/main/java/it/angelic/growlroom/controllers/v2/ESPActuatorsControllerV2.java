@@ -41,7 +41,7 @@ public class ESPActuatorsControllerV2 {
 	 * @return
 	 */
 	@PutMapping(value = "/{boardId}/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public int putActuator(@PathVariable String id, @PathVariable String boardId, @RequestBody Actuator dispositivo) {
+	public long putActuator(@PathVariable String id, @PathVariable String boardId, @RequestBody Actuator dispositivo) {
 		try {
 			int t2 = Integer.valueOf(id);
 		} catch (NumberFormatException e) {

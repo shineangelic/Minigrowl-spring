@@ -37,8 +37,8 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 
 	@Override
 	public Actuator createOrUpdateBoardActuator(Actuator dispositivo, String boardId, String id) {
-		if (!Integer.valueOf(id).equals(dispositivo.getId()))
-			throw new IllegalArgumentException("PID Mismatch: " + id + " vs" + dispositivo.getId());
+		if (!Long.valueOf(id).equals(dispositivo.getId()))
+			throw new IllegalArgumentException("PID Mismatch: " + id + " vs " + dispositivo.getId());
 
 		Board tboard;
 		try {
@@ -50,7 +50,7 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 			tboard = new Board(Integer.valueOf(boardId));
 			tboard.setBoardActuators(new ArrayList<>());
 			tboard = boardsRepository.save(tboard);
-		}
+		} 
 
 		switch (dispositivo.getTyp()) {
 		case FAN:
@@ -66,20 +66,24 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 			dispositivo.setUinit(UnitEnum.CELSIUS);
 			break;
 		}
+		
+		dispositivo.setTimeStamp(new Date());
+		dispositivo.setBoard(tboard);
+
 
 		for (Command com : dispositivo.getSupportedCommands()) {
-			com.setTargetActuatorId(Integer.valueOf(id));
-			commandsRepository.save(com);
+			com.setTargetActuator(dispositivo);
+			//commandsRepository.save(com);
 		}
-
-		dispositivo.setTimeStamp(new Date());
-		if (!tboard.getBoardActuators().contains(dispositivo)) {
-			tboard.getBoardActuators().add(dispositivo);
-			tboard = boardsRepository.save(tboard);
-		}
-		dispositivo.setBoard(tboard);
 		Actuator updated = actuatorsRepository.save(dispositivo);
+		
 		if (!updated.isErrorPresent()) {
+			
+			if (!tboard.getBoardActuators().contains(dispositivo)) {
+				tboard.getBoardActuators().add(dispositivo);
+				tboard = boardsRepository.save(tboard);
+			}
+			
 			try {
 				mongoLogService.logActuator(new ActuatorLog(updated));
 			} catch (Exception e) {
@@ -111,7 +115,7 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 		}
 
 		for (Command com : dispositivo.getSupportedCommands()) {
-			com.setTargetActuatorId(Integer.valueOf(id));
+			com.setTargetActuator(dispositivo);
 			commandsRepository.save(com);
 		}
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -71,10 +72,10 @@ public class CommandsServiceImpl implements CommandsService {
 	@Override
 	public Long sendCommand(Command toExecurte) {
 
-		int targetActuator = toExecurte.getTargetActuator();
-		Actuator checkSensor = actuatorsRepository.findById(targetActuator);
+		Long targetActuator = toExecurte.getTargetActuator().getId();
+		Optional<Actuator> checkSensor = actuatorsRepository.findById(targetActuator);
 
-		if (checkSensor == null || !checkSensor.getSupportedCommands().contains(toExecurte))
+		if (!checkSensor.isPresent() || !checkSensor.get().getSupportedCommands().contains(toExecurte))
 			throw new IllegalArgumentException("UNSUPPORTED COMMAND: " + toExecurte.toString());
 
 		QueueCommands arg0 = new QueueCommands(toExecurte);
@@ -87,7 +88,7 @@ public class CommandsServiceImpl implements CommandsService {
 		Command forceRefresh = new Command();
 		forceRefresh.setParameter("-3");
 		forceRefresh.setName("Refresh");
-		forceRefresh.setTargetActuatorId(-1);
+		forceRefresh.setTargetActuator(null);
 		QueueCommands arg0 = new QueueCommands(forceRefresh);
 		queueCommands.save(arg0);
 		return queueCommands.count();

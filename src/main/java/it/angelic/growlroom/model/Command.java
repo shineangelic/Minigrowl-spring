@@ -3,12 +3,22 @@ package it.angelic.growlroom.model;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * Singolo Comando reale quale spegni luici o set temperatura la chiave e` data anche dal disp a cui e` associato
@@ -17,7 +27,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 @Entity
-@IdClass(CompositeCommandKey.class)
+@Table(uniqueConstraints={
+	    @UniqueConstraint(columnNames = {"parameter", "targetActuator"})
+	}) 
 public class Command implements Serializable {
 	/**
 	 * 
@@ -26,16 +38,25 @@ public class Command implements Serializable {
 
 	private String name;
 
-	@JsonProperty("val")
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@JsonIgnore
+	private Long commandId;
+	
+	@JsonProperty("val")
 	private String parameter;
 	@JsonInclude(Include.NON_NULL)
 	private Long idOnQueue;
 
 	// dispositivo destinatario
-	@Id
+ 
 	@JsonProperty("tgt")
-	private int targetActuator;
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+	@JoinColumn(name = "targetActuator", nullable = false)
+	@JsonBackReference
+	@JsonSerialize(using = IntActuatorSerializer.class, as=Integer.class)
+	@JsonDeserialize(using = ActuatorDeserializer.class)
+	private Actuator targetActuator;
 
 	@Override
 	public String toString() {
@@ -68,11 +89,11 @@ public class Command implements Serializable {
 		this.name = name;
 	}
 
-	public int getTargetActuator() {
+	public Actuator getTargetActuator() {
 		return targetActuator;
 	}
 
-	public void setTargetActuatorId(int targetActuator) {
+	public void setTargetActuator(Actuator targetActuator) {
 		this.targetActuator = targetActuator;
 	}
 
@@ -84,12 +105,21 @@ public class Command implements Serializable {
 		this.idOnQueue = idOnQueue;
 	}
 
+	 
+
+	public Long getCommandId() {
+		return commandId;
+	}
+
+	public void setCommandId(Long commandId) {
+		this.commandId = commandId;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((parameter == null) ? 0 : parameter.hashCode());
-		result = prime * result + targetActuator;
+		result = prime * result + ((commandId == null) ? 0 : commandId.hashCode());
 		return result;
 	}
 
@@ -102,12 +132,10 @@ public class Command implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Command other = (Command) obj;
-		if (parameter == null) {
-			if (other.parameter != null)
+		if (commandId == null) {
+			if (other.commandId != null)
 				return false;
-		} else if (!parameter.equals(other.parameter))
-			return false;
-		if (targetActuator != other.targetActuator)
+		} else if (!commandId.equals(other.commandId))
 			return false;
 		return true;
 	}

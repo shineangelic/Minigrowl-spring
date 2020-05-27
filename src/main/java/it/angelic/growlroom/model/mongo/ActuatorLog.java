@@ -25,7 +25,7 @@ public class ActuatorLog implements Serializable {
 	private Long logId;
 
 	private Long nextLogId;
-	private Integer id;
+	private Long id;
 	private ActuatorEnum typ;
 	@JsonProperty("val")
 	private String reading;
@@ -52,11 +52,11 @@ public class ActuatorLog implements Serializable {
 		boardId = updated.getBoard().getBoardId();
 	}
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
