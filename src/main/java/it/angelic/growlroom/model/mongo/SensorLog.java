@@ -12,11 +12,11 @@ import it.angelic.growlroom.model.UnitEnum;
 import lombok.Data;
 
 @Data
-@Document(collection = "sensors")
+@Document(collection = "sensorsV2")
 public class SensorLog {
 
 	@Transient
-	public static final String SEQUENCE_NAME = "users_sequence";
+	public static final String SEQUENCE_NAME = "sensorsv2_sequence";
 
 
 	@Id
@@ -28,6 +28,7 @@ public class SensorLog {
 	private UnitEnum uinit;
 	private Date timeStamp;
 	private boolean err;
+	private Integer boardId;
 	
 	
 
@@ -41,6 +42,7 @@ public class SensorLog {
 		val = Float.valueOf(updated.getVal());
 		timeStamp = updated.getTimeStamp();
 		err = updated.isErr();
+		boardId = updated.getBoard().getBoardId();
 	}
 
 	public Integer getId() {
@@ -102,6 +104,14 @@ public class SensorLog {
 
 	public void setLogId(Long logId) {
 		this.logId = logId;
+	}
+
+	public Integer getBoardId() {
+		return boardId;
+	}
+
+	public void setBoardId(Integer boardId) {
+		this.boardId = boardId;
 	}
 
 }

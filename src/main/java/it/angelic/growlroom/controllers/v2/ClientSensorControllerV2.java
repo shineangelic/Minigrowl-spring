@@ -1,4 +1,4 @@
-package it.angelic.growlroom.controllers;
+package it.angelic.growlroom.controllers.v2;
 
 import java.io.FileNotFoundException;
 import java.util.Collection;
@@ -41,7 +41,7 @@ import it.angelic.growlroom.service.SensorsService;
 @RestController
 @CrossOrigin
 @RequestMapping(value = "/api/minigrowl/v2")
-public class ClientSensorController {
+public class ClientSensorControllerV2 {
 
 	@Autowired
 	private SensorsService sensorService;
@@ -56,49 +56,53 @@ public class ClientSensorController {
 	private MongoLogService mongoLogService;
 
 	@CrossOrigin
-	@GetMapping(value = "/sensors", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/sensors/{boardId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Collection<Sensor>> getSensors(
-			@RequestParam(value = "dataInizio", required = false) Date dtIn)
+			@RequestParam(value = "dataInizio", required = false) Date dtIn, @PathVariable String boardId)
 			throws FileNotFoundException, PrintException {
 
 		return new ResponseEntity<>(sensorService.getSensors(), HttpStatus.OK);
 	}
 
 	@CrossOrigin
-	@GetMapping(value = "/actuators", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/actuators/{boardId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Collection<Actuator>> getActuators() {
 
 		return new ResponseEntity<>(actuatorsService.getActuators(), HttpStatus.OK);
 	}
 
 	@CrossOrigin // UNUSED, see supported commands
-	@GetMapping(value = "/commands", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/commands/{boardId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Collection<Command>> getSupportedCommands() {
 		return ResponseEntity.status(HttpStatus.OK).body(commandsService.getSupportedCommands());
 	}
 
 	@CrossOrigin
-	@PutMapping(value = "/commands/queue/add", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Long sendCommand(@RequestBody Command sensing) {
-
+	@PutMapping(value = "/commands/{boardId}/queue/add", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public Long sendCommand(@RequestBody Command sensing, @PathVariable String boardId) {
+		try {
+			int t2 = Integer.valueOf(boardId);
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException("Unparsable boardId: " + boardId);
+		}
 		return commandsService.sendCommand(sensing);
 	}
 
 	@CrossOrigin
-	@PutMapping(value = "/commands/fullRefresh", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(value = "/commands/{boardId}/fullRefresh", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Long sendForceRefresh() {
 		return commandsService.sendFullRefreshCommand();
 	}
 
 	@CrossOrigin
-	@PutMapping(value = "/sensors/log/delete", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(value = "/sensors/{boardId}/log/delete", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Long deleteLogs() {
 
 		return mongoLogService.deleteOldSensorLog();
 	}
 
 	@CrossOrigin
-	@GetMapping(value = "/actuators/uptime", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/actuators/{boardId}/uptime", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Document>> getActuatorsUptime(
 			@RequestParam(value = "dataInizio", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date dtIn,
 			@RequestParam(value = "dataFine", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date dtOut,
@@ -110,7 +114,7 @@ public class ClientSensorController {
 	}
 
 	@CrossOrigin
-	@GetMapping(value = "/sensors/{id}/hourChart", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/sensors/{boardId}/{id}/hourChart", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<HourValuePair>> getSensorsHourChart(@PathVariable String id,
 			@RequestParam(value = "dataInizio", required = false) Date dtIn)
 			throws FileNotFoundException, IllegalArgumentException {
@@ -122,7 +126,7 @@ public class ClientSensorController {
 	}
 
 	@CrossOrigin
-	@GetMapping(value = "/sensors/{id}/historyChart", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/sensors/{boardId}/{id}/historyChart", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<HourValuePair>> getSensorsHistoryChart(@PathVariable String id,
 			@RequestParam(value = "dataInizio", required = false) Date dtIn)
 			throws FileNotFoundException, IllegalArgumentException {

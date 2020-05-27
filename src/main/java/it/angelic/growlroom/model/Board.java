@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Board {
 	public Board() {
@@ -27,9 +29,11 @@ public class Board {
 	private int boardId;
 
 	@OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JsonIgnore
 	List<Sensor> boardSensors;
 
 	@OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JsonIgnore
 	List<Actuator> boardActuators;
 
 	public int getBoardId() {

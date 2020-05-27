@@ -14,12 +14,12 @@ import it.angelic.growlroom.model.ActuatorEnum;
 import lombok.Data;
 
 @Data
-@Document(collection = "actuators")
+@Document(collection = "actuatorsV2")
 public class ActuatorLog implements Serializable {
 
 	private static final long serialVersionUID = 816445541126448L;
 	@Transient
-	public static final String SEQUENCE_NAME_ACTUATORS = "actuators_sequence";
+	public static final String SEQUENCE_NAME_ACTUATORS = "actuatorsv2_sequence";
 
 	@Id
 	private Long logId;
@@ -34,6 +34,8 @@ public class ActuatorLog implements Serializable {
 	private Date timeStamp;
 	@JsonProperty("err")
 	private boolean errorPresent;
+	@JsonProperty("bid")
+	private Integer boardId;
 
 	public ActuatorLog() {
 		super();
@@ -47,6 +49,7 @@ public class ActuatorLog implements Serializable {
 		mode = updated.getMode();
 		errorPresent = updated.isErrorPresent();
 		typ = updated.getTyp();
+		boardId = updated.getBoard().getBoardId();
 	}
 
 	public Integer getId() {
@@ -116,6 +119,14 @@ public class ActuatorLog implements Serializable {
 
 	public void setNextLogId(Long long1) {
 		this.nextLogId = long1;
+	}
+
+	public Integer getBoardId() {
+		return boardId;
+	}
+
+	public void setBoardId(Integer boardId) {
+		this.boardId = boardId;
 	}
 
 }

@@ -1,4 +1,4 @@
-package it.angelic.growlroom.controllers;
+package it.angelic.growlroom.controllers.v2;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -24,10 +24,10 @@ public class ESPSensorsControllerV2 {
 	@Autowired
 	private SensorsService sensorService;
 
-	@PutMapping(value = "/{boardid}/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public int putSensor(@PathVariable String id, @PathVariable String boardid, @RequestBody Sensor sensing) {
+	@PutMapping(value = "/{boardId}/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public int putSensor(@PathVariable String id, @PathVariable String boardId, @RequestBody Sensor sensing) {
 
-		Sensor updated = sensorService.createOrUpdateBoardSensor(sensing,boardid, id);
+		Sensor updated = sensorService.createOrUpdateBoardSensor(sensing, boardId, id);
 		return updated.getId();
 	}
 

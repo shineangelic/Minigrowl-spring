@@ -40,6 +40,22 @@ public class CommandsServiceImpl implements CommandsService {
 	}
 
 	@Override
+	public Collection<Command> getUnexecutedCommands(String boardId) {
+		ArrayList<Command> ret = new ArrayList<>();
+		
+		//List<Actuator> act = actuatorsRepository.findByBoardId(Integer.valueOf(boardId));
+		
+		List<QueueCommands> pes = queueCommands.findByBoardId(Integer.valueOf(boardId));
+		for (QueueCommands queueCommands : pes) {
+			Command actualCmd = queueCommands.getToExecute();
+			actualCmd.setIdOnQueue(queueCommands.getIdQueueCommand());
+			ret.add(actualCmd);
+			break;// only 1 per volta
+		}
+		return ret;
+	}
+	
+	@Override
 	public Collection<Command> getUnexecutedCommands() {
 		ArrayList<Command> ret = new ArrayList<>();
 		List<QueueCommands> pes = queueCommands.findAll();
@@ -82,6 +98,12 @@ public class CommandsServiceImpl implements CommandsService {
 		queueCommands.deleteById(queueCommandId);
 		return !queueCommands.existsById(queueCommandId);
 	}
+	
+	@Override
+	public boolean removeExecutedCommand(String boardId, Long queueCommandId, Command executed) {
+		queueCommands.deleteById(queueCommandId);
+		return !queueCommands.existsById(queueCommandId);
+	}
 
 	@Override
 	public Collection<Command> getSupportedCommands() {
@@ -92,5 +114,9 @@ public class CommandsServiceImpl implements CommandsService {
 		}
 		return ret;
 	}
+
+
+
+
 
 }
