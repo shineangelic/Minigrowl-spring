@@ -37,58 +37,67 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 
 	@Override
 	public Actuator createOrUpdateBoardActuator(Actuator dispositivo, String boardId, String id) {
-		if (!Long.valueOf(id).equals(dispositivo.getId()))
-			throw new IllegalArgumentException("PID Mismatch: " + id + " vs " + dispositivo.getId());
+		if (!Integer.valueOf(id).equals(dispositivo.getPid()))
+			throw new IllegalArgumentException("PID Mismatch: " + id + " vs " + dispositivo.getPid());
+		 
 
-		Board tboard;
-		try {
-			tboard = boardsRepository.findByBoardId(Integer.valueOf(boardId));
-		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException("boardId ERR: " + e.getMessage());
-		}  
-		if (tboard == null) {
-			tboard = new Board(Integer.valueOf(boardId));
-			tboard.setBoardActuators(new ArrayList<>());
-			tboard = boardsRepository.save(tboard);
-		} 
-
-		switch (dispositivo.getTyp()) {
-		case FAN:
-		case OUTTAKE:
-		case LIGHT:
-			dispositivo.setUinit(UnitEnum.TURNED_ON);
-			break;
-		case HUMIDIFIER:
-			// reserve tank?
-			dispositivo.setUinit(UnitEnum.LITER);
-			break;
-		case HVAC:
-			dispositivo.setUinit(UnitEnum.CELSIUS);
-			break;
-		}
-		
-		dispositivo.setTimeStamp(new Date());
-		dispositivo.setBoard(tboard);
-
-
-		for (Command com : dispositivo.getSupportedCommands()) {
-			com.setTargetActuator(dispositivo);
-			//commandsRepository.save(com);
-		}
-		Actuator updated = actuatorsRepository.save(dispositivo);
-		
-		if (!updated.isErrorPresent()) {
-			
-			if (!tboard.getBoardActuators().contains(dispositivo)) {
-				tboard.getBoardActuators().add(dispositivo);
+		Actuator previous = actuatorsRepository.findByBoardIdAndPid(Long.valueOf(boardId), dispositivo.getPid());
+		Actuator updated = null;
+		if (previous == null) {
+			Board tboard;
+			try {
+				tboard = boardsRepository.findByBoardId(Long.valueOf(boardId));
+			} catch (NumberFormatException e) {
+				throw new IllegalArgumentException("boardId ERR: " + e.getMessage());
+			}
+			if (tboard == null) {
+				tboard = new Board(Long.valueOf(boardId));
+				tboard.setBoardActuators(new ArrayList<>());
 				tboard = boardsRepository.save(tboard);
 			}
-			
-			try {
-				mongoLogService.logActuator(new ActuatorLog(updated));
-			} catch (Exception e) {
-				logger.warn("MongoDB exc: " + e.getMessage());
+
+			switch (dispositivo.getTyp()) {
+			case FAN:
+			case OUTTAKE:
+			case LIGHT:
+				dispositivo.setUinit(UnitEnum.TURNED_ON);
+				break;
+			case HUMIDIFIER:
+				// reserve tank?
+				dispositivo.setUinit(UnitEnum.LITER);
+				break;
+			case HVAC:
+				dispositivo.setUinit(UnitEnum.CELSIUS);
+				break;
 			}
+
+			dispositivo.setTimeStamp(new Date());
+			dispositivo.setBoard(tboard);
+
+			for (Command com : dispositivo.getSupportedCommands()) {
+				com.setTargetActuator(dispositivo);
+				// commandsRepository.save(com);
+			}
+			updated = actuatorsRepository.save(dispositivo);
+
+			if (!updated.isErrorPresent()) {
+
+				if (!tboard.getBoardActuators().contains(dispositivo)) {
+					tboard.getBoardActuators().add(dispositivo);
+					tboard = boardsRepository.save(tboard);
+				}
+
+				try {
+					mongoLogService.logActuator(new ActuatorLog(updated));
+				} catch (Exception e) {
+					logger.warn("MongoDB exc: " + e.getMessage());
+				}
+			}
+		} else {
+			previous.setReading(dispositivo.getReading());
+			previous.setTimeStamp(new Date());
+			previous.setErrorPresent(dispositivo.isErrorPresent());
+			updated = actuatorsRepository.save(previous);
 		}
 
 		return updated;
@@ -96,8 +105,8 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 
 	@Override
 	public Actuator createOrUpdateActuator(Actuator dispositivo, String id) {
-		if (!Integer.valueOf(id).equals(dispositivo.getId()))
-			throw new IllegalArgumentException("PID Mismatch: " + id + " vs" + dispositivo.getId());
+		if (!Integer.valueOf(id).equals(dispositivo.getPid()))
+			throw new IllegalArgumentException("PID Mismatch: " + id + " vs" + dispositivo.getPid());
 
 		switch (dispositivo.getTyp()) {
 		case FAN:

@@ -28,7 +28,7 @@ public class ESPSensorsController {
 	public int putSensor(@PathVariable String id, @RequestBody Sensor sensing) {
 
 		Sensor updated = sensorService.createOrUpdateSensor(sensing, id);
-		return updated.getId();
+		return updated.getPid();
 	}
 
 }

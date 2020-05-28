@@ -47,9 +47,9 @@ public class EspControllerTests {
 	@Test
 	public void testRepository() {
 		Sensor emp = new Sensor();
-		emp.setId(22);
+		emp.setPid(22);
 		repository.save(emp);
-		Assert.assertNotNull(emp.getId());
+		Assert.assertNotNull(emp.getPid());
 
 		Assert.assertTrue(repository.count() > 0);
 	}
@@ -57,10 +57,10 @@ public class EspControllerTests {
 	@Test
 	public void testActRepository() {
 		Actuator emp = new Actuator();
-		emp.setId(22l);
+		emp.setPid(22);
 		emp.setTyp(ActuatorEnum.HUMIDIFIER);
 		actrepository.save(emp);
-		Assert.assertNotNull(emp.getId());
+		Assert.assertNotNull(emp.getPid());
 
 		Assert.assertTrue(actrepository.count() > 0);
 	}

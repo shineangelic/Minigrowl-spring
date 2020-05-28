@@ -1,5 +1,6 @@
 package it.angelic.growlroom.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -13,20 +14,25 @@ import javax.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-public class Board {
+public class Board implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1142251055437613043L;
+
 	public Board() {
 		super();
 
 	}
 
-	public Board(int boardId) {
+	public Board(Long boardId) {
 		super();
 		this.boardId = boardId;
 	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int boardId;
+	private Long boardId;
 
 	@OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JsonIgnore
@@ -36,11 +42,11 @@ public class Board {
 	@JsonIgnore
 	List<Actuator> boardActuators;
 
-	public int getBoardId() {
+	public Long getBoardId() {
 		return boardId;
 	}
 
-	public void setBoardId(int boardId) {
+	public void setBoardId(Long boardId) {
 		this.boardId = boardId;
 	}
 

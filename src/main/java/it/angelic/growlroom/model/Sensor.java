@@ -4,32 +4,44 @@ import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-@Entity 
+
+@Entity
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "board_id", "pid" }) })
 public class Sensor {
 	@Id
-	private Integer id;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@JsonIgnore
+	private Long sensorId;
+
+	@JsonProperty("id")
+	private Integer pid;
 	private SensorEnum typ;
 	private String val;
 	private UnitEnum uinit;
 	private Date timeStamp;
 	private boolean err;
-	
+
 	@JsonProperty("bid")
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "board_id", nullable = false)
 	private Board board;
 
-	public Integer getId() {
-		return id;
+	public Integer getPid() {
+		return pid;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	public void setPid(Integer id) {
+		this.pid = id;
 	}
 
 	public SensorEnum getTyp() {
@@ -71,10 +83,10 @@ public class Sensor {
 	public void setErr(boolean errorPresent) {
 		this.err = errorPresent;
 	}
-	
+
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + "-" + getId();
+		return this.getClass().getSimpleName() + "-" + getPid();
 	}
 
 	public Board getBoard() {
@@ -89,7 +101,7 @@ public class Sensor {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((pid == null) ? 0 : pid.hashCode());
 		return result;
 	}
 
@@ -102,12 +114,20 @@ public class Sensor {
 		if (getClass() != obj.getClass())
 			return false;
 		Sensor other = (Sensor) obj;
-		if (id == null) {
-			if (other.id != null)
+		if (pid == null) {
+			if (other.pid != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!pid.equals(other.pid))
 			return false;
 		return true;
+	}
+
+	public Long getSensorId() {
+		return sensorId;
+	}
+
+	public void setSensorId(Long sensorId) {
+		this.sensorId = sensorId;
 	}
 
 }

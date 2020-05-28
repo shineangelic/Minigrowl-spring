@@ -27,7 +27,6 @@ public class SensorsServiceImpl implements SensorsService {
 
 	@Autowired
 	private MongoLogService mongoLogService;
-	
 
 	@Autowired
 	private BoardsRepository boardsRepository;
@@ -44,9 +43,9 @@ public class SensorsServiceImpl implements SensorsService {
 	public Sensor createOrUpdateSensor(Sensor sensing, String checkId) {
 		float dbs = -1f;
 		try {
-			dbs = Float.valueOf(getSensorById(sensing.getId()).getVal());
+			dbs =  Float.valueOf(getSensorByPid(sensing.getPid()).getVal());
 		} catch (SensorNotFoundException e) {
-			logger.warn("Sensore non Trovato? " + sensing.getId());
+			logger.warn("Sensore non Trovato? " + sensing.getPid());
 		}
 
 		Sensor updated = createSensorImpl(sensing, checkId);
@@ -62,55 +61,62 @@ public class SensorsServiceImpl implements SensorsService {
 		// }
 		return updated;
 	}
-	
+
 	@Override
 	public Sensor createOrUpdateBoardSensor(Sensor sensing, String boardId, String checkId) {
-		if (!Integer.valueOf(checkId).equals(sensing.getId()))
-			throw new IllegalArgumentException("PID Mismatch: " + checkId + " vs" + sensing.getId());
+		if (!Integer.valueOf(checkId).equals(sensing.getPid()))
+			throw new IllegalArgumentException("PID Mismatch: " + checkId + " vs" + sensing.getPid());
+		Sensor previous = sensorRepository.findByBoardIdAndPid(Long.valueOf(boardId), sensing.getPid());
+		if (previous == null) {
+			Board tboard;
+			try {
+				tboard = boardsRepository.findByBoardId(Long.valueOf(boardId));
+			} catch (NumberFormatException e) {
+				throw new IllegalArgumentException("boardId ERR: " + e.getMessage());
+			}
+			if (tboard == null) {
+				tboard = new Board(Long.valueOf(boardId));
+				tboard.setBoardSensors(new ArrayList<>());
+				tboard = boardsRepository.save(tboard);
+			}
 
-		Board tboard;
-		try {
-			tboard = boardsRepository.findByBoardId(Integer.valueOf(boardId));
-		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException("boardId ERR: " + e.getMessage());
-		}  
-		if (tboard == null) {
-			tboard = new Board(Integer.valueOf(boardId));
-			tboard.setBoardSensors(new ArrayList<>());
-			tboard = boardsRepository.save(tboard);
+			switch (sensing.getTyp()) {
+			case BAROMETER:
+				sensing.setUinit(UnitEnum.MILLIBAR);
+				break;
+			case TEMPERATURE:
+				sensing.setUinit(UnitEnum.CELSIUS);
+				break;
+			case HUMIDITY:
+				sensing.setUinit(UnitEnum.PERCENT);
+				break;
+			case LIGHT:
+				sensing.setUinit(UnitEnum.LUMEN);
+				break;
+			case WATER_RESERVE:
+				sensing.setUinit(UnitEnum.LITER);
+				break;
+			default:
+				break;
+			}
+			if (!tboard.getBoardSensors().contains(sensing)) {
+				tboard.getBoardSensors().add(sensing);
+				boardsRepository.save(tboard);
+			}
+			sensing.setBoard(tboard);
+			sensing.setTimeStamp(new Date());
+			return sensorRepository.save(sensing);
+		} else {
+			previous.setVal(sensing.getVal());
+			previous.setTimeStamp(new Date());
+			previous.setErr(sensing.isErr());
+			return sensorRepository.save(previous);
 		}
-		
-		switch (sensing.getTyp()) {
-		case BAROMETER:
-			sensing.setUinit(UnitEnum.MILLIBAR);
-			break;
-		case TEMPERATURE:
-			sensing.setUinit(UnitEnum.CELSIUS);
-			break;
-		case HUMIDITY:
-			sensing.setUinit(UnitEnum.PERCENT);
-			break;
-		case LIGHT:
-			sensing.setUinit(UnitEnum.LUMEN);
-			break;
-		case WATER_RESERVE:
-			sensing.setUinit(UnitEnum.LITER);
-			break;
-		default:
-			break;
-		}
-		if (!tboard.getBoardSensors().contains(sensing)) {
-			tboard.getBoardSensors().add(sensing);
-			boardsRepository.save(tboard);
-		}
-		sensing.setBoard(tboard);
-		sensing.setTimeStamp(new Date());
-		return sensorRepository.save(sensing);
 	}
 
 	public Sensor createSensorImpl(Sensor sensing, String checkId) {
-		if (!Integer.valueOf(checkId).equals(sensing.getId()))
-			throw new IllegalArgumentException("PID Mismatch: " + checkId + " vs" + sensing.getId());
+		if (!Integer.valueOf(checkId).equals(sensing.getPid()))
+			throw new IllegalArgumentException("PID Mismatch: " + checkId + " vs" + sensing.getPid());
 
 		switch (sensing.getTyp()) {
 		case BAROMETER:
@@ -148,16 +154,21 @@ public class SensorsServiceImpl implements SensorsService {
 	}
 
 	@Override
-	public Sensor getSensorById(Integer sensorPid) throws SensorNotFoundException {
-		Optional<Sensor> opt = sensorRepository.findById(sensorPid);
+	public Sensor getSensorByBoardIdAndPid(Long boardId, Integer sensorPid) throws SensorNotFoundException {
+		Sensor opt = sensorRepository.findByBoardIdAndPid(boardId, sensorPid);
+		if (opt != null)
+			return opt;
+
+		throw new SensorNotFoundException();
+	}
+
+	@Override
+	public Sensor getSensorByPid(Integer sensorPid) throws SensorNotFoundException {
+		Optional<Sensor> opt = sensorRepository.findByPid(sensorPid);
 		if (opt.isPresent())
 			return opt.get();
 
 		throw new SensorNotFoundException();
 	}
-
-
-
-
 
 }

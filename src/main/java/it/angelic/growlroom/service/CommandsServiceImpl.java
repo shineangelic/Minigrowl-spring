@@ -72,13 +72,14 @@ public class CommandsServiceImpl implements CommandsService {
 	@Override
 	public Long sendCommand(Command toExecurte) {
 
-		Long targetActuator = toExecurte.getTargetActuator().getId();
+		//mmmm
+		Long targetActuator = toExecurte.getTargetActuator().getActuatorId();
 		Optional<Actuator> checkSensor = actuatorsRepository.findById(targetActuator);
 
-		if (!checkSensor.isPresent() || !checkSensor.get().getSupportedCommands().contains(toExecurte))
+		if (!checkSensor.isPresent() || checkSensor.get().containsCommand(toExecurte) == null)
 			throw new IllegalArgumentException("UNSUPPORTED COMMAND: " + toExecurte.toString());
 
-		QueueCommands arg0 = new QueueCommands(toExecurte);
+		QueueCommands arg0 = new QueueCommands(checkSensor.get().containsCommand(toExecurte));
 		queueCommands.save(arg0);
 		return queueCommands.count();
 	}

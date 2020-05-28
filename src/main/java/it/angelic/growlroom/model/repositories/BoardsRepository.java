@@ -6,6 +6,6 @@ import it.angelic.growlroom.model.Board;
 
 public interface BoardsRepository extends JpaRepository<Board, Long> {
 
-	Board findByBoardId(int id);
+	Board findByBoardId(Long id);
  
 }
