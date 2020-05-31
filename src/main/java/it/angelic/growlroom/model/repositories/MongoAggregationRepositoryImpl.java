@@ -70,20 +70,20 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 
 	public AggregateIterable<Document> getHour24ChartAggregateData(int sensorId) {
 
-		AggregateIterable<Document> result = mongoTemplate.getCollection("sensors")
+		AggregateIterable<Document> result = mongoTemplate.getCollection("sensorsV2")
 				.aggregate(aggrega24HUltimaSettimana(sensorId));
 		return result;
 
 	}
 
 	public AggregateIterable<Document> getIntervalActuatorsOnMsec(Date from, Date to, Integer actId) {
-		AggregateIterable<Document> result = mongoTemplate.getCollection("actuators")
+		AggregateIterable<Document> result = mongoTemplate.getCollection("actuatorsV2")
 				.aggregate(aggregaTempoAccese(from, to, actId));
 		return result;
 	}
 
 	public ActuatorLog getLastByActuatorId(Long id) {
-		Query query = Query.query(Criteria.where("id").is(id));
+		Query query = Query.query(Criteria.where("actuatorId").is(id));
 		query.with(new Sort(Sort.Direction.DESC, "timeStamp"));
 		return mongoTemplate.findOne(query, ActuatorLog.class);
 	}
@@ -99,7 +99,7 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 	 * count: { $sum: '$msecAccesa' } }}]
 	 * 
 	 */private List<Bson> aggregaTempoAccese(Date in, Date out, Integer which) {
-		return Arrays.asList(match(and(gt("timeStamp", in), lte("timeStamp", out), eq("id", which))),
+		return Arrays.asList(match(and(gt("timeStamp", in), lte("timeStamp", out), eq("actuatorId", which))),
 				lookup("actuators", "_id", "nextLogId", "previous"),
 				addFields(new Field("prev", new Document("$arrayElemAt", Arrays.asList("$previous", 0L)))),
 				addFields(new Field("msecAccesa",
@@ -123,7 +123,7 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 		dtIn.add(Calendar.DATE, -7);
 		return Arrays.asList(
 				new Document("$match",
-						new Document("id", sensorId).append("err", false).append("timeStamp",
+						new Document("sensorId", sensorId).append("err", false).append("timeStamp",
 								new Document("$gt", dtIn.getTime()).append("$lte", dtTo))),
 				new Document("$addFields",
 						new Document("ora24",
@@ -158,7 +158,7 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 								new Document(new Document("$match",
 										new Document("timeStamp",
 												new Document("$gt", dtIn.getTime()).append("$lte", dtTo)))),
-								new Document("$match", new Document("id", sensorI).append("err", false)),
+								new Document("$match", new Document("sensorId", sensorI).append("err", false)),
 								new Document("$addFields",
 										new Document("groupStamp", new Document("$dateToString",
 												new Document("date", "$timeStamp").append("format", "%Y-%m-%d:%H")

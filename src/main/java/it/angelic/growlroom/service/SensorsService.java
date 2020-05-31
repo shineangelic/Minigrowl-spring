@@ -5,8 +5,7 @@ import java.util.Collection;
 import it.angelic.growlroom.model.Sensor;
 
 public interface SensorsService {
-
-	public Sensor createOrUpdateSensor(Sensor product, String checkId);
+ 
 
 	public Sensor createOrUpdateBoardSensor(Sensor product, String boardId, String checkId);
 
@@ -16,6 +15,5 @@ public interface SensorsService {
 	public Sensor getSensorByPid(Integer sensorPid) throws SensorNotFoundException;
 
 	Sensor getSensorByBoardIdAndPid(Long boardId, Integer sensorPid) throws SensorNotFoundException;
-
 
 }

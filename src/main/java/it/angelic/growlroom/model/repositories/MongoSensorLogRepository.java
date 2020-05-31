@@ -13,10 +13,10 @@ public interface MongoSensorLogRepository extends MongoRepository<SensorLog, Str
 	@Override
 	List<SensorLog> findAll();
 
-	@Query("{'id': ?0}")
+	@Query("{'sensorId': ?0}")
 	List<SensorLog> findByIdSensore(int sensorId);
 
-	@Query("{'id': ?0},{'timeStamp': $gt: ?1}")
+	@Query("{'sensorId': ?0},{'timeStamp': $gt: ?1}")
 	List<SensorLog> findFromDate(int sensorId, Date tHold);
  
 }

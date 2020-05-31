@@ -32,10 +32,10 @@ public class MongoLogService {
 
 	@Autowired
 	private MongoSensorLogRepository mongoSensorLogRepository;
-	
+
 	@Autowired
 	private MongoActuatorLogRepository mongoActuatorLogRepository;
-	
+
 	@Autowired
 	private MongoSequenceService sequenceGenerator;
 
@@ -48,24 +48,21 @@ public class MongoLogService {
 		in.setLogId(sequenceGenerator.generateSequence(SensorLog.SEQUENCE_NAME));
 		mongoSensorLogRepository.save(in);
 	}
-	
+
 	public void logActuator(ActuatorLog in) {
-		ActuatorLog last =mongoSensorLogRepository.getLastByActuatorId(in.getId().longValue());
-		
-		
+		ActuatorLog last = mongoSensorLogRepository.getLastByActuatorId(in.getId().longValue());
+
 		in.setLogId(sequenceGenerator.generateSequence(ActuatorLog.SEQUENCE_NAME_ACTUATORS));
-		
+
 		mongoActuatorLogRepository.insert(in);
-		
-		
-		//mongoActuatorLogRepository.findLastByActuatorId(in.getId());
+
+		// mongoActuatorLogRepository.findLastByActuatorId(in.getId());
 		if (last != null) {
 			last.setNextLogId(in.getLogId());
 			mongoActuatorLogRepository.save(last);
 			logger.info("Updated old log with next: " + last.getId());
 		}
-		
-		
+
 	}
 
 	public List<HourValuePair> getHourChartSensorData(int sensorId, Date tholdDate) {
@@ -98,9 +95,9 @@ public class MongoLogService {
 		Collections.sort(ret);
 		return ret;
 	}
-	
+
 	public List<Document> getGroupedActuatorUptime(Date dtIn, Date out, Integer id) {
-		 
+
 		AggregateIterable<Document> nit = mongoSensorLogRepository.getIntervalActuatorsOnMsec(dtIn, out, id);
 		ArrayList<Document> ret = new ArrayList<>();
 		for (Document document : nit) {

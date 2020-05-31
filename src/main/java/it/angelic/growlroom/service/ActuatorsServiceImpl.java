@@ -39,7 +39,6 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 	public Actuator createOrUpdateBoardActuator(Actuator dispositivo, String boardId, String id) {
 		if (!Integer.valueOf(id).equals(dispositivo.getPid()))
 			throw new IllegalArgumentException("PID Mismatch: " + id + " vs " + dispositivo.getPid());
-		 
 
 		Actuator previous = actuatorsRepository.findByBoardIdAndPid(Long.valueOf(boardId), dispositivo.getPid());
 		Actuator updated = null;
@@ -83,16 +82,7 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 				tboard.getBoardActuators().add(dispositivo);
 				tboard = boardsRepository.save(tboard);
 			}
-			if (!updated.isErrorPresent()) {
 
-				
-
-				try {
-					mongoLogService.logActuator(new ActuatorLog(updated));
-				} catch (Exception e) {
-					logger.warn("MongoDB exc: " + e.getMessage());
-				}
-			}
 		} else {
 			previous.setReading(dispositivo.getReading());
 			previous.setTimeStamp(new Date());
@@ -100,36 +90,7 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 			updated = actuatorsRepository.save(previous);
 		}
 
-		return updated;
-	}
-
-	@Override
-	public Actuator createOrUpdateActuator(Actuator dispositivo, String id) {
-		if (!Integer.valueOf(id).equals(dispositivo.getPid()))
-			throw new IllegalArgumentException("PID Mismatch: " + id + " vs" + dispositivo.getPid());
-
-		switch (dispositivo.getTyp()) {
-		case FAN:
-		case OUTTAKE:
-		case LIGHT:
-			dispositivo.setUinit(UnitEnum.TURNED_ON);
-			break;
-		case HUMIDIFIER:
-			// reserve tank?
-			dispositivo.setUinit(UnitEnum.LITER);
-			break;
-		case HVAC:
-			dispositivo.setUinit(UnitEnum.CELSIUS);
-			break;
-		}
-
-		for (Command com : dispositivo.getSupportedCommands()) {
-			com.setTargetActuator(dispositivo);
-			commandsRepository.save(com);
-		}
-
-		dispositivo.setTimeStamp(new Date());
-		Actuator updated = actuatorsRepository.save(dispositivo);
+		// mongo log
 		if (!updated.isErrorPresent()) {
 			try {
 				mongoLogService.logActuator(new ActuatorLog(updated));
@@ -137,7 +98,6 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 				logger.warn("MongoDB exc: " + e.getMessage());
 			}
 		}
-
 		return updated;
 	}
 

@@ -22,7 +22,7 @@ public class SensorLog {
 	@Id
 	private Long logId;
 
-	private Integer id;
+	private Integer pid;
 	private SensorEnum typ;
 	private Float val;
 	private UnitEnum uinit;
@@ -38,7 +38,7 @@ public class SensorLog {
 	}
 
 	public SensorLog(Sensor updated) {
-		id = updated.getPid();
+		pid = updated.getPid();
 		typ = updated.getTyp();
 		sensorId = updated.getSensorId();
 		val = Float.valueOf(updated.getVal());
@@ -47,12 +47,12 @@ public class SensorLog {
 		boardId = updated.getBoard().getBoardId();
 	}
 
-	public Integer getId() {
-		return id;
+	public Integer getPid() {
+		return pid;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	public void setPid(Integer id) {
+		this.pid = id;
 	}
 
 	public SensorEnum getTyp() {
@@ -97,7 +97,7 @@ public class SensorLog {
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + "-" + getId();
+		return this.getClass().getSimpleName() + "-" + getPid();
 	}
 
 	public Long getLogId() {

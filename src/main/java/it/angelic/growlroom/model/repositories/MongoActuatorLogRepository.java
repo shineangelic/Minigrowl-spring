@@ -13,13 +13,13 @@ public interface MongoActuatorLogRepository extends MongoRepository<ActuatorLog,
 	@Override
 	List<ActuatorLog> findAll();
 
-	@Query("{'id': ?0}")
+	@Query("{'actuatorId': ?0}")
 	List<ActuatorLog> findByActuatorId(int actId);
 	
-	@Query("{'id': ?0}")
+	@Query("{'actuatorId': ?0}")
 	ActuatorLog findLastByActuatorId(int actId);
 
-	@Query("{'id': ?0},{'timeStamp': $gt: ?1}")
+	@Query("{'actuatorId': ?0},{'timeStamp': $gt: ?1}")
 	List<ActuatorLog> findFromDate(int sensorId, Date tHold);
 	 
  

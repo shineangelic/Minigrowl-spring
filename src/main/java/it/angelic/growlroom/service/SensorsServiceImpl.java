@@ -40,29 +40,6 @@ public class SensorsServiceImpl implements SensorsService {
 	}
 
 	@Override
-	public Sensor createOrUpdateSensor(Sensor sensing, String checkId) {
-		float dbs = -1f;
-		try {
-			dbs = Float.valueOf(getSensorByPid(sensing.getPid()).getVal());
-		} catch (SensorNotFoundException e) {
-			logger.warn("Sensore non Trovato? " + sensing.getPid());
-		}
-
-		Sensor updated = createSensorImpl(sensing, checkId);
-		if (!updated.isErr()) {
-			try {
-				mongoLogService.logSensor(new SensorLog(updated));
-			} catch (Exception e) {
-				logger.warn("MongoDB exc: " + e.getMessage());
-			}
-		}
-		// avvisa i sottoscrittori dei sensori
-		this.simpMessagingTemplate.convertAndSend("/topic/sensors", updated);
-		// }
-		return updated;
-	}
-
-	@Override
 	public Sensor createOrUpdateBoardSensor(Sensor sensing, String boardId, String checkId) {
 		if (!Integer.valueOf(checkId).equals(sensing.getPid()))
 			throw new IllegalArgumentException("PID Mismatch: " + checkId + " vs" + sensing.getPid());
@@ -109,7 +86,6 @@ public class SensorsServiceImpl implements SensorsService {
 				boardsRepository.save(tboard);
 			}
 			if (!updated.isErr()) {
-
 				try {
 					mongoLogService.logSensor(new SensorLog(updated));
 				} catch (Exception e) {
@@ -121,36 +97,16 @@ public class SensorsServiceImpl implements SensorsService {
 			previous.setVal(sensing.getVal());
 			previous.setTimeStamp(new Date());
 			previous.setErr(sensing.isErr());
-			return sensorRepository.save(previous);
+			updated = sensorRepository.save(previous);
+			if (!updated.isErr()) {
+				try {
+					mongoLogService.logSensor(new SensorLog(updated));
+				} catch (Exception e) {
+					logger.warn("MongoDB exc: " + e.getMessage());
+				}
+			}
+			return updated;
 		}
-	}
-
-	public Sensor createSensorImpl(Sensor sensing, String checkId) {
-		if (!Integer.valueOf(checkId).equals(sensing.getPid()))
-			throw new IllegalArgumentException("PID Mismatch: " + checkId + " vs" + sensing.getPid());
-
-		switch (sensing.getTyp()) {
-		case BAROMETER:
-			sensing.setUinit(UnitEnum.MILLIBAR);
-			break;
-		case TEMPERATURE:
-			sensing.setUinit(UnitEnum.CELSIUS);
-			break;
-		case HUMIDITY:
-			sensing.setUinit(UnitEnum.PERCENT);
-			break;
-		case LIGHT:
-			sensing.setUinit(UnitEnum.LUMEN);
-			break;
-		case WATER_RESERVE:
-			sensing.setUinit(UnitEnum.LITER);
-			break;
-		default:
-			break;
-		}
-
-		sensing.setTimeStamp(new Date());
-		return sensorRepository.save(sensing);
 	}
 
 	@Override
@@ -184,7 +140,7 @@ public class SensorsServiceImpl implements SensorsService {
 
 	@Override
 	public Collection<Sensor> getBoardSensors(Integer boardId) {
-		
+
 		return sensorRepository.findByBoardId(boardId.longValue());
 	}
 
