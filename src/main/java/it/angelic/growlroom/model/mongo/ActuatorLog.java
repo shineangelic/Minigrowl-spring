@@ -36,6 +36,8 @@ public class ActuatorLog implements Serializable {
 	private boolean errorPresent;
 	@JsonProperty("bid")
 	private Long boardId;
+	@JsonProperty("actuatorId")
+	private Long actuatorId;
 
 	public ActuatorLog() {
 		super();
@@ -44,6 +46,7 @@ public class ActuatorLog implements Serializable {
 
 	public ActuatorLog(Actuator updated) {
 		id = updated.getPid();
+		actuatorId = updated.getActuatorId();
 		reading = updated.getReading();
 		timeStamp = updated.getTimeStamp();
 		mode = updated.getMode();
@@ -127,6 +130,14 @@ public class ActuatorLog implements Serializable {
 
 	public void setBoardId(Long boardId) {
 		this.boardId = boardId;
+	}
+
+	public Long getActuatorId() {
+		return actuatorId;
+	}
+
+	public void setActuatorId(Long actuatorId) {
+		this.actuatorId = actuatorId;
 	}
 
 }

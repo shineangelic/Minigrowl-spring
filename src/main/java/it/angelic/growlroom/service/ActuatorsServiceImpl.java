@@ -146,4 +146,9 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 		return actuatorsRepository.findAll();
 	}
 
+	@Override
+	public Collection<Actuator> getBoardActuators(Long t2) {
+		return actuatorsRepository.findByBoardId(t2);
+	}
+
 }

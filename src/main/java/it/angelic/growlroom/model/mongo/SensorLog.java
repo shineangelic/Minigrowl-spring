@@ -29,6 +29,7 @@ public class SensorLog {
 	private Date timeStamp;
 	private boolean err;
 	private Long boardId;
+	private Long sensorId;
 	
 	
 
@@ -39,6 +40,7 @@ public class SensorLog {
 	public SensorLog(Sensor updated) {
 		id = updated.getPid();
 		typ = updated.getTyp();
+		sensorId = updated.getSensorId();
 		val = Float.valueOf(updated.getVal());
 		timeStamp = updated.getTimeStamp();
 		err = updated.isErr();
@@ -112,6 +114,14 @@ public class SensorLog {
 
 	public void setBoardId(Long boardId) {
 		this.boardId = boardId;
+	}
+
+	public Long getSensorId() {
+		return sensorId;
+	}
+
+	public void setSensorId(Long sensorId) {
+		this.sensorId = sensorId;
 	}
 
 }

@@ -182,4 +182,10 @@ public class SensorsServiceImpl implements SensorsService {
 		throw new SensorNotFoundException();
 	}
 
+	@Override
+	public Collection<Sensor> getBoardSensors(Integer boardId) {
+		
+		return sensorRepository.findByBoardId(boardId.longValue());
+	}
+
 }
