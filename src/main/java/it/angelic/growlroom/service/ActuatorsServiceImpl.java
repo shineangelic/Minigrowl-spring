@@ -85,6 +85,7 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 
 		} else {
 			previous.setReading(dispositivo.getReading());
+			previous.setMode(dispositivo.getMode());
 			previous.setTimeStamp(new Date());
 			previous.setErrorPresent(dispositivo.isErrorPresent());
 			updated = actuatorsRepository.save(previous);

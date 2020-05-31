@@ -150,7 +150,7 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 
 		dtIn.add(Calendar.DATE, -7);
 
-		MongoCollection<Document> collection = mongoTemplate.getCollection("sensors");
+		MongoCollection<Document> collection = mongoTemplate.getCollection("sensorsV2");
 
 		AggregateIterable<Document> result = collection
 				.aggregate(

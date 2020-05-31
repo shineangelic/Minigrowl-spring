@@ -85,7 +85,7 @@ public class CommandsServiceImpl implements CommandsService {
 		return queueCommands.count();
 	}
 
-	@Override
+	/*@Override
 	public Long sendFullRefreshCommand() {
 		Command forceRefresh = new Command();
 		forceRefresh.setParameter("-3");
@@ -94,7 +94,7 @@ public class CommandsServiceImpl implements CommandsService {
 		QueueCommands arg0 = new QueueCommands(forceRefresh);
 		queueCommands.save(arg0);
 		return queueCommands.count();
-	}
+	}*/
 
 	@Override
 	public boolean removeExecutedCommand(Long queueCommandId, Command check) {

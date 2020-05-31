@@ -99,12 +99,6 @@ public class ClientSensorControllerV2 {
 	}
 
 	@CrossOrigin
-	@PutMapping(value = "/commands/{boardId}/fullRefresh", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Long sendForceRefresh() {
-		return commandsService.sendFullRefreshCommand();
-	}
-
-	@CrossOrigin
 	@PutMapping(value = "/sensors/{boardId}/log/delete", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Long deleteLogs() {
 

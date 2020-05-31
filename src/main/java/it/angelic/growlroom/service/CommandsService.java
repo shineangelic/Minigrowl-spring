@@ -15,8 +15,6 @@ public interface CommandsService {
 
 	public abstract Collection<Command> getSupportedCommands();
 
-	public abstract Long sendFullRefreshCommand();
-
 	//API V2
 	public abstract Collection<Command> getUnexecutedCommands(String boardId);
 	public abstract boolean removeExecutedCommand(String boardId, Long valueOf, Command executed);
