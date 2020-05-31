@@ -17,8 +17,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
@@ -30,13 +28,15 @@ public class Actuator implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long actuatorId;
+	
 	@JsonProperty("id")
 	private Integer pid;
+	
 	private ActuatorEnum typ;
+	
 	@JsonProperty("val")
 	private String reading;
-	@JsonInclude(Include.NON_NULL)
-	private String humanName;
+	
 	private UnitEnum uinit;
 
 	@JsonProperty("mode")
@@ -133,14 +133,6 @@ public class Actuator implements Serializable {
 		this.supportedCommands = supportedCommands;
 	}
 
-	public String getHumanName() {
-		return humanName;
-	}
-
-	public void setHumanName(String name) {
-		this.humanName = name;
-	}
-
 	@Override
 	public String toString() {
 		StringBuilder stb = new StringBuilder(this.getClass().getSimpleName());
@@ -167,31 +159,6 @@ public class Actuator implements Serializable {
 		this.board = board;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((pid == null) ? 0 : pid.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Actuator other = (Actuator) obj;
-		if (pid == null) {
-			if (other.pid != null)
-				return false;
-		} else if (!pid.equals(other.pid))
-			return false;
-		return true;
-	}
-
 	public Long getActuatorId() {
 		return actuatorId;
 	}
@@ -207,6 +174,31 @@ public class Actuator implements Serializable {
 				return command;
 		}
 		return null;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((actuatorId == null) ? 0 : actuatorId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Actuator other = (Actuator) obj;
+		if (actuatorId == null) {
+			if (other.actuatorId != null)
+				return false;
+		} else if (!actuatorId.equals(other.actuatorId))
+			return false;
+		return true;
 	}
 
 }

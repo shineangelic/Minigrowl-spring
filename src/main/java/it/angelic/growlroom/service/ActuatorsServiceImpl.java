@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import it.angelic.growlroom.model.Actuator;
 import it.angelic.growlroom.model.Board;
 import it.angelic.growlroom.model.Command;
-import it.angelic.growlroom.model.CommandsRepository;
 import it.angelic.growlroom.model.UnitEnum;
 import it.angelic.growlroom.model.mongo.ActuatorLog;
 import it.angelic.growlroom.model.repositories.ActuatorsRepository;
@@ -20,9 +19,6 @@ import it.angelic.growlroom.model.repositories.BoardsRepository;
 
 @Service
 public class ActuatorsServiceImpl implements ActuatorsService {
-
-	@Autowired
-	private CommandsRepository commandsRepository;
 
 	@Autowired
 	private ActuatorsRepository actuatorsRepository;

@@ -47,10 +47,11 @@ public class MongoLogService {
 	public void logSensor(SensorLog in) {
 		in.setLogId(sequenceGenerator.generateSequence(SensorLog.SEQUENCE_NAME));
 		mongoSensorLogRepository.save(in);
+		logger.info("logSensor() saved log with next: " + in.getLogId());
 	}
 
 	public void logActuator(ActuatorLog in) {
-		ActuatorLog last = mongoSensorLogRepository.getLastByActuatorId(in.getId().longValue());
+		ActuatorLog last = mongoSensorLogRepository.getLastByActuatorId(in.getActuatorId().longValue());
 
 		in.setLogId(sequenceGenerator.generateSequence(ActuatorLog.SEQUENCE_NAME_ACTUATORS));
 
@@ -60,7 +61,7 @@ public class MongoLogService {
 		if (last != null) {
 			last.setNextLogId(in.getLogId());
 			mongoActuatorLogRepository.save(last);
-			logger.info("Updated old log with next: " + last.getId());
+			logger.info("logActuator() Updated old log with next: " + last.getLogId());
 		}
 
 	}

@@ -1,4 +1,4 @@
-package it.angelic.growlroom.controllers.v2;
+package it.angelic.growlroom.controllers;
 
 import java.util.Collection;
 

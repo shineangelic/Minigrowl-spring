@@ -2,7 +2,6 @@ package it.angelic.growlroom.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,68 +56,30 @@ public class CommandsServiceImpl implements CommandsService {
 		return ret;
 	}
 	
-	@Override
-	public Collection<Command> getUnexecutedCommands() {
-		ArrayList<Command> ret = new ArrayList<>();
-		List<QueueCommands> pes = queueCommands.findAll();
-		for (QueueCommands queueCommands : pes) {
-			Command actualCmd = queueCommands.getToExecute();
-			actualCmd.setIdOnQueue(queueCommands.getIdQueueCommand());
-			ret.add(actualCmd);
-			break;// only 1 per volta
-		}
-		return ret;
-	}
+	 
 
 	@Override
 	public Long sendCommand(Command toExecurte) {
 
 		//mmmm
 		Long targetActuator = toExecurte.getTargetActuator().getActuatorId();
-		Optional<Actuator> checkSensor = actuatorsRepository.findById(targetActuator);
+		Optional<Actuator> checkAct = actuatorsRepository.findById(targetActuator);
 
-		if (!checkSensor.isPresent() || checkSensor.get().containsCommand(toExecurte) == null)
+		if (!checkAct.isPresent()) 
+			throw new IllegalArgumentException("ACTUATOR COMMAND NOT FOUND: " + toExecurte.getTargetActuator().getActuatorId());
+		if( checkAct.get().containsCommand(toExecurte) == null)
 			throw new IllegalArgumentException("UNSUPPORTED COMMAND: " + toExecurte.toString());
 
-		QueueCommands arg0 = new QueueCommands(checkSensor.get().containsCommand(toExecurte));
+		QueueCommands arg0 = new QueueCommands(checkAct.get().containsCommand(toExecurte));
 		queueCommands.save(arg0);
 		return queueCommands.count();
 	}
 
-	/*@Override
-	public Long sendFullRefreshCommand() {
-		Command forceRefresh = new Command();
-		forceRefresh.setParameter("-3");
-		forceRefresh.setName("Refresh");
-		forceRefresh.setTargetActuator(null);
-		QueueCommands arg0 = new QueueCommands(forceRefresh);
-		queueCommands.save(arg0);
-		return queueCommands.count();
-	}*/
-
-	@Override
-	public boolean removeExecutedCommand(Long queueCommandId, Command check) {
-		queueCommands.deleteById(queueCommandId);
-		return !queueCommands.existsById(queueCommandId);
-	}
-	
 	@Override
 	public boolean removeExecutedCommand(String boardId, Long queueCommandId, Command executed) {
 		queueCommands.deleteById(queueCommandId);
 		return !queueCommands.existsById(queueCommandId);
 	}
-
-	@Override
-	public Collection<Command> getSupportedCommands() {
-		Collection<Command> ret = new HashSet<>();
-		Iterable<Actuator> it = actuatorsRepository.findAll();
-		for (Actuator sensor : it) {
-			ret.addAll(sensor.getSupportedCommands());
-		}
-		return ret;
-	}
-
-
 
 
 

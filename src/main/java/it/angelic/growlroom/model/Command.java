@@ -50,12 +50,11 @@ public class Command implements Serializable {
 	@Transient
 	private Long idOnQueue;
 
-	// dispositivo destinatario
-
+	// dispositivo destinatario, e si balla con jackson
 	@JsonProperty("tgt")
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "targetActuator", nullable = false)
-	@JsonSerialize(using = IntActuatorCommandPidSerializer.class)
+	@JsonSerialize(using = ActuatorIntCommandPidSerializer.class)
 	@JsonDeserialize(using = ActuatorDeserializer.class)
 	private Actuator targetActuator;
 

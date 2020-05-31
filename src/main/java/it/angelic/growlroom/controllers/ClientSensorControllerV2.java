@@ -1,4 +1,4 @@
-package it.angelic.growlroom.controllers.v2;
+package it.angelic.growlroom.controllers;
 
 import java.io.FileNotFoundException;
 import java.util.Collection;
@@ -81,12 +81,6 @@ public class ClientSensorControllerV2 {
 		
 	}
 
-	@CrossOrigin // UNUSED, see supported commands
-	@GetMapping(value = "/commands/{boardId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Collection<Command>> getSupportedCommands() {
-		return ResponseEntity.status(HttpStatus.OK).body(commandsService.getSupportedCommands());
-	}
-
 	@CrossOrigin
 	@PutMapping(value = "/commands/{boardId}/queue/add", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Long sendCommand(@RequestBody Command sensing, @PathVariable String boardId) {
@@ -101,7 +95,6 @@ public class ClientSensorControllerV2 {
 	@CrossOrigin
 	@PutMapping(value = "/sensors/{boardId}/log/delete", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Long deleteLogs() {
-
 		return mongoLogService.deleteOldSensorLog();
 	}
 
@@ -124,7 +117,6 @@ public class ClientSensorControllerV2 {
 			throws FileNotFoundException, IllegalArgumentException {
 		if (!(Integer.valueOf(id).intValue() > 0))
 			throw new IllegalArgumentException("INVALID sensor id: " + id);
-		// return new ResponseEntity<>(mongoLogService.getLogBySensorId(Integer.valueOf(id)), HttpStatus.OK);
 		return new ResponseEntity<>(mongoLogService.getGroupedSensorLogHourChart(Integer.valueOf(id), dtIn),
 				HttpStatus.OK);
 	}
@@ -136,7 +128,6 @@ public class ClientSensorControllerV2 {
 			throws FileNotFoundException, IllegalArgumentException {
 		if (!(Integer.valueOf(id).intValue() > 0))
 			throw new IllegalArgumentException("INVALID sensor id: " + id);
-		// return new ResponseEntity<>(mongoLogService.getLogBySensorId(Integer.valueOf(id)), HttpStatus.OK);
 		return new ResponseEntity<>(mongoLogService.getGroupedSensorLogHistory(Integer.valueOf(id), dtIn),
 				HttpStatus.OK);
 	}

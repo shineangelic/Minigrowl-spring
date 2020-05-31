@@ -24,9 +24,14 @@ public class Sensor {
 	@JsonProperty("id")
 	private Integer pid;
 	private SensorEnum typ;
-	private String val;
+	
+	@JsonProperty("reading")
+	private String reading;
+	
 	private UnitEnum uinit;
+	
 	private Date timeStamp;
+	
 	private boolean err;
 
 	@JsonProperty("bid")
@@ -50,12 +55,12 @@ public class Sensor {
 		this.typ = type;
 	}
 
-	public String getVal() {
-		return val;
+	public String getReading() {
+		return reading;
 	}
 
-	public void setVal(String reading) {
-		this.val = reading;
+	public void setReading(String reading) {
+		this.reading = reading;
 	}
 
 	public UnitEnum getUinit() {
@@ -95,11 +100,19 @@ public class Sensor {
 		this.board = board;
 	}
 
+	public Long getSensorId() {
+		return sensorId;
+	}
+
+	public void setSensorId(Long sensorId) {
+		this.sensorId = sensorId;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((pid == null) ? 0 : pid.hashCode());
+		result = prime * result + ((sensorId == null) ? 0 : sensorId.hashCode());
 		return result;
 	}
 
@@ -112,20 +125,12 @@ public class Sensor {
 		if (getClass() != obj.getClass())
 			return false;
 		Sensor other = (Sensor) obj;
-		if (pid == null) {
-			if (other.pid != null)
+		if (sensorId == null) {
+			if (other.sensorId != null)
 				return false;
-		} else if (!pid.equals(other.pid))
+		} else if (!sensorId.equals(other.sensorId))
 			return false;
 		return true;
-	}
-
-	public Long getSensorId() {
-		return sensorId;
-	}
-
-	public void setSensorId(Long sensorId) {
-		this.sensorId = sensorId;
 	}
 
 }

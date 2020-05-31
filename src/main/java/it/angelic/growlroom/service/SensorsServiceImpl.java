@@ -3,13 +3,10 @@ package it.angelic.growlroom.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import it.angelic.growlroom.model.Board;
@@ -31,32 +28,20 @@ public class SensorsServiceImpl implements SensorsService {
 	@Autowired
 	private BoardsRepository boardsRepository;
 
-	private final SimpMessagingTemplate simpMessagingTemplate;
-
 	Logger logger = LoggerFactory.getLogger(SensorsServiceImpl.class);
 
-	public SensorsServiceImpl(SimpMessagingTemplate simpMessagingTemplate) {
-		this.simpMessagingTemplate = simpMessagingTemplate;
+	public SensorsServiceImpl() {
 	}
 
 	@Override
 	public Sensor createOrUpdateBoardSensor(Sensor sensing, String boardId, String checkId) {
 		if (!Integer.valueOf(checkId).equals(sensing.getPid()))
 			throw new IllegalArgumentException("PID Mismatch: " + checkId + " vs" + sensing.getPid());
+
 		Sensor previous = sensorRepository.findByBoardIdAndPid(Long.valueOf(boardId), sensing.getPid());
 		Sensor updated;
 		if (previous == null) {
-			Board tboard;
-			try {
-				tboard = boardsRepository.findByBoardId(Long.valueOf(boardId));
-			} catch (NumberFormatException e) {
-				throw new IllegalArgumentException("boardId ERR: " + e.getMessage());
-			}
-			if (tboard == null) {
-				tboard = new Board(Long.valueOf(boardId));
-				tboard.setBoardSensors(new ArrayList<>());
-				tboard = boardsRepository.save(tboard);
-			}
+			Board tboard= findOrCreateBoard(boardId);
 
 			switch (sensing.getTyp()) {
 			case BAROMETER:
@@ -85,39 +70,36 @@ public class SensorsServiceImpl implements SensorsService {
 				tboard.getBoardSensors().add(sensing);
 				boardsRepository.save(tboard);
 			}
-			if (!updated.isErr()) {
-				try {
-					mongoLogService.logSensor(new SensorLog(updated));
-				} catch (Exception e) {
-					logger.warn("MongoDB exc: " + e.getMessage());
-				}
-			}
-			return updated;
 		} else {
-			previous.setVal(sensing.getVal());
+			previous.setReading(sensing.getReading());
 			previous.setTimeStamp(new Date());
 			previous.setErr(sensing.isErr());
 			updated = sensorRepository.save(previous);
-			if (!updated.isErr()) {
-				try {
-					mongoLogService.logSensor(new SensorLog(updated));
-				} catch (Exception e) {
-					logger.warn("MongoDB exc: " + e.getMessage());
-				}
-			}
-			return updated;
 		}
+		//mongo logging
+		if (!updated.isErr()) {
+			try {
+				mongoLogService.logSensor(new SensorLog(updated));
+			} catch (Exception e) {
+				logger.warn("MongoDB exc: " + e.getMessage());
+			}
+		}
+		return updated;
 	}
 
-	@Override
-	public Collection<Sensor> getSensors() {
-		List<Sensor> ret = new ArrayList<>();
-		Iterable<Sensor> res = sensorRepository.findAll();
-		for (Sensor sensor : res) {
-			ret.add(sensor);
+	private Board findOrCreateBoard(String boardId ) {
+		Board tboard;
+		try {
+			tboard = boardsRepository.findByBoardId(Long.valueOf(boardId));
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException("boardId ERR: " + e.getMessage());
 		}
-
-		return ret;
+		if (tboard == null) {
+			tboard = new Board(Long.valueOf(boardId));
+			tboard.setBoardSensors(new ArrayList<>());
+			tboard = boardsRepository.save(tboard);
+		}
+		return tboard;
 	}
 
 	@Override
@@ -125,15 +107,6 @@ public class SensorsServiceImpl implements SensorsService {
 		Sensor opt = sensorRepository.findByBoardIdAndPid(boardId, sensorPid);
 		if (opt != null)
 			return opt;
-
-		throw new SensorNotFoundException();
-	}
-
-	@Override
-	public Sensor getSensorByPid(Integer sensorPid) throws SensorNotFoundException {
-		Optional<Sensor> opt = sensorRepository.findByPid(sensorPid);
-		if (opt.isPresent())
-			return opt.get();
 
 		throw new SensorNotFoundException();
 	}

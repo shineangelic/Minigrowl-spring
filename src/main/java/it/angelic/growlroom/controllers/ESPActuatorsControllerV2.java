@@ -1,4 +1,4 @@
-package it.angelic.growlroom.controllers.v2;
+package it.angelic.growlroom.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

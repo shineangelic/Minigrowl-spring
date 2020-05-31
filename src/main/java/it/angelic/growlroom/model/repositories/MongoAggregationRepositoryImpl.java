@@ -11,7 +11,6 @@ import static com.mongodb.client.model.Filters.gt;
 import static com.mongodb.client.model.Filters.lte;
 import static com.mongodb.client.model.Filters.ne;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -100,7 +99,7 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 	 * 
 	 */private List<Bson> aggregaTempoAccese(Date in, Date out, Integer which) {
 		return Arrays.asList(match(and(gt("timeStamp", in), lte("timeStamp", out), eq("actuatorId", which))),
-				lookup("actuators", "_id", "nextLogId", "previous"),
+				lookup("actuatorsV2", "_id", "nextLogId", "previous"),
 				addFields(new Field("prev", new Document("$arrayElemAt", Arrays.asList("$previous", 0L)))),
 				addFields(new Field("msecAccesa",
 						new Document("$subtract", Arrays.asList("$timeStamp", "$prev.timeStamp")))),
@@ -118,7 +117,7 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 		Calendar dtIn = Calendar.getInstance();
 		Date dtTo = new Date();
 		dtTo.setTime(dtIn.getTime().getTime());
-		SimpleDateFormat df = new SimpleDateFormat("YYYY-MM-DD");
+		//SimpleDateFormat df = new SimpleDateFormat("YYYY-MM-DD");
 
 		dtIn.add(Calendar.DATE, -7);
 		return Arrays.asList(
@@ -146,7 +145,7 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 		Calendar dtIn = Calendar.getInstance();
 		Date dtTo = new Date();
 		dtTo.setTime(dtIn.getTime().getTime());
-		SimpleDateFormat df = new SimpleDateFormat("YYYY-MM-DD");
+		//SimpleDateFormat df = new SimpleDateFormat("YYYY-MM-DD");
 
 		dtIn.add(Calendar.DATE, -7);
 

@@ -41,7 +41,7 @@ public class SensorLog {
 		pid = updated.getPid();
 		typ = updated.getTyp();
 		sensorId = updated.getSensorId();
-		val = Float.valueOf(updated.getVal());
+		val = Float.valueOf(updated.getReading());
 		timeStamp = updated.getTimeStamp();
 		err = updated.isErr();
 		boardId = updated.getBoard().getBoardId();
