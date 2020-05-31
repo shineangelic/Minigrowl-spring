@@ -13,10 +13,12 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -27,9 +29,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  *
  */
 @Entity
-@Table(uniqueConstraints={
-	    @UniqueConstraint(columnNames = {"parameter", "targetActuator"})
-	}) 
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "parameter", "targetActuator" }) })
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "tgt")
 public class Command implements Serializable {
 	/**
 	 * 
@@ -42,7 +43,7 @@ public class Command implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@JsonIgnore
 	private Long commandId;
-	
+
 	@JsonProperty("val")
 	private String parameter;
 	@JsonInclude(Include.NON_NULL)
@@ -50,11 +51,10 @@ public class Command implements Serializable {
 	private Long idOnQueue;
 
 	// dispositivo destinatario
- 
+
 	@JsonProperty("tgt")
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "targetActuator", nullable = false)
-	//@JsonBackReference
 	@JsonSerialize(using = IntActuatorCommandPidSerializer.class)
 	@JsonDeserialize(using = ActuatorDeserializer.class)
 	private Actuator targetActuator;
@@ -105,8 +105,6 @@ public class Command implements Serializable {
 	public void setIdOnQueue(Long idOnQueue) {
 		this.idOnQueue = idOnQueue;
 	}
-
-	 
 
 	public Long getCommandId() {
 		return commandId;

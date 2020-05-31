@@ -19,7 +19,6 @@ import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
@@ -55,14 +54,27 @@ public class Actuator implements Serializable {
 
 	@JsonProperty("cmds")
 	@OneToMany(mappedBy = "targetActuator", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JsonManagedReference
-	// @ElementCollection(targetClass = HashSet.class)
 	private List<Command> supportedCommands;
 
 	public Actuator() {
 		super();
+	}
+
+	public Actuator(String fromJackson) {
+		super();
+		this.actuatorId = Long.valueOf(fromJackson);
 		errorPresent = false;
 		supportedCommands = new ArrayList<>();
+	}
+
+	/**
+	 * Serve a jackson
+	 * 
+	 * @param actuatorId
+	 */
+	public Actuator(Long actuatorId) {
+		super();
+		this.actuatorId = actuatorId;
 	}
 
 	public Integer getPid() {
@@ -131,8 +143,12 @@ public class Actuator implements Serializable {
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + "-" + getActuatorId() + "(board " + board.getBoardId() + " pid " + pid
-				+ ")";
+		StringBuilder stb = new StringBuilder(this.getClass().getSimpleName());
+		stb.append("-").append(getActuatorId());
+		if (board != null)
+			stb.append(" - board ").append(board.getBoardId());
+		stb.append(" - pid ").append(pid).append("");
+		return stb.toString();
 	}
 
 	public short getMode() {
