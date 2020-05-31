@@ -16,7 +16,7 @@ public interface QueueCommandsRepository extends JpaRepository<QueueCommands, Lo
 
 	@Query(value = "Select * from Queue_Commands "
 			+ " inner join Command cmd on Queue_Commands.command_id = cmd.command_id "
-			+ " inner join Actuator act on act.pid = cmd.target_Actuator "
+			+ " inner join Actuator act on act.actuator_id = cmd.target_Actuator "
 			+ " where act.board_id = :boardId", nativeQuery = true)
 	List<QueueCommands> findByBoardId(@Param("boardId") Integer boardId);
 }

@@ -31,7 +31,8 @@ public class ESPCommandsControllerV2 {
 	@CrossOrigin
 	@GetMapping(value = "/{boardId}/", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Collection<Command> downloadComandi(@PathVariable String boardId) {
-		return commandsService.getUnexecutedCommands(boardId);
+		Collection<Command> ret = commandsService.getUnexecutedCommands(boardId);
+		return ret;
 	}
 
 	/**

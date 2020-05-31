@@ -50,6 +50,7 @@ public class CommandsServiceImpl implements CommandsService {
 		for (QueueCommands queueCommands : pes) {
 			Command actualCmd = queueCommands.getToExecute();
 			actualCmd.setIdOnQueue(queueCommands.getIdQueueCommand());
+			actualCmd.setTargetActuator(queueCommands.getToExecute().getTargetActuator());
 			ret.add(actualCmd);
 			break;// only 1 per volta
 		}

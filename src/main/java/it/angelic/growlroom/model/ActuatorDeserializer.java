@@ -24,10 +24,10 @@ public class ActuatorDeserializer extends JsonDeserializer implements Serializab
 	public Object deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
 		JsonNode node = jsonParser.getCodec().readTree(jsonParser);
 		Long userId = node.asLong();
-		System.out.println(node);
-		System.out.println(node.asLong());
+		//System.out.println(node);
+		//System.out.println(node.asLong());
 		Optional<Actuator> act = actuatorsRepository.findById(userId);
-		System.out.println("appuser: " + act.toString());
+		//System.out.println("appuser: " + act.toString());
 		return act.get();
 	}
 }

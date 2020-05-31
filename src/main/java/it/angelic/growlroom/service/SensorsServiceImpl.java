@@ -43,7 +43,7 @@ public class SensorsServiceImpl implements SensorsService {
 	public Sensor createOrUpdateSensor(Sensor sensing, String checkId) {
 		float dbs = -1f;
 		try {
-			dbs =  Float.valueOf(getSensorByPid(sensing.getPid()).getVal());
+			dbs = Float.valueOf(getSensorByPid(sensing.getPid()).getVal());
 		} catch (SensorNotFoundException e) {
 			logger.warn("Sensore non Trovato? " + sensing.getPid());
 		}
@@ -67,6 +67,7 @@ public class SensorsServiceImpl implements SensorsService {
 		if (!Integer.valueOf(checkId).equals(sensing.getPid()))
 			throw new IllegalArgumentException("PID Mismatch: " + checkId + " vs" + sensing.getPid());
 		Sensor previous = sensorRepository.findByBoardIdAndPid(Long.valueOf(boardId), sensing.getPid());
+		Sensor updated;
 		if (previous == null) {
 			Board tboard;
 			try {
@@ -99,13 +100,23 @@ public class SensorsServiceImpl implements SensorsService {
 			default:
 				break;
 			}
+
+			sensing.setBoard(tboard);
+			sensing.setTimeStamp(new Date());
+			updated = sensorRepository.save(sensing);
 			if (!tboard.getBoardSensors().contains(sensing)) {
 				tboard.getBoardSensors().add(sensing);
 				boardsRepository.save(tboard);
 			}
-			sensing.setBoard(tboard);
-			sensing.setTimeStamp(new Date());
-			return sensorRepository.save(sensing);
+			if (!updated.isErr()) {
+
+				try {
+					mongoLogService.logSensor(new SensorLog(updated));
+				} catch (Exception e) {
+					logger.warn("MongoDB exc: " + e.getMessage());
+				}
+			}
+			return updated;
 		} else {
 			previous.setVal(sensing.getVal());
 			previous.setTimeStamp(new Date());

@@ -7,11 +7,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
-public class IntActuatorSerializer extends JsonSerializer<Integer> {
+public class IntActuatorCommandPidSerializer extends JsonSerializer<Actuator> {
 
 	@Override
-	public void serialize(Integer tmpInt, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
+	public void serialize(Actuator tmpInt, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
 			throws IOException, JsonProcessingException {
-		jsonGenerator.writeObject(tmpInt.toString());
+		
+		jsonGenerator.writeObject("" +tmpInt.getPid());
 	}
 }

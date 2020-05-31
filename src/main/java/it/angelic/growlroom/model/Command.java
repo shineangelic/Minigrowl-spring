@@ -10,9 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -46,6 +46,7 @@ public class Command implements Serializable {
 	@JsonProperty("val")
 	private String parameter;
 	@JsonInclude(Include.NON_NULL)
+	@Transient
 	private Long idOnQueue;
 
 	// dispositivo destinatario
@@ -53,8 +54,8 @@ public class Command implements Serializable {
 	@JsonProperty("tgt")
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "targetActuator", nullable = false)
-	@JsonBackReference
-	@JsonSerialize(using = IntActuatorSerializer.class, as=Integer.class)
+	//@JsonBackReference
+	@JsonSerialize(using = IntActuatorCommandPidSerializer.class)
 	@JsonDeserialize(using = ActuatorDeserializer.class)
 	private Actuator targetActuator;
 

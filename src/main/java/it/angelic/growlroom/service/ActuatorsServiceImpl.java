@@ -79,13 +79,13 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 				// commandsRepository.save(com);
 			}
 			updated = actuatorsRepository.save(dispositivo);
-
+			if (!tboard.getBoardActuators().contains(dispositivo)) {
+				tboard.getBoardActuators().add(dispositivo);
+				tboard = boardsRepository.save(tboard);
+			}
 			if (!updated.isErrorPresent()) {
 
-				if (!tboard.getBoardActuators().contains(dispositivo)) {
-					tboard.getBoardActuators().add(dispositivo);
-					tboard = boardsRepository.save(tboard);
-				}
+				
 
 				try {
 					mongoLogService.logActuator(new ActuatorLog(updated));
