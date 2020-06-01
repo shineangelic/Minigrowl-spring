@@ -34,7 +34,7 @@ import com.mongodb.client.model.Field;
 
 import it.angelic.growlroom.model.mongo.ActuatorLog;
 
-//Impl postfix of the name on it compared to the core repository interface
+
 public class MongoAggregationRepositoryImpl implements MongoAggregationRepository {
 
 	private final MongoTemplate mongoTemplate;

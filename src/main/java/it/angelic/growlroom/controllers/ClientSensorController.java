@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import javax.print.PrintException;
-
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -23,8 +21,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.angelic.growlroom.model.Actuator;
+import it.angelic.growlroom.model.Board;
 import it.angelic.growlroom.model.Command;
 import it.angelic.growlroom.model.Sensor;
+import it.angelic.growlroom.model.repositories.BoardsRepository;
 import it.angelic.growlroom.model.repositories.HourValuePair;
 import it.angelic.growlroom.service.ActuatorsService;
 import it.angelic.growlroom.service.CommandsService;
@@ -50,35 +50,44 @@ public class ClientSensorController {
 	private CommandsService commandsService;
 
 	@Autowired
+	private BoardsRepository boardsRepository;
+
+	@Autowired
 	private ActuatorsService actuatorsService;
 
 	@Autowired
 	private MongoLogService mongoLogService;
 
 	@CrossOrigin
+	@GetMapping(value = "/boards", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Collection<Board>> getBoards() {
+		return new ResponseEntity<>(boardsRepository.findAll(), HttpStatus.OK);
+	}
+
+	@CrossOrigin
 	@GetMapping(value = "/sensors/{boardId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Collection<Sensor>> getSensors(
-			@RequestParam(value = "dataInizio", required = false) Date dtIn, @PathVariable String boardId)
-			throws FileNotFoundException, PrintException {
+	public ResponseEntity<Collection<Sensor>> getSensors(@PathVariable String boardId)
+			throws IllegalArgumentException {
 		try {
 			int t2 = Integer.valueOf(boardId);
 			return new ResponseEntity<>(sensorService.getBoardSensors(t2), HttpStatus.OK);
 		} catch (NumberFormatException e) {
 			throw new IllegalArgumentException("Unparsable boardId: " + boardId);
 		}
-		
+
 	}
 
 	@CrossOrigin
 	@GetMapping(value = "/actuators/{boardId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Collection<Actuator>> getActuators( @PathVariable String boardId) {
+	public ResponseEntity<Collection<Actuator>> getActuators(@PathVariable String boardId)
+			throws IllegalArgumentException {
 		try {
 			long t2 = Integer.valueOf(boardId);
 			return new ResponseEntity<>(actuatorsService.getBoardActuators(t2), HttpStatus.OK);
 		} catch (NumberFormatException e) {
 			throw new IllegalArgumentException("Unparsable boardId: " + boardId);
 		}
-		
+
 	}
 
 	@CrossOrigin
