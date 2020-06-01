@@ -25,7 +25,7 @@ public class Sensor {
 	private Integer pid;
 	private SensorEnum typ;
 	
-	@JsonProperty("reading")
+	@JsonProperty("val")
 	private String reading;
 	
 	private UnitEnum uinit;

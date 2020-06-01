@@ -1,4 +1,4 @@
-package it.angelic.growlroom.service;
+ package it.angelic.growlroom.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -79,7 +79,8 @@ public class SensorsServiceImpl implements SensorsService {
 		//mongo logging
 		if (!updated.isErr()) {
 			try {
-				mongoLogService.logSensor(new SensorLog(updated));
+				SensorLog grimpl = new SensorLog(updated);
+				mongoLogService.logSensor(grimpl);
 			} catch (Exception e) {
 				logger.warn("MongoDB exc: " + e.getMessage());
 			}
