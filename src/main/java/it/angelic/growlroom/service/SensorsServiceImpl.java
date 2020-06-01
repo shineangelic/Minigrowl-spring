@@ -7,6 +7,7 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import it.angelic.growlroom.model.Board;
@@ -27,10 +28,13 @@ public class SensorsServiceImpl implements SensorsService {
 
 	@Autowired
 	private BoardsRepository boardsRepository;
+	
+	private final SimpMessagingTemplate simpMessagingTemplate;
 
 	Logger logger = LoggerFactory.getLogger(SensorsServiceImpl.class);
 
-	public SensorsServiceImpl() {
+	public SensorsServiceImpl(SimpMessagingTemplate simpMessagingTemplate) {
+		this.simpMessagingTemplate = simpMessagingTemplate;
 	}
 
 	@Override
@@ -76,6 +80,9 @@ public class SensorsServiceImpl implements SensorsService {
 			previous.setErr(sensing.isErr());
 			updated = sensorRepository.save(previous);
 		}
+		// avvisa i sottoscrittori dei sensori
+		this.simpMessagingTemplate.convertAndSend("/topic/sensors", updated);
+		
 		//mongo logging
 		if (!updated.isErr()) {
 			try {
