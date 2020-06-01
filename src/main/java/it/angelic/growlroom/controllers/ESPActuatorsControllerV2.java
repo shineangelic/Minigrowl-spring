@@ -52,7 +52,7 @@ public class ESPActuatorsControllerV2 {
 
 
 		// avvisa i sottoscrittori degli attuatori
-		this.simpMessagingTemplate.convertAndSend("/topic/actuators", updated);
+		this.simpMessagingTemplate.convertAndSend("/topic/actuators/"+updated.getBoard().getBoardId(), updated);
 
 		return dispositivo.getPid();
 	}

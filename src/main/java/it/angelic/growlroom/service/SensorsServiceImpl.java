@@ -81,7 +81,7 @@ public class SensorsServiceImpl implements SensorsService {
 			updated = sensorRepository.save(previous);
 		}
 		// avvisa i sottoscrittori dei sensori
-		this.simpMessagingTemplate.convertAndSend("/topic/sensors", updated);
+		this.simpMessagingTemplate.convertAndSend("/topic/sensors/"+updated.getBoard().getBoardId(), updated);
 		
 		//mongo logging
 		if (!updated.isErr()) {
