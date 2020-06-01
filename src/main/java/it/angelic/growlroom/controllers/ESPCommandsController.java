@@ -23,7 +23,7 @@ import it.angelic.growlroom.service.CommandsService;
  */
 @RestController
 @RequestMapping(value = "/api/esp/v2/commands")
-public class ESPCommandsControllerV2 {
+public class ESPCommandsController {
 
 	@Autowired
 	private CommandsService commandsService;

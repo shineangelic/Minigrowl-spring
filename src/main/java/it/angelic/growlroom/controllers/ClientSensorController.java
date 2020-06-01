@@ -41,7 +41,7 @@ import it.angelic.growlroom.service.SensorsService;
 @RestController
 @CrossOrigin
 @RequestMapping(value = "/api/minigrowl/v2")
-public class ClientSensorControllerV2 {
+public class ClientSensorController {
 
 	@Autowired
 	private SensorsService sensorService;

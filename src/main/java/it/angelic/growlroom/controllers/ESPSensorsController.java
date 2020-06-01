@@ -19,7 +19,7 @@ import it.angelic.growlroom.service.SensorsService;
  */
 @RestController
 @RequestMapping(value = "/api/esp/v2/sensors")
-public class ESPSensorsControllerV2 {
+public class ESPSensorsController {
 
 	@Autowired
 	private SensorsService sensorService;

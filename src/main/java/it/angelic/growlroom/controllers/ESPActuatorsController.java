@@ -21,14 +21,14 @@ import it.angelic.growlroom.service.ActuatorsService;
  */
 @RestController
 @RequestMapping(value = "/api/esp/v2/actuators")
-public class ESPActuatorsControllerV2 {
+public class ESPActuatorsController {
 
 	@Autowired
 	private ActuatorsService actuatorsService;
 
 	private final SimpMessagingTemplate simpMessagingTemplate;
 
-	public ESPActuatorsControllerV2(SimpMessagingTemplate simpMessagingTemplate) {
+	public ESPActuatorsController(SimpMessagingTemplate simpMessagingTemplate) {
 		this.simpMessagingTemplate = simpMessagingTemplate;
 	}
 

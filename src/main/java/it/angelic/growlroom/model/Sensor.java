@@ -23,6 +23,7 @@ public class Sensor {
 
 	@JsonProperty("id")
 	private Integer pid;
+	
 	private SensorEnum typ;
 	
 	@JsonProperty("val")
@@ -89,7 +90,7 @@ public class Sensor {
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + "-" + getPid();
+		return this.getClass().getSimpleName() + ":" + getSensorId() +" PID:"+ getPid();
 	}
 
 	public Board getBoard() {
