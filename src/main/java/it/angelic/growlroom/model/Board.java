@@ -1,6 +1,7 @@
 package it.angelic.growlroom.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -22,12 +23,14 @@ public class Board implements Serializable{
 
 	public Board() {
 		super();
-
+		boardActuators = new ArrayList<Actuator>();
+		boardSensors = new ArrayList<Sensor>();
 	}
 
 	public Board(Long boardId) {
-		super();
 		this.boardId = boardId;
+		boardActuators = new ArrayList<Actuator>();
+		boardSensors = new ArrayList<Sensor>();
 	}
 
 	@Id

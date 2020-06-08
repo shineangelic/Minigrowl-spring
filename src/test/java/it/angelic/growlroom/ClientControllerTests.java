@@ -36,20 +36,34 @@ public class ClientControllerTests {
 	@Autowired
 	private MockMvc mockMvc;
 	
+	@Test
+	public void testGetBoards() throws Exception {
+		this.mockMvc.perform(get("/api/minigrowl/v2/boards")).andExpect(status().isOk());
+	}
 	
 	@Test
 	public void testGetSensors() throws Exception {
-		this.mockMvc.perform(get("/api/minigrowl/v1/sensors")).andExpect(status().isOk());
+		this.mockMvc.perform(get("/api/minigrowl/v2/sensors/1")).andExpect(status().isOk());
 	}
 	
 	@Test
 	public void testGetActuators() throws Exception {
-		this.mockMvc.perform(get("/api/minigrowl/v1/actuators")).andExpect(status().isOk());
+		this.mockMvc.perform(get("/api/minigrowl/v2/actuators/1")).andExpect(status().isOk());
+	}
+ 
+	@Test
+	public void testGetHistory() throws Exception {
+		this.mockMvc.perform(get("/api/minigrowl/v2/sensors/1/historyChart")).andExpect(status().isOk());
 	}
 	
 	@Test
-	public void testGetCommands() throws Exception {
-		this.mockMvc.perform(get("/api/minigrowl/v1/commands")).andExpect(status().isOk());
+	public void testGetHourChart() throws Exception {
+		this.mockMvc.perform(get("/api/minigrowl/v2/sensors/1/hourChart")).andExpect(status().isOk());
+	}
+	
+	@Test
+	public void testGetUptime() throws Exception {
+		this.mockMvc.perform(get("/api/minigrowl/v2/actuators/uptime?dataInizio=2020-05-02+00:02:23&dataFine=2020-05-21+00:02:23&actuatorId=13")).andExpect(status().isOk());
 	}
 
 	

@@ -18,7 +18,6 @@ public class SensorLog {
 	@Transient
 	public static final String SEQUENCE_NAME = "sensorsv2_sequence";
 
-
 	@Id
 	private Long logId;
 
@@ -30,8 +29,6 @@ public class SensorLog {
 	private boolean err;
 	private Long boardId;
 	private Long sensorId;
-	
-	
 
 	public SensorLog() {
 		super();
@@ -41,7 +38,11 @@ public class SensorLog {
 		pid = updated.getPid();
 		typ = updated.getTyp();
 		sensorId = updated.getSensorId();
-		val = Float.valueOf(updated.getReading());
+		try {
+			val = Float.valueOf(updated.getReading());
+		} catch (Exception e) {
+			// will stay null
+		}
 		timeStamp = updated.getTimeStamp();
 		err = updated.isErr();
 		boardId = updated.getBoard().getBoardId();

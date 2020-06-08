@@ -24,6 +24,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.mapping.event.LoggingEventListener;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import it.angelic.growlroom.model.Board;
 import it.angelic.growlroom.model.Sensor;
 import it.angelic.growlroom.model.mongo.SensorLog;
 import it.angelic.growlroom.model.repositories.MongoSensorLogRepository;
@@ -40,6 +41,8 @@ public class MongoSensorRepositoryIntegrationTest {
 
 	@Autowired MongoSensorLogRepository repository;
 	@Autowired MongoOperations operations;
+	
+	
 
 	SensorLog dave;
 
@@ -47,7 +50,11 @@ public class MongoSensorRepositoryIntegrationTest {
 	public void setUp() {
 
 		repository.deleteAll();
-		dave = repository.save(new SensorLog(new Sensor()));
+		Sensor fake = new Sensor();
+		fake.setSensorId(66l);
+		Board fakeB = new Board();
+		fake.setBoard(fakeB);
+		dave = repository.save(new SensorLog(fake));
 		 
 	}
 
