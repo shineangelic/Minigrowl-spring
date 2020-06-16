@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,8 @@ public class CommandsServiceImpl implements CommandsService {
 
 	@Autowired
 	QueueCommandsRepository queueCommands;
+	
+	Logger logger = LoggerFactory.getLogger(CommandsServiceImpl.class);
 
 	/**
 	 * Creates a new command to be executed
@@ -72,7 +76,9 @@ public class CommandsServiceImpl implements CommandsService {
 
 		QueueCommands arg0 = new QueueCommands(checkAct.get().containsCommand(toExecurte));
 		queueCommands.save(arg0);
-		return queueCommands.count();
+		long ret = queueCommands.count();
+		logger.warn("Saving command on queue for execution. Queue lenght: " + ret);
+		return ret;
 	}
 
 	@Override

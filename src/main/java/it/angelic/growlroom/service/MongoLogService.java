@@ -47,21 +47,21 @@ public class MongoLogService {
 	public void logSensor(SensorLog in) {
 		in.setLogId(sequenceGenerator.generateSequence(SensorLog.SEQUENCE_NAME));
 		mongoSensorLogRepository.save(in);
-		logger.info("logSensor() saved log with next: " + in.getLogId());
+		logger.info("logSensor() saved log with id: " + in.getLogId());
 	}
 
 	public void logActuator(ActuatorLog in) {
 		ActuatorLog last = mongoSensorLogRepository.getLastByActuatorId(in.getActuatorId().longValue());
 
 		in.setLogId(sequenceGenerator.generateSequence(ActuatorLog.SEQUENCE_NAME_ACTUATORS));
-
-		mongoActuatorLogRepository.insert(in);
+		ActuatorLog out = mongoActuatorLogRepository.insert(in);
+		logger.info("logActuator() Saved new log with id: " + out.getLogId());
 
 		// mongoActuatorLogRepository.findLastByActuatorId(in.getId());
 		if (last != null) {
-			last.setNextLogId(in.getLogId());
+			last.setNextLogId(out.getLogId());
 			mongoActuatorLogRepository.save(last);
-			logger.info("logActuator() Updated old log with next: " + last.getLogId());
+			logger.info("logActuator() Updated old log " + last.getLogId()+" with next:"+out.getLogId() );
 		}
 
 	}

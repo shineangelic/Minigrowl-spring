@@ -73,7 +73,9 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 				com.setTargetActuator(dispositivo);
 				// commandsRepository.save(com);
 			}
+			
 			updated = actuatorsRepository.save(dispositivo);
+			logger.warn("Created new ACTUATOR id:" + updated.getActuatorId());
 			if (!tboard.getBoardActuators().contains(dispositivo)) {
 				tboard.getBoardActuators().add(dispositivo);
 				tboard = boardsRepository.save(tboard);

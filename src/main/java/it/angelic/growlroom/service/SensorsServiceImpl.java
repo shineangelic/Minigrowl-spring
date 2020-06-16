@@ -1,4 +1,4 @@
- package it.angelic.growlroom.service;
+package it.angelic.growlroom.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,7 +28,7 @@ public class SensorsServiceImpl implements SensorsService {
 
 	@Autowired
 	private BoardsRepository boardsRepository;
-	
+
 	private final SimpMessagingTemplate simpMessagingTemplate;
 
 	Logger logger = LoggerFactory.getLogger(SensorsServiceImpl.class);
@@ -43,14 +43,14 @@ public class SensorsServiceImpl implements SensorsService {
 			throw new IllegalArgumentException("PID Mismatch: " + checkId + " vs" + sensing.getPid());
 
 		try {
-			
+
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
 		Sensor previous = sensorRepository.findByBoardIdAndPid(Long.valueOf(boardId), sensing.getPid());
 		Sensor updated;
 		if (previous == null) {
-			Board tboard= findOrCreateBoard(boardId);
+			Board tboard = findOrCreateBoard(boardId);
 
 			switch (sensing.getTyp()) {
 			case BAROMETER:
@@ -79,7 +79,8 @@ public class SensorsServiceImpl implements SensorsService {
 				tboard.getBoardSensors().add(sensing);
 				boardsRepository.save(tboard);
 			}
-		} else {
+			logger.warn("Created new SENSOR id:" + updated.getSensorId());
+		} else {//update its readings
 			previous.setReading(sensing.getReading());
 			previous.setTimeStamp(new Date());
 			previous.setErr(sensing.isErr());
@@ -87,20 +88,22 @@ public class SensorsServiceImpl implements SensorsService {
 		}
 		// avvisa i sottoscrittori dei sensori
 		this.simpMessagingTemplate.convertAndSend("/topic/sensors", updated);
-		
-		//mongo logging
+
+		// mongo logging
 		if (!updated.isErr()) {
 			try {
 				SensorLog grimpl = new SensorLog(updated);
 				mongoLogService.logSensor(grimpl);
 			} catch (Exception e) {
-				logger.warn("MongoDB exc: " + e.getMessage());
+				logger.error("MongoDB exc: " + e.getMessage());
 			}
+		} else {
+			logger.warn("NON-logging erratic sensor: " + updated.getSensorId());
 		}
 		return updated;
 	}
 
-	private Board findOrCreateBoard(String boardId ) {
+	private Board findOrCreateBoard(String boardId) {
 		Board tboard;
 		try {
 			tboard = boardsRepository.findByBoardId(Long.valueOf(boardId));
