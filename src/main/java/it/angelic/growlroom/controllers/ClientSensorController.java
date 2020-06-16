@@ -137,7 +137,7 @@ public class ClientSensorController {
 			throws FileNotFoundException, IllegalArgumentException {
 		if (!(Integer.valueOf(id).intValue() > 0))
 			throw new IllegalArgumentException("INVALID sensor id: " + id);
-		return new ResponseEntity<>(mongoLogService.getGroupedSensorLogHistory(Integer.valueOf(id), dtIn),
+		return new ResponseEntity<>(mongoLogService.getGroupedSensorLogHistory(Long.valueOf(id), dtIn),
 				HttpStatus.OK);
 	}
 }

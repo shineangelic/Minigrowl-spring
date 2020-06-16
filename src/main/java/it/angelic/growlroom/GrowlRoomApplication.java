@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class GrowlRoomApplication {
 
-	@Autowired
+	@Autowired(required=false)
 	GrowlroomProperties props;
 	
 	@PostConstruct

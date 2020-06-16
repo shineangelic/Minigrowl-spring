@@ -114,7 +114,7 @@ public class MongoLogService {
 	 * @param dtIn
 	 * @return
 	 */
-	public List<HourValuePair> getGroupedSensorLogHistory(int sensorId, Date dtIn) {
+	public List<HourValuePair> getGroupedSensorLogHistory(Long sensorId, Date dtIn) {
 		final DecimalFormat df = new DecimalFormat();
 		df.setGroupingUsed(false);
 		df.setMaximumFractionDigits(2);

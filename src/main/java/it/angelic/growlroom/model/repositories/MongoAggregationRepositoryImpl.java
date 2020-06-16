@@ -140,7 +140,7 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 	 * }, 'hourmin': { '$min': '$val' }, 'hourmax': { '$max': '$val' }, }}, {}]
 	 */
 	@Override
-	public AggregateIterable<Document> aggregaStoriaUltimaSettimana(int sensorI) {
+	public AggregateIterable<Document> aggregaStoriaUltimaSettimana(Long sensorI) {
 
 		Calendar dtIn = Calendar.getInstance();
 		Date dtTo = new Date();

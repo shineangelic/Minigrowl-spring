@@ -15,6 +15,8 @@
  */
 package it.angelic.growlroom;
 
+import org.bson.Document;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +25,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.mapping.event.LoggingEventListener;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import com.mongodb.client.AggregateIterable;
 
 import it.angelic.growlroom.model.Board;
 import it.angelic.growlroom.model.Sensor;
@@ -39,31 +43,32 @@ import it.angelic.growlroom.model.repositories.MongoSensorLogRepository;
 @SpringBootTest
 public class MongoSensorRepositoryIntegrationTest {
 
-	@Autowired MongoSensorLogRepository repository;
-	@Autowired MongoOperations operations;
-	
-	
+	@Autowired
+	MongoSensorLogRepository repository;
+	@Autowired
+	MongoOperations operations;
 
-	SensorLog dave;
+	SensorLog sensorLogT1;
 
 	@Before
 	public void setUp() {
-
 		repository.deleteAll();
 		Sensor fake = new Sensor();
 		fake.setSensorId(66l);
 		Board fakeB = new Board();
 		fake.setBoard(fakeB);
-		dave = repository.save(new SensorLog(fake));
-		 
+		SensorLog sl = new SensorLog(fake);
+		sl.setLogId(2l);
+		sensorLogT1 = repository.save(sl);
+
 	}
 
 	/**
 	 * Note that the all object conversions are preformed before the results are printed to the console.
 	 */
 	@Test
-	public void shouldPerformConversionBeforeResultProcessing() {
-		repository.findAll().forEach(System.out::println);
+	public void testFindAll() {
+		Assert.assertTrue(repository.findAll().size() > 0);
 	}
 
 	/**
@@ -71,10 +76,8 @@ public class MongoSensorRepositoryIntegrationTest {
 	 * {@link LoggingEventListener} output that is printed to the console.
 	 */
 	@Test
-	public void shouldPerformConversionDuringJava8StreamProcessing() {
-
-	//	try (Stream<Sensor> result = repository.findAllByCustomQueryWithStream()) {
-	//		result.forEach(System.out::println);
-	//	}
+	public void testStoriaUltimaSettimana() {
+		AggregateIterable<Document> ret = repository.aggregaStoriaUltimaSettimana(66l);
+		Assert.assertTrue(!ret.first().isEmpty());
 	}
 }

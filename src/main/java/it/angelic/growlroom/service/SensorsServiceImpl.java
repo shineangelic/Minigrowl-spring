@@ -41,12 +41,7 @@ public class SensorsServiceImpl implements SensorsService {
 	public Sensor createOrUpdateBoardSensor(Sensor sensing, String boardId, String checkId) {
 		if (!Integer.valueOf(checkId).equals(sensing.getPid()))
 			throw new IllegalArgumentException("PID Mismatch: " + checkId + " vs" + sensing.getPid());
-
-		try {
-
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
+ 
 		Sensor previous = sensorRepository.findByBoardIdAndPid(Long.valueOf(boardId), sensing.getPid());
 		Sensor updated;
 		if (previous == null) {

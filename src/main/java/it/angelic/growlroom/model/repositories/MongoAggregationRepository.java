@@ -17,7 +17,7 @@ public interface MongoAggregationRepository {
 	// aggregate pipeline
 	public AggregateIterable<Document> getHour24ChartAggregateData(int sensorId);
 	
-	public AggregateIterable<Document> aggregaStoriaUltimaSettimana(int sensorId);
+	public AggregateIterable<Document> aggregaStoriaUltimaSettimana(Long sensorId);
 	
 	public ActuatorLog getLastByActuatorId(Long id);
 	

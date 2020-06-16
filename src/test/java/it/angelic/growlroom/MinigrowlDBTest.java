@@ -54,6 +54,7 @@ public class MinigrowlDBTest {
 	private ActuatorsRepository actrepository;
 	@Autowired
 	private CommandsRepository comrepository;
+	 
 	@Autowired
 	private QueueCommandsRepository queueCommandsRepository;
 	
@@ -114,6 +115,8 @@ public class MinigrowlDBTest {
 		actrepository.save(emp2);
 		Assert.assertTrue(actrepository.count() > 1);
 	}
+	
+	
 	
 	@Test
 	public void testCommandsRepository() {
