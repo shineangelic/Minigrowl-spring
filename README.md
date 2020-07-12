@@ -1,6 +1,8 @@
 # Minigrow back-end services
 
-Minigrow _APIs_ are based on three kind of objects: `sensors`, `actuators` and `commands`. While the first two reflect real hardware devices with their own readings, the command is an abstraction used to drive such devices. a `Board` contains a list of actuators and one of sensors. The system supports more than one board, each one will be treated and logged separately.
+A spring-boot server is used to collect grow-room data, log it on a cloud database and persist information that could be lost on the little boards. This runtime can be easily deployed on some compatible spring-boot compatible cloud service like Heroku.
+
+Minigrow _APIs_ are based on three kind of objects: `sensors`, `actuators` and `commands`. All of them belongs to some `board`, which is an abstraction to group actuators and sensors. While the first two reflect real hardware devices with their own readings, the command is an abstraction used to drive such devices. a `Board` contains a list of actuators and one of sensors. The system supports more than one board, each one will be shown separately in the UI.
 
 The spring-boot server exposes REST API to exchange such devices between harware boards (ESP) and clients with JSON representation and keeps a history. Two separate api sides are exposed: one to be used by the board and the other from clients. Since this is a personal home project, no additional security nor login features are provided. The spring server may be used optionally, as the [Minigrowl-ESP](https://shineangelic.github.io/Minigrowl-ESP-LoRa32-OLED/) already implements some basic logic, but you'll need this running in order to archive logs and serve clients like [Minigrowl-react](https://shineangelic.github.io/Minigrowl-react/).
 
@@ -23,15 +25,20 @@ Minigrowl supports multiple boards, in order to control more chambers/drying roo
 ```
 
 # ESP32 APIs
+
+These APIs are used by the ESP boards, to send devices and request commands to be executed at run-time.
+
 ```
-   /api/esp/v1/actuators/id/{id}
-   /api/esp/v1/sensors/id/{id}
-   /api/esp/v1/commands
+   /api/esp/v2/actuators/{boardId}/{id}
+   /api/esp/v2/sensors/{boardId}/{id}
+   
+   /api/esp/v2/commands/{boardId}/
+   /api/esp/v2/commands/{boardId}/{queueCommandid}
 ```
 
 # Websockets
 
-Two topic websocket are made available in order to asyncronously update front-end views. a message is sent upon changes detection, containing only data relevant to the change event. At front-end level, `actuatorId` and `sensorId` will be used to map actuators and sensors, respectively, so that unrelevant updates are ignored.
+Two topic websocket are made available in order to asyncronously update front-end views. a message is sent upon changes detection, containing data relevant to the change event only. At front-end level, `actuatorId` and `sensorId` will be used to map actuators and sensors, respectively, so that unrelevant updates are ignored.
 
 ```
    /topic/actuators/
@@ -149,6 +156,7 @@ An actuator is a real device used inside a typical growroom, for example: `MainL
 ]
 ```
 ## Send Command example
+
 PUT on /api/minigrowl/v2/commands/queue/add, with payload like the following (it must be a supported command seen above)
 ```
 {
