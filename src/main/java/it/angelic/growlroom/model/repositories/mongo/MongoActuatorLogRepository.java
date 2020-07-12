@@ -14,7 +14,7 @@ public interface MongoActuatorLogRepository extends MongoRepository<ActuatorLog,
 	List<ActuatorLog> findAll();
 
 	@Query("{'actuatorId': ?0}")
-	List<ActuatorLog> findByActuatorId(int actId);
+	List<ActuatorLog> findByActuatorId(long actId);
 	
 	@Query("{'actuatorId': ?0}")
 	ActuatorLog findLastByActuatorId(int actId);

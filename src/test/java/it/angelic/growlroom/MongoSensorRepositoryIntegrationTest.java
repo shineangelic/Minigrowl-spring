@@ -15,6 +15,9 @@
  */
 package it.angelic.growlroom;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import org.bson.Document;
 import org.junit.Assert;
 import org.junit.Before;
@@ -29,9 +32,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.mongodb.client.AggregateIterable;
 
+import it.angelic.growlroom.model.Actuator;
+import it.angelic.growlroom.model.ActuatorEnum;
 import it.angelic.growlroom.model.Board;
 import it.angelic.growlroom.model.Sensor;
+import it.angelic.growlroom.model.mongo.ActuatorLog;
 import it.angelic.growlroom.model.mongo.SensorLog;
+import it.angelic.growlroom.model.repositories.mongo.MongoActuatorLogRepository;
 import it.angelic.growlroom.model.repositories.mongo.MongoSensorLogRepository;
 
 /**
@@ -46,22 +53,34 @@ import it.angelic.growlroom.model.repositories.mongo.MongoSensorLogRepository;
 public class MongoSensorRepositoryIntegrationTest {
 
 	@Autowired
-	MongoSensorLogRepository repository;
+	MongoSensorLogRepository mongoSensorLogRepository;
+	@Autowired
+	MongoActuatorLogRepository mongoActuatorLogRepository;
 	@Autowired
 	MongoOperations operations;
 
 	SensorLog sensorLogT1;
+	private ActuatorLog actuatorLog;
+	 
+	private Board fakeB;
+	private Sensor fakeSensor1;
 
 	@Before
 	public void setUp() {
-		repository.deleteAll();
-		Sensor fake = new Sensor();
-		fake.setSensorId(66l);
-		Board fakeB = new Board();
-		fake.setBoard(fakeB);
-		SensorLog sl = new SensorLog(fake);
+		mongoSensorLogRepository.deleteAll();
+		mongoActuatorLogRepository.deleteAll();
+		fakeSensor1 = new Sensor();
+		fakeSensor1.setSensorId(66l);
+		fakeB = new Board();
+		fakeSensor1.setBoard(fakeB);
+		SensorLog sl = new SensorLog(fakeSensor1);
 		sl.setLogId(2l);
-		sensorLogT1 = repository.save(sl);
+		sensorLogT1 = mongoSensorLogRepository.save(sl);
+		
+		
+		ActuatorLog l2 = new ActuatorLog();
+		l2.setLogId(33l);
+		actuatorLog = mongoActuatorLogRepository.save(l2);
 
 	}
 
@@ -69,8 +88,28 @@ public class MongoSensorRepositoryIntegrationTest {
 	 * Note that the all object conversions are preformed before the results are printed to the console.
 	 */
 	@Test
-	public void testFindAll() {
-		Assert.assertTrue(repository.findAll().size() > 0);
+	public void testFindAllSensors() {
+		Assert.assertTrue(mongoSensorLogRepository.findAll().size() > 0);
+	}
+	
+	@Test
+	public void testActuatorLogSensors() {
+		Actuator a = new Actuator();
+		a.setBoard(fakeB);
+		a.setActuatorId(5432l);
+		a.setTimeStamp(new Date());
+		a.setErrorPresent(false);
+		a.setTyp(ActuatorEnum.FAN);
+		ActuatorLog l2 = new ActuatorLog(a);
+		l2.setLogId(234111l);
+		mongoActuatorLogRepository.save(l2);
+		
+		Assert.assertNotNull(mongoActuatorLogRepository.findByActuatorId(5432l));
+	}
+	
+	@Test
+	public void testFindAllctuators() {
+		Assert.assertTrue(mongoActuatorLogRepository.findAll().size() > 0);
 	}
 
 	/**
@@ -79,7 +118,14 @@ public class MongoSensorRepositoryIntegrationTest {
 	 */
 	@Test
 	public void testStoriaUltimaSettimana() {
-		AggregateIterable<Document> ret = repository.aggregaStoriaUltimaSettimana(66l);
+		Calendar timeStamp = Calendar.getInstance();
+		timeStamp.add(Calendar.DATE, -3);
+		SensorLog sl = new SensorLog(fakeSensor1);
+		sl.setLogId(2l);
+		sl.setTimeStamp(timeStamp.getTime());
+		sensorLogT1 = mongoSensorLogRepository.save(sl);
+		
+		AggregateIterable<Document> ret = mongoSensorLogRepository.aggregaStoriaUltimaSettimana(66l);
 		Assert.assertNotNull(ret);
 		Assert.assertTrue(!ret.first().isEmpty());
 	}

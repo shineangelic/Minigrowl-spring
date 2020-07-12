@@ -16,6 +16,7 @@
 package it.angelic.growlroom;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,11 +47,17 @@ public class MinigrowlServiceTest {
 	private ActuatorsService actuatorsService;
 	@Autowired
 	private BoardsRepository boardsRepository;
+	private Board fBoard;
+	
+	@Before
+	public void setUp() {
+		fBoard = createFakeBoard(2l);
+
+	}
 	 
 	private Board createFakeBoard(Long id) {
 		Board ret = new Board();
 		ret.setBoardId(id);
-
 		return boardsRepository.saveAndFlush(ret);
 	}
 
@@ -65,7 +72,7 @@ public class MinigrowlServiceTest {
 		Sensor emp = new Sensor();
 		emp.setPid(22);
 		emp.setTyp(SensorEnum.HUMIDITY);
-		emp.setBoard(createFakeBoard(456l));
+		emp.setBoard(fBoard);
 		Sensor t2 = sensorsService.createOrUpdateBoardSensor(emp, "4", "22");
 		Assert.assertNotNull(t2.getPid());
 		
@@ -78,7 +85,7 @@ public class MinigrowlServiceTest {
 		Sensor emp = new Sensor();
 		emp.setPid(22);
 		emp.setTyp(SensorEnum.HUMIDITY);
-		emp.setBoard(createFakeBoard(567l));
+		emp.setBoard(fBoard);
 		Sensor t2 = sensorsService.createOrUpdateBoardSensor(emp, "4", "22");
 		Assert.assertNotNull(t2.getPid());
 		
@@ -91,7 +98,7 @@ public class MinigrowlServiceTest {
 		Actuator emp = new Actuator();
 		emp.setPid(22);
 		emp.setTyp(ActuatorEnum.LIGHT);
-		emp.setBoard(createFakeBoard(678l));
+		emp.setBoard(fBoard);
 		Actuator t2 = actuatorsService.createOrUpdateBoardActuator(emp, "4", "22");
 		Assert.assertNotNull(t2.getPid());
 		
