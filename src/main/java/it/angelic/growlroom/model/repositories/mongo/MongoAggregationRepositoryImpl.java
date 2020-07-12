@@ -1,4 +1,4 @@
-package it.angelic.growlroom.model.repositories;
+package it.angelic.growlroom.model.repositories.mongo;
 
 import static com.mongodb.client.model.Accumulators.sum;
 import static com.mongodb.client.model.Aggregates.addFields;
@@ -32,6 +32,7 @@ import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Field;
 
+import it.angelic.growlroom.model.HourValuePair;
 import it.angelic.growlroom.model.mongo.ActuatorLog;
 
 

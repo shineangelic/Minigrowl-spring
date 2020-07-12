@@ -1,4 +1,4 @@
-package it.angelic.growlroom.model.repositories;
+package it.angelic.growlroom.model.repositories.mongo;
 
 import java.util.Date;
 import java.util.List;
@@ -7,6 +7,7 @@ import org.bson.Document;
 
 import com.mongodb.client.AggregateIterable;
 
+import it.angelic.growlroom.model.HourValuePair;
 import it.angelic.growlroom.model.mongo.ActuatorLog;
 
 public interface MongoAggregationRepository {

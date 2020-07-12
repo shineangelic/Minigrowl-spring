@@ -58,6 +58,7 @@ public class Actuator implements Serializable {
 
 	public Actuator() {
 		super();
+		supportedCommands = new ArrayList<>();
 	}
 
 	public Actuator(String fromJackson) {

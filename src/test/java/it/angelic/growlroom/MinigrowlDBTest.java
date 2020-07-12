@@ -54,17 +54,17 @@ public class MinigrowlDBTest {
 	private ActuatorsRepository actrepository;
 	@Autowired
 	private CommandsRepository comrepository;
-	 
+
 	@Autowired
 	private QueueCommandsRepository queueCommandsRepository;
-	
+
 	private Board createFakeBoard() {
 		Board ret = new Board();
 		ret.setBoardId(1l);
-		
+
 		return boardsRepository.saveAndFlush(ret);
 	}
-	
+
 	@Test
 	public void testBRepository() {
 		Board ret = createFakeBoard();
@@ -81,54 +81,52 @@ public class MinigrowlDBTest {
 		Assert.assertNotNull(emp.getPid());
 		Assert.assertTrue(sensorsRepository.count() > 0);
 	}
-	
+
 	@Test
 	public void testActRepository() {
 		Actuator emp = new Actuator();
 		emp.setPid(22);
 		emp.setTyp(ActuatorEnum.HUMIDIFIER);
 		emp.setBoard(createFakeBoard());
-		List<Command> xlist =new ArrayList<>();
+		List<Command> xlist = new ArrayList<>();
 		xlist.add(createFakeCommand(emp));
 		emp.setSupportedCommands(xlist);
-		
+
 		actrepository.save(emp);
 		Assert.assertNotNull(emp.getPid());
 		Assert.assertTrue(actrepository.count() > 0);
 	}
-	 
-	@Test(expected=DataIntegrityViolationException.class)
+
+	@Test(expected = DataIntegrityViolationException.class)
 	public void testActClashRepository() {
 		Actuator emp = new Actuator();
 		emp.setPid(22);
 		emp.setTyp(ActuatorEnum.HUMIDIFIER);
-		Board b=createFakeBoard();
+		Board b = createFakeBoard();
 		emp.setBoard(b);
-		 
+
 		Actuator emp2 = new Actuator();
 		emp2.setPid(22);
 		emp2.setTyp(ActuatorEnum.FAN);
 		emp2.setBoard(b);
-		 
+
 		actrepository.save(emp);
 		Assert.assertTrue(actrepository.count() > 0);
 		actrepository.save(emp2);
 		Assert.assertTrue(actrepository.count() > 1);
 	}
-	
-	
-	
+
 	@Test
 	public void testCommandsRepository() {
 		Actuator emp = new Actuator();
 		emp.setPid(22);
 		actrepository.save(emp);
 		Command ret = createFakeCommand(emp);
-		
+
 		Command saved = comrepository.save(ret);
 		Assert.assertNotNull(comrepository.findById(saved.getCommandId()));
 	}
-	 
+
 	private Command createFakeCommand(Actuator a) {
 		Command emp = new Command();
 		emp.setName("df");
@@ -138,7 +136,7 @@ public class MinigrowlDBTest {
 		emp.setParameter("1");
 		return emp;
 	}
-	
+
 	@Test
 	public void testQueueRepository() {
 		Actuator emp = new Actuator();
@@ -147,7 +145,7 @@ public class MinigrowlDBTest {
 		Command ret = createFakeCommand(emp);
 		Command saved = comrepository.save(ret);
 		QueueCommands q1 = new QueueCommands(saved);
-		
+
 		QueueCommands s1 = queueCommandsRepository.save(q1);
 		Assert.assertNotNull(s1.getIdQueueCommand());
 	}

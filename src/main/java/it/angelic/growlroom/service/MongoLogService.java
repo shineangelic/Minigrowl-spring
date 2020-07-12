@@ -19,11 +19,11 @@ import org.springframework.stereotype.Service;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.result.DeleteResult;
 
+import it.angelic.growlroom.model.HourValuePair;
 import it.angelic.growlroom.model.mongo.ActuatorLog;
 import it.angelic.growlroom.model.mongo.SensorLog;
-import it.angelic.growlroom.model.repositories.HourValuePair;
-import it.angelic.growlroom.model.repositories.MongoActuatorLogRepository;
-import it.angelic.growlroom.model.repositories.MongoSensorLogRepository;
+import it.angelic.growlroom.model.repositories.mongo.MongoActuatorLogRepository;
+import it.angelic.growlroom.model.repositories.mongo.MongoSensorLogRepository;
 
 @Service
 public class MongoLogService {

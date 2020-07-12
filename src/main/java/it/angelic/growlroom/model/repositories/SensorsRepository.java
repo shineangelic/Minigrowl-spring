@@ -9,11 +9,10 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import it.angelic.growlroom.model.Sensor;
-import it.angelic.growlroom.model.SensorEnum;
 
 public interface SensorsRepository extends CrudRepository<Sensor, Long> {
 
-	Sensor findByTyp(SensorEnum id);
+
 	
 	@Query(value = "SELECT a FROM Sensor a WHERE a.board.boardId = :bid")
 	List<Sensor> findByBoardId(@Param("bid") Long  boardId);

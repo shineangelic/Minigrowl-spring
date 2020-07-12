@@ -1,4 +1,4 @@
-package it.angelic.growlroom.model.repositories;
+package it.angelic.growlroom.model.repositories.mongo;
 
 import java.util.Date;
 import java.util.List;

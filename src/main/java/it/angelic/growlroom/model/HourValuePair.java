@@ -1,4 +1,4 @@
-package it.angelic.growlroom.model.repositories;
+package it.angelic.growlroom.model;
 
 public class HourValuePair implements Comparable<HourValuePair> {
 

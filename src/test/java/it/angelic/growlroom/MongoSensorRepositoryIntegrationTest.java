@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.mapping.event.LoggingEventListener;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.mongodb.client.AggregateIterable;
@@ -31,7 +32,7 @@ import com.mongodb.client.AggregateIterable;
 import it.angelic.growlroom.model.Board;
 import it.angelic.growlroom.model.Sensor;
 import it.angelic.growlroom.model.mongo.SensorLog;
-import it.angelic.growlroom.model.repositories.MongoSensorLogRepository;
+import it.angelic.growlroom.model.repositories.mongo.MongoSensorLogRepository;
 
 /**
  * Integration test for {@link PersonRepository}.
@@ -40,6 +41,7 @@ import it.angelic.growlroom.model.repositories.MongoSensorLogRepository;
  * @author Oliver Gierke
  */
 @RunWith(SpringRunner.class)
+@TestPropertySource(locations = "classpath:application-test.properties")
 @SpringBootTest
 public class MongoSensorRepositoryIntegrationTest {
 
@@ -78,6 +80,7 @@ public class MongoSensorRepositoryIntegrationTest {
 	@Test
 	public void testStoriaUltimaSettimana() {
 		AggregateIterable<Document> ret = repository.aggregaStoriaUltimaSettimana(66l);
+		Assert.assertNotNull(ret);
 		Assert.assertTrue(!ret.first().isEmpty());
 	}
 }
