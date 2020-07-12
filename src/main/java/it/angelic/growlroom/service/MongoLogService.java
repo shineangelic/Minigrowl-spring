@@ -61,7 +61,7 @@ public class MongoLogService {
 		if (last != null) {
 			last.setNextLogId(out.getLogId());
 			mongoActuatorLogRepository.save(last);
-			logger.info("logActuator() Updated old log " + last.getLogId()+" with next:"+out.getLogId() );
+			logger.info("logActuator() Updated old log " + last.getLogId() + " with next:" + out.getLogId());
 		}
 
 	}
@@ -87,11 +87,15 @@ public class MongoLogService {
 		AggregateIterable<Document> nit = mongoSensorLogRepository.getHour24ChartAggregateData(sensorId);
 		ArrayList<HourValuePair> ret = new ArrayList<>();
 		for (Document document : nit) {
-			HourValuePair ha = new HourValuePair(document.get("_id").toString(),
-					df.format(Double.valueOf(document.get("avg").toString())));
-			ha.setMax(df.format(Double.valueOf(document.get("max").toString())));
-			ha.setMin(df.format(Double.valueOf(document.get("min").toString())));
-			ret.add(ha);
+			try {
+				HourValuePair ha = new HourValuePair(document.get("_id").toString(),
+						df.format(Double.valueOf(document.get("avg").toString())));
+				ha.setMax(df.format(Double.valueOf(document.get("max").toString())));
+				ha.setMin(df.format(Double.valueOf(document.get("min").toString())));
+				ret.add(ha);
+			} catch (Exception e) {
+				continue;
+			}
 		}
 		Collections.sort(ret);
 		return ret;
@@ -128,12 +132,15 @@ public class MongoLogService {
 
 			if (dPart[1].length() == 1)
 				dPart[1] = "0" + dPart[1];
-
-			HourValuePair ha = new HourValuePair(dPart[0] + dPart[1],
-					df.format(Double.valueOf(document.get("houravg").toString())));
-			ha.setMax(df.format(Double.valueOf(document.get("hourmax").toString())));
-			ha.setMin(df.format(Double.valueOf(document.get("hourmin").toString())));
-			ret.add(ha);
+			try {
+				HourValuePair ha = new HourValuePair(dPart[0] + dPart[1],
+						df.format(Double.valueOf(document.get("houravg").toString())));
+				ha.setMax(df.format(Double.valueOf(document.get("hourmax").toString())));
+				ha.setMin(df.format(Double.valueOf(document.get("hourmin").toString())));
+				ret.add(ha);
+			} catch (Exception e) {
+				continue;
+			}
 		}
 		Collections.sort(ret);
 		return ret;
