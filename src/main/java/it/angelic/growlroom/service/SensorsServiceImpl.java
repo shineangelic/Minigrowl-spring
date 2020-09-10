@@ -41,7 +41,7 @@ public class SensorsServiceImpl implements SensorsService {
 	public Sensor createOrUpdateBoardSensor(Sensor sensing, String boardId, String checkId) {
 		if (!Integer.valueOf(checkId).equals(sensing.getPid()))
 			throw new IllegalArgumentException("PID Mismatch: " + checkId + " vs" + sensing.getPid());
- 
+
 		Sensor previous = sensorRepository.findByBoardIdAndPid(Long.valueOf(boardId), sensing.getPid());
 		Sensor updated;
 		if (previous == null) {
@@ -75,26 +75,34 @@ public class SensorsServiceImpl implements SensorsService {
 				boardsRepository.save(tboard);
 			}
 			logger.warn("Created new SENSOR id:" + updated.getSensorId());
-		} else {//update its readings
-			previous.setReading(sensing.getReading());
-			previous.setTimeStamp(new Date());
-			previous.setErr(sensing.isErr());
-			updated = sensorRepository.save(previous);
+		} else {// update its readings
+
+			if (sensing.getTyp().equals(previous.getTyp())) {//BUGHUNT
+
+				previous.setReading(sensing.getReading());
+				previous.setTimeStamp(new Date());
+				previous.setErr(sensing.isErr());
+				updated = sensorRepository.save(previous);
+
+				// mongo logging
+				if (!updated.isErr()) {
+					try {
+						SensorLog grimpl = new SensorLog(updated);
+						mongoLogService.logSensor(grimpl);
+					} catch (Exception e) {
+						logger.error("MongoDB exc: " + e.getMessage());
+					}
+				} else {
+					logger.warn("NON-logging erratic sensor: " + updated.getSensorId());
+				}
+			}else {
+				logger.error("GRAVE sensor id mismatch sensing: " +sensing.toString() + " previous: " + previous.toString());
+				updated = previous;
+			}
 		}
 		// avvisa i sottoscrittori dei sensori
 		this.simpMessagingTemplate.convertAndSend("/topic/sensors", updated);
 
-		// mongo logging
-		if (!updated.isErr()) {
-			try {
-				SensorLog grimpl = new SensorLog(updated);
-				mongoLogService.logSensor(grimpl);
-			} catch (Exception e) {
-				logger.error("MongoDB exc: " + e.getMessage());
-			}
-		} else {
-			logger.warn("NON-logging erratic sensor: " + updated.getSensorId());
-		}
 		return updated;
 	}
 
