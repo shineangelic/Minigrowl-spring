@@ -70,8 +70,8 @@ public class SensorsServiceImpl implements SensorsService {
 			sensing.setBoard(tboard);
 			sensing.setTimeStamp(new Date());
 			updated = sensorRepository.save(sensing);
-			if (!tboard.getBoardSensors().contains(sensing)) {
-				tboard.getBoardSensors().add(sensing);
+			if (!tboard.getBoardSensors().contains(updated)) {
+				tboard.getBoardSensors().add(updated);
 				boardsRepository.save(tboard);
 			}
 			logger.warn("Created new SENSOR id:" + updated.getSensorId());
