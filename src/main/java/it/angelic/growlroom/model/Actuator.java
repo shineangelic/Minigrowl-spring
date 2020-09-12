@@ -26,7 +26,7 @@ public class Actuator implements Serializable {
 	private static final long serialVersionUID = 8169740067541126448L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long actuatorId;
 	
 	@JsonProperty("id")

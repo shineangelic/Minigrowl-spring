@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "board_id", "pid" }) })
 public class Sensor {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long sensorId;
 
 	@JsonProperty("id")
