@@ -38,6 +38,7 @@ public class SensorLog {
 		pid = updated.getPid();
 		typ = updated.getTyp();
 		sensorId = updated.getSensorId();
+		uinit = updated.getUinit();
 		try {
 			val = Float.valueOf(updated.getReading());
 		} catch (Exception e) {

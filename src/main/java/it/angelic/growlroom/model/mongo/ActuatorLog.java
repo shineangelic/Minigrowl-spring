@@ -25,42 +25,39 @@ public class ActuatorLog implements Serializable {
 	private Long logId;
 
 	private Long nextLogId;
-	private Integer id;
+	private Integer pid;
 	private ActuatorEnum typ;
 	@JsonProperty("val")
 	private String reading;
-	@JsonProperty("mode")
 	private short mode;
 	private Date timeStamp;
-	@JsonProperty("err")
-	private boolean errorPresent;
+	private boolean err;
 	@JsonProperty("bid")
 	private Long boardId;
-	@JsonProperty("actuatorId")
 	private Long actuatorId;
 
 	public ActuatorLog() {
 		super();
-		errorPresent = false;
+		err = false;
 	}
 
 	public ActuatorLog(Actuator updated) {
-		id = updated.getPid();
+		pid = updated.getPid();
 		actuatorId = updated.getActuatorId();
 		reading = updated.getReading();
 		timeStamp = updated.getTimeStamp();
 		mode = updated.getMode();
-		errorPresent = updated.isErrorPresent();
+		err = updated.isErrorPresent();
 		typ = updated.getTyp();
 		boardId = updated.getBoard().getBoardId();
 	}
 
-	public Integer getId() {
-		return id;
+	public Integer getPid() {
+		return pid;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	public void setPid(Integer id) {
+		this.pid = id;
 	}
 
 	public ActuatorEnum getTyp() {
@@ -87,17 +84,17 @@ public class ActuatorLog implements Serializable {
 		this.timeStamp = timeStamp;
 	}
 
-	public boolean isErrorPresent() {
-		return errorPresent;
+	public boolean isErr() {
+		return err;
 	}
 
-	public void setErrorPresent(boolean errorPresent) {
-		this.errorPresent = errorPresent;
+	public void setErr(boolean errorPresent) {
+		this.err = errorPresent;
 	}
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + "-" + getId();
+		return this.getClass().getSimpleName() + "-" + getPid();
 	}
 
 	public short getMode() {
