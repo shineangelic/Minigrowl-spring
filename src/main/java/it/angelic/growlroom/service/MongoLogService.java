@@ -44,7 +44,14 @@ public class MongoLogService {
 		this.mongoTemplate = mongoTemplate;
 	}
 
-	public void logSensor(SensorLog in) {
+	public void logSensor(SensorLog in) throws SensorNotFoundException {
+		SensorLog last = mongoSensorLogRepository.getLastBySensorId(in.getSensorId().longValue());
+		// mongoActuatorLogRepository.findLastByActuatorId(in.getId());
+		if (last != null && !last.getTyp().equals(in.getTyp())) {
+			logger.error("SENSOR LOG MISMATCHED: " + in);
+			logger.warn("SENSOR LOG WAS        : " + last);
+			throw new SensorNotFoundException();
+		}
 		in.setLogId(sequenceGenerator.generateSequence(SensorLog.SEQUENCE_NAME));
 		mongoSensorLogRepository.save(in);
 		logger.info("logSensor() saved log with id: " + in.getLogId());

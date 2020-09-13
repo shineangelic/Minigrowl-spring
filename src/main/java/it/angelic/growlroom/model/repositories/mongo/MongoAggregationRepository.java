@@ -9,6 +9,7 @@ import com.mongodb.client.AggregateIterable;
 
 import it.angelic.growlroom.model.HourValuePair;
 import it.angelic.growlroom.model.mongo.ActuatorLog;
+import it.angelic.growlroom.model.mongo.SensorLog;
 
 public interface MongoAggregationRepository {
 
@@ -21,6 +22,9 @@ public interface MongoAggregationRepository {
 	public AggregateIterable<Document> aggregaStoriaUltimaSettimana(Long sensorId);
 	
 	public ActuatorLog getLastByActuatorId(Long id);
+	
+	//per check log mismatch
+	public SensorLog getLastBySensorId(Long id);
 	
 	//per ogni attuatore ottiene i millisec di uptime
 	public AggregateIterable<Document> getIntervalActuatorsOnMsec(Date from, Date to, Integer actuatorId);

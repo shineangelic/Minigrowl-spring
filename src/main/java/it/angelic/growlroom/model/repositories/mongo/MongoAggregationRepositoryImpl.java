@@ -34,6 +34,7 @@ import com.mongodb.client.model.Field;
 
 import it.angelic.growlroom.model.HourValuePair;
 import it.angelic.growlroom.model.mongo.ActuatorLog;
+import it.angelic.growlroom.model.mongo.SensorLog;
 
 
 public class MongoAggregationRepositoryImpl implements MongoAggregationRepository {
@@ -87,6 +88,14 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 		query.with(new Sort(Sort.Direction.DESC, "timeStamp"));
 		return mongoTemplate.findOne(query, ActuatorLog.class);
 	}
+	
+	@Override
+	public SensorLog getLastBySensorId(Long id) {
+		Query query = Query.query(Criteria.where("sensorId").is(id));
+		query.with(new Sort(Sort.Direction.DESC, "timeStamp"));
+		return mongoTemplate.findOne(query, SensorLog.class);
+	}
+
 
 	/*
 	 * PIPELINE
@@ -173,4 +182,5 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 
 	}
 
+	
 }

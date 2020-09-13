@@ -77,27 +77,22 @@ public class SensorsServiceImpl implements SensorsService {
 			logger.warn("Created new SENSOR id:" + updated.getSensorId());
 		} else {// update its readings
 
-			if (sensing.getTyp().equals(previous.getTyp())) {//BUGHUNT
+			previous.setReading(sensing.getReading());
+			previous.setTimeStamp(new Date());
+			previous.setErr(sensing.isErr());
+			updated = sensorRepository.save(previous);
 
-				previous.setReading(sensing.getReading());
-				previous.setTimeStamp(new Date());
-				previous.setErr(sensing.isErr());
-				updated = sensorRepository.save(previous);
+			// mongo logging
+			if (!updated.isErr()) {
+				try {
+					SensorLog grimpl = new SensorLog(updated);
 
-				// mongo logging
-				if (!updated.isErr()) {
-					try {
-						SensorLog grimpl = new SensorLog(updated);
-						mongoLogService.logSensor(grimpl);
-					} catch (Exception e) {
-						logger.error("MongoDB exc: " + e.getMessage());
-					}
-				} else {
-					logger.warn("NON-logging erratic sensor: " + updated.getSensorId());
+					mongoLogService.logSensor(grimpl);
+				} catch (Exception e) {
+					logger.error("MongoDB exc: " + e.getMessage());
 				}
-			}else {
-				logger.error("GRAVE sensor id mismatch sensing: " +sensing.toString() + " previous: " + previous.toString());
-				updated = previous;
+			} else {
+				logger.warn("NON-logging erratic sensor: " + updated.getSensorId());
 			}
 		}
 		// avvisa i sottoscrittori dei sensori
