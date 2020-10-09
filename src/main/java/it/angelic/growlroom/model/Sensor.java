@@ -2,6 +2,7 @@ package it.angelic.growlroom.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -9,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -18,7 +20,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "board_id", "pid" }) })
 public class Sensor {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@SequenceGenerator(name = "sensor_id_seq", sequenceName = "sensor_sensor_id_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sensor_id_seq")
+	@Column(columnDefinition="serial")
 	private Long sensorId;
 
 	@JsonProperty("id")
