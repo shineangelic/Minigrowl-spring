@@ -36,7 +36,6 @@ import it.angelic.growlroom.model.HourValuePair;
 import it.angelic.growlroom.model.mongo.ActuatorLog;
 import it.angelic.growlroom.model.mongo.SensorLog;
 
-
 public class MongoAggregationRepositoryImpl implements MongoAggregationRepository {
 
 	private final MongoTemplate mongoTemplate;
@@ -88,7 +87,7 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 		query.with(new Sort(Sort.Direction.DESC, "timeStamp"));
 		return mongoTemplate.findOne(query, ActuatorLog.class);
 	}
-	
+
 	@Override
 	public SensorLog getLastBySensorId(Long id) {
 		Query query = Query.query(Criteria.where("sensorId").is(id));
@@ -96,25 +95,24 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 		return mongoTemplate.findOne(query, SensorLog.class);
 	}
 
-
 	/*
 	 * PIPELINE
 	 * 
-	 * [{$match: { timeStamp: { $gte: ISODate("2016-06-01T00:00:00.000Z"), $lt: ISODate("2020-06-03T00:00:00.000Z")},
-	 * 
-	 * }}, {$lookup: { from: 'actuators', localField: '_id', foreignField: 'nextLogId', as: 'previous' }}, {$addFields:
-	 * { prev: {$arrayElemAt: [ '$previous', 0]} }}, {$addFields: { msecAccesa:{ $subtract:
-	 * ['$timeStamp','$prev.timeStamp'] } }}, {$match: { prev: {$ne:null}, 'prev.reading':"1" }}, {$group: { _id: '$id',
-	 * count: { $sum: '$msecAccesa' } }}]
+	 * [{$match: { actuatorId:2, timeStamp: { $gte: ISODate('2016-06-01T00:00:00.000Z'), $lt:
+	 * ISODate('2020-11-03T00:00:00.000Z') } }}, {$lookup: { from: 'actuatorsV2', localField: '_id', foreignField:
+	 * 'nextLogId', as: 'previous' }}, {$addFields: { prev: { $arrayElemAt: [ '$previous', 0 ] } }}, {$addFields: {
+	 * msecAccesa: { $subtract: [ '$timeStamp', '$prev.timeStamp' ] } }}, {$match: { prev: { $ne: null },
+	 * 'prev.reading': '1' }}, {$group: { _id: '$actuatorId', count: { $sum: '$msecAccesa' } }}]
 	 * 
 	 */private List<Bson> aggregaTempoAccese(Date in, Date out, Integer which) {
-		return Arrays.asList(match(and(gt("timeStamp", in), lte("timeStamp", out), eq("actuatorId", which))),
+
+		return Arrays.asList(match(and(eq("actuatorId", which), and(gt("timeStamp", in), lte("timeStamp", out)))),
 				lookup("actuatorsV2", "_id", "nextLogId", "previous"),
 				addFields(new Field("prev", new Document("$arrayElemAt", Arrays.asList("$previous", 0L)))),
 				addFields(new Field("msecAccesa",
 						new Document("$subtract", Arrays.asList("$timeStamp", "$prev.timeStamp")))),
 				match(and(ne("prev", new BsonNull()), eq("prev.reading", "1"))),
-				group("$id", sum("count", "$msecAccesa")));
+				group("$actuatorId", sum("count", "$msecAccesa")));
 	}
 
 	/**
@@ -127,7 +125,7 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 		Calendar dtIn = Calendar.getInstance();
 		Date dtTo = new Date();
 		dtTo.setTime(dtIn.getTime().getTime());
-		//SimpleDateFormat df = new SimpleDateFormat("YYYY-MM-DD");
+		// SimpleDateFormat df = new SimpleDateFormat("YYYY-MM-DD");
 
 		dtIn.add(Calendar.DATE, -7);
 		return Arrays.asList(
@@ -155,7 +153,7 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 		Calendar dtIn = Calendar.getInstance();
 		Date dtTo = new Date();
 		dtTo.setTime(dtIn.getTime().getTime());
-		//SimpleDateFormat df = new SimpleDateFormat("YYYY-MM-DD");
+		// SimpleDateFormat df = new SimpleDateFormat("YYYY-MM-DD");
 
 		dtIn.add(Calendar.DATE, -7);
 
@@ -182,5 +180,4 @@ public class MongoAggregationRepositoryImpl implements MongoAggregationRepositor
 
 	}
 
-	
 }
