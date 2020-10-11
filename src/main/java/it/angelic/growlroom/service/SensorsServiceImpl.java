@@ -1,6 +1,5 @@
 package it.angelic.growlroom.service;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
@@ -14,7 +13,6 @@ import it.angelic.growlroom.model.Board;
 import it.angelic.growlroom.model.Sensor;
 import it.angelic.growlroom.model.UnitEnum;
 import it.angelic.growlroom.model.mongo.SensorLog;
-import it.angelic.growlroom.model.repositories.BoardsRepository;
 import it.angelic.growlroom.model.repositories.SensorsRepository;
 
 @Service
@@ -26,8 +24,9 @@ public class SensorsServiceImpl implements SensorsService {
 	@Autowired
 	private MongoLogService mongoLogService;
 
+
 	@Autowired
-	private BoardsRepository boardsRepository;
+	private BoardsService boardsService;
 
 	private final SimpMessagingTemplate simpMessagingTemplate;
 
@@ -43,9 +42,10 @@ public class SensorsServiceImpl implements SensorsService {
 			throw new IllegalArgumentException("PID Mismatch: " + checkId + " vs" + sensing.getPid());
 
 		Sensor previous = sensorRepository.findByBoardIdAndPid(Long.valueOf(boardId), sensing.getPid());
+		Board tboard = boardsService.findOrCreateBoard(boardId);
 		Sensor updated;
 		if (previous == null) {
-			Board tboard = findOrCreateBoard(boardId);
+			
 
 			switch (sensing.getTyp()) {
 			case BAROMETER:
@@ -71,10 +71,7 @@ public class SensorsServiceImpl implements SensorsService {
 			sensing.setTimeStamp(new Date());
 			sensing.setTimeStampCreated(new Date());
 			updated = sensorRepository.save(sensing);
-			if (!tboard.getBoardSensors().contains(updated)) {
-				tboard.getBoardSensors().add(updated);
-				boardsRepository.save(tboard);
-			}
+			
 			logger.warn("Created new SENSOR id:" + updated.getSensorId());
 		} else {// update its readings
 
@@ -96,26 +93,16 @@ public class SensorsServiceImpl implements SensorsService {
 				logger.warn("NON-logging erratic sensor: " + updated.getSensorId());
 			}
 		}
+		
+		boardsService.assign(tboard, updated);
+		
 		// avvisa i sottoscrittori dei sensori
 		this.simpMessagingTemplate.convertAndSend("/topic/sensors", updated);
 
 		return updated;
 	}
 
-	private Board findOrCreateBoard(String boardId) {
-		Board tboard;
-		try {
-			tboard = boardsRepository.findByBoardId(Long.valueOf(boardId));
-		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException("boardId ERR: " + e.getMessage());
-		}
-		if (tboard == null) {
-			tboard = new Board(Long.valueOf(boardId));
-			tboard.setBoardSensors(new ArrayList<>());
-			tboard = boardsRepository.save(tboard);
-		}
-		return tboard;
-	}
+	
 
 	@Override
 	public Sensor getSensorByBoardIdAndPid(Long boardId, Integer sensorPid) throws SensorNotFoundException {

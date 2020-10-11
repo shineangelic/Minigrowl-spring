@@ -2,6 +2,7 @@ package it.angelic.growlroom.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -23,6 +24,9 @@ public class Board implements Serializable {
 	 */
 	private static final long serialVersionUID = -1142251055437613043L;
 
+	private Date timeStampCreated;
+	
+	
 	public Board() {
 		super();
 		boardActuators = new ArrayList<Actuator>();
@@ -49,6 +53,14 @@ public class Board implements Serializable {
 	@OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JsonIgnore
 	List<Actuator> boardActuators;
+	
+	public Date getTimeStampCreated() {
+		return timeStampCreated;
+	}
+
+	public void setTimeStampCreated(Date timeStampCreated) {
+		this.timeStampCreated = timeStampCreated;
+	}
 
 	public Long getBoardId() {
 		return boardId;

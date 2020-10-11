@@ -1,6 +1,5 @@
 package it.angelic.growlroom.service;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
@@ -15,7 +14,6 @@ import it.angelic.growlroom.model.Command;
 import it.angelic.growlroom.model.UnitEnum;
 import it.angelic.growlroom.model.mongo.ActuatorLog;
 import it.angelic.growlroom.model.repositories.ActuatorsRepository;
-import it.angelic.growlroom.model.repositories.BoardsRepository;
 
 @Service
 public class ActuatorsServiceImpl implements ActuatorsService {
@@ -24,11 +22,11 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 	private ActuatorsRepository actuatorsRepository;
 
 	@Autowired
-	private BoardsRepository boardsRepository;
-
-	@Autowired
 	private MongoLogService mongoLogService;
-
+	
+	@Autowired
+	private BoardsService boardsService;
+	
 	Logger logger = LoggerFactory.getLogger(ActuatorsServiceImpl.class);
 
 	@Override
@@ -38,19 +36,8 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 
 		Actuator previous = actuatorsRepository.findByBoardIdAndPid(Long.valueOf(boardId), dispositivo.getPid());
 		Actuator updated = null;
+		Board tboard= boardsService.findOrCreateBoard( boardId );
 		if (previous == null) {
-			Board tboard;
-			try {
-				tboard = boardsRepository.findByBoardId(Long.valueOf(boardId));
-			} catch (NumberFormatException e) {
-				throw new IllegalArgumentException("boardId ERR: " + e.getMessage());
-			}
-			if (tboard == null) {
-				tboard = new Board(Long.valueOf(boardId));
-				tboard.setBoardActuators(new ArrayList<>());
-				tboard = boardsRepository.save(tboard);
-			}
-
 			switch (dispositivo.getTyp()) {
 			case FAN:
 			case OUTTAKE:
@@ -76,11 +63,6 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 			dispositivo.setTimeStampCreated(new Date());
 			updated = actuatorsRepository.save(dispositivo);
 			logger.warn("Created new ACTUATOR id:" + updated.getActuatorId());
-			if (!tboard.getBoardActuators().contains(dispositivo)) {
-				tboard.getBoardActuators().add(dispositivo);
-				tboard = boardsRepository.save(tboard);
-			}
-
 		} else {
 			previous.setReading(dispositivo.getReading());
 			previous.setMode(dispositivo.getMode());
@@ -88,6 +70,8 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 			previous.setErrorPresent(dispositivo.isErrorPresent());
 			updated = actuatorsRepository.save(previous);
 		}
+		
+		boardsService.assign(tboard, updated);
 
 		// mongo log
 		if (!updated.isErrorPresent()) {
