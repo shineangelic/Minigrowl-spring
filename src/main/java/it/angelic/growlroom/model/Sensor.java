@@ -36,6 +36,7 @@ public class Sensor {
 	private UnitEnum uinit;
 	
 	private Date timeStamp;
+	private Date timeStampCreated;
 	
 	private boolean err;
 
@@ -136,6 +137,14 @@ public class Sensor {
 		} else if (!sensorId.equals(other.sensorId))
 			return false;
 		return true;
+	}
+
+	public Date getTimeStampCreated() {
+		return timeStampCreated;
+	}
+
+	public void setTimeStampCreated(Date timeStampCreated) {
+		this.timeStampCreated = timeStampCreated;
 	}
 
 }

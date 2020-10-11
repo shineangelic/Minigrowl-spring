@@ -60,6 +60,8 @@ public class Actuator implements Serializable {
 	@OneToMany(mappedBy = "targetActuator", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private List<Command> supportedCommands;
 
+	private Date timeStampCreated;
+
 	public Actuator() {
 		super();
 		supportedCommands = new ArrayList<>();
@@ -170,6 +172,14 @@ public class Actuator implements Serializable {
 
 	public void setActuatorId(Long actuatorId) {
 		this.actuatorId = actuatorId;
+	}
+	
+	public Date getTimeStampCreated() {
+		return timeStampCreated;
+	}
+
+	public void setTimeStampCreated(Date timeStampCreated) {
+		this.timeStampCreated = timeStampCreated;
 	}
 
 	public Command containsCommand(Command toExecurte) {
