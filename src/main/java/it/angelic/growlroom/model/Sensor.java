@@ -34,8 +34,9 @@ public class Sensor {
 	private String reading;
 	
 	private UnitEnum uinit;
-	
+	@Column(nullable=false)
 	private Date timeStamp;
+	@Column(nullable=false)
 	private Date timeStampCreated;
 	
 	private boolean err;

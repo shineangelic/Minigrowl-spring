@@ -46,8 +46,6 @@ public class Actuator implements Serializable {
 	@JsonProperty("mode")
 	private short mode;
 
-	private Date timeStamp;
-
 	@JsonProperty("err")
 	private boolean errorPresent;
 
@@ -60,6 +58,9 @@ public class Actuator implements Serializable {
 	@OneToMany(mappedBy = "targetActuator", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private List<Command> supportedCommands;
 
+	@Column(nullable=false)
+	private Date timeStamp;
+	@Column(nullable=false)
 	private Date timeStampCreated;
 
 	public Actuator() {

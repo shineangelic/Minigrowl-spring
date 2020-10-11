@@ -24,6 +24,7 @@ public class Board implements Serializable {
 	 */
 	private static final long serialVersionUID = -1142251055437613043L;
 
+	@Column(nullable=false)
 	private Date timeStampCreated;
 	
 	
