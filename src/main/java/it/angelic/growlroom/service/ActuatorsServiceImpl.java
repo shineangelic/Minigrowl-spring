@@ -54,16 +54,18 @@ public class ActuatorsServiceImpl implements ActuatorsService {
 			}
 
 			dispositivo.setTimeStamp(new Date());
+			dispositivo.setTimeStampCreated(new Date());
 			dispositivo.setBoard(tboard);
 
 			for (Command com : dispositivo.getSupportedCommands()) {
 				com.setTargetActuator(dispositivo);
 				// commandsRepository.save(com);
 			}
-			dispositivo.setTimeStampCreated(new Date());
+			
 			updated = actuatorsRepository.save(dispositivo);
 			logger.warn("Created new ACTUATOR id:" + updated.getActuatorId());
 		} else {
+			dispositivo.setBoard(tboard);
 			previous.setReading(dispositivo.getReading());
 			previous.setMode(dispositivo.getMode());
 			previous.setTimeStamp(new Date());

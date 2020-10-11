@@ -74,7 +74,7 @@ public class SensorsServiceImpl implements SensorsService {
 			
 			logger.warn("Created new SENSOR id:" + updated.getSensorId());
 		} else {// update its readings
-
+			previous.setBoard(tboard);
 			previous.setReading(sensing.getReading());
 			previous.setTimeStamp(new Date());
 			previous.setErr(sensing.isErr());

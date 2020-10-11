@@ -1,7 +1,10 @@
 package it.angelic.growlroom.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.angelic.growlroom.model.Actuator;
@@ -10,7 +13,7 @@ import it.angelic.growlroom.model.Sensor;
 import it.angelic.growlroom.model.repositories.BoardsRepository;
 
 public class BoardsServiceImpl implements BoardsService {
-
+	Logger logger = LoggerFactory.getLogger(BoardsServiceImpl.class);
 	@Autowired
 	private BoardsRepository boardsRepository;
 
@@ -25,7 +28,9 @@ public class BoardsServiceImpl implements BoardsService {
 		if (tboard == null) {
 			tboard = new Board(Long.valueOf(boardId));
 			tboard.setBoardSensors(new ArrayList<>());
+			tboard.setTimeStampCreated(new Date());
 			tboard = boardsRepository.save(tboard);
+			logger.warn("CREATED NEW BOARD ID" + tboard.getBoardId());
 		}
 		return tboard;
 	}
@@ -45,6 +50,5 @@ public class BoardsServiceImpl implements BoardsService {
 			owner.getBoardActuators().add(dispositivo);
 			boardsRepository.save(owner);
 		}
-
 	}
 }
